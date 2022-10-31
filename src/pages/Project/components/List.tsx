@@ -37,7 +37,7 @@ const List = ({ title, cards, id }: Props) => {
   };
 
   return (
-    <Droppable droppableId={id} type="List">
+    <Droppable droppableId={id} type="LIST">
       {(provided) => (
         <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
           <Title>{title}</Title>

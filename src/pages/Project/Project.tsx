@@ -31,6 +31,7 @@ const LISTS = [
     cards: [
       { title: "card1", id: "cardASD" },
       { title: "card2", id: "card23461" },
+      { title: "card3", id: "card233331" },
     ],
   },
   {
@@ -47,17 +48,38 @@ const Project = () => {
     const { source, destination } = result;
     if (!destination) return;
 
-    const newList = Array.from(list);
-    const [newOrder] = newList.splice(source.index, 1);
-    newList.splice(destination.index, 0, newOrder);
+    if (result.type === "COLUMN") {
+      const newList = Array.from(list);
+      const [newOrder] = newList.splice(source.index, 1);
+      newList.splice(destination.index, 0, newOrder);
 
-    setList(newList);
+      setList(newList);
+    }
+
+    if (result.type === "LIST") {
+      const newList = Array.from(list);
+      // const [newOrder] = newList.splice(source.index, 1);
+      const prevListIndex = newList.findIndex((item) => {
+        return item.id === source.droppableId;
+      });
+      const newListIndex = newList.findIndex((item) => {
+        return item.id === destination.droppableId;
+      });
+
+      const [newOrder] = newList[prevListIndex].cards.splice(source.index, 1);
+      newList[newListIndex].cards.splice(destination.index, 0, newOrder);
+
+      console.log(source.index, destination.index);
+      console.log(source, destination);
+      console.log(newList, newOrder);
+      console.log(prevListIndex, newListIndex);
+    }
   };
 
   return (
     <PrivateRoute>
       <DragDropContext onDragEnd={onDragEnHandler}>
-        <Droppable droppableId="Project1" direction="horizontal">
+        <Droppable droppableId="Project1" direction="horizontal" type="COLUMN">
           {(provided) => (
             <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
               Project1
