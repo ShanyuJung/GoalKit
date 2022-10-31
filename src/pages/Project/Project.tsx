@@ -58,7 +58,6 @@ const Project = () => {
 
     if (result.type === "LIST") {
       const newList = Array.from(list);
-      // const [newOrder] = newList.splice(source.index, 1);
       const prevListIndex = newList.findIndex((item) => {
         return item.id === source.droppableId;
       });
@@ -68,11 +67,6 @@ const Project = () => {
 
       const [newOrder] = newList[prevListIndex].cards.splice(source.index, 1);
       newList[newListIndex].cards.splice(destination.index, 0, newOrder);
-
-      console.log(source.index, destination.index);
-      console.log(source, destination);
-      console.log(newList, newOrder);
-      console.log(prevListIndex, newListIndex);
     }
   };
 
