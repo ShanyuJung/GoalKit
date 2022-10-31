@@ -1,5 +1,14 @@
+import styled from "styled-components";
+import LoginRoute from "../../components/route/LoginRoute";
+
+const Wrapper = styled.div``;
+
 const Login = () => {
-  return <div>Login</div>;
+  return (
+    <LoginRoute>
+      <Wrapper>Login</Wrapper>
+    </LoginRoute>
+  );
 };
 
 export default Login;
