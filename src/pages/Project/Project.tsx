@@ -82,6 +82,7 @@ const Project = () => {
                             title={list.title}
                             cards={list.cards}
                             key={list.id}
+                            id={list.id}
                           />
                         </div>
                       )}
