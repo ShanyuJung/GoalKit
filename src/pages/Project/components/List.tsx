@@ -4,13 +4,14 @@ import Card from "./Card";
 const Wrapper = styled.div`
   padding: 5px;
   border: 1px black solid;
+  margin: 5px;
 `;
 
 const Title = styled.div``;
 
 interface Props {
   title: string;
-  cards: { title: string }[];
+  cards: { title: string; id: string }[];
 }
 
 const List = ({ title, cards }: Props) => {
@@ -18,7 +19,7 @@ const List = ({ title, cards }: Props) => {
     <Wrapper>
       <Title>{title}</Title>
       {cards.map((card) => {
-        return <Card title={card.title} />;
+        return <Card title={card.title} key={card.id} />;
       })}
     </Wrapper>
   );

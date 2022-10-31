@@ -9,7 +9,22 @@ const ListWrapper = styled.div`
 `;
 
 const LISTS = [
-  { title: "List1", cards: [{ title: "card1" }, { title: "card2" }] },
+  {
+    title: "List1",
+    id: "listQWE",
+    cards: [
+      { title: "card1", id: "cardQWE" },
+      { title: "card2", id: "card123456" },
+    ],
+  },
+  {
+    title: "List2",
+    id: "listASD",
+    cards: [
+      { title: "card1", id: "cardASD" },
+      { title: "card2", id: "card23461" },
+    ],
+  },
 ];
 
 const Project = () => {
@@ -19,7 +34,7 @@ const Project = () => {
         Project1
         <ListWrapper>
           {LISTS.map((list) => {
-            return <List title={list.title} cards={list.cards} />;
+            return <List title={list.title} cards={list.cards} key={list.id} />;
           })}
         </ListWrapper>
       </Wrapper>
