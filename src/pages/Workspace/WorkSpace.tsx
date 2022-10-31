@@ -3,7 +3,12 @@ import styled from "styled-components";
 
 const Wrapper = styled.div``;
 
-const ProjectCard = styled.div``;
+const ProjectCard = styled.div`
+  border: 1px #000 solid;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+`;
 
 const Workspace = () => {
   const navigate = useNavigate();
