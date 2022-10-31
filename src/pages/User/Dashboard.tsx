@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import PrivateRoute from "../../components/route/PrivateRoute";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,22 +28,35 @@ const Workspace = styled.div`
 const Dashboard = () => {
   const navigate = useNavigate();
 
+  const { logout } = useAuth();
+
   return (
-    <Wrapper>
-      <Sidebar>Sidebar</Sidebar>
-      <WorkspaceWrapper>
-        <Workspace
-          onClick={() => {
-            navigate("/workspace/workspace-1");
-          }}
-        >
-          workspace1
-        </Workspace>
-        <Workspace>workspace2</Workspace>
-        <Workspace>workspace3</Workspace>
-        <Workspace>workspace4</Workspace>
-      </WorkspaceWrapper>
-    </Wrapper>
+    <PrivateRoute>
+      <Wrapper>
+        <Sidebar>
+          Sidebar
+          <button
+            onClick={() => {
+              logout();
+            }}
+          >
+            logout
+          </button>
+        </Sidebar>
+        <WorkspaceWrapper>
+          <Workspace
+            onClick={() => {
+              navigate("/workspace/workspace-1");
+            }}
+          >
+            workspace1
+          </Workspace>
+          <Workspace>workspace2</Workspace>
+          <Workspace>workspace3</Workspace>
+          <Workspace>workspace4</Workspace>
+        </WorkspaceWrapper>
+      </Wrapper>
+    </PrivateRoute>
   );
 };
 

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import PrivateRoute from "../../components/route/PrivateRoute";
 
 const Wrapper = styled.div``;
 
@@ -14,15 +15,17 @@ const Workspace = () => {
   const navigate = useNavigate();
 
   return (
-    <Wrapper>
-      <ProjectCard
-        onClick={() => {
-          navigate("/project/project1");
-        }}
-      >
-        Project 1
-      </ProjectCard>
-    </Wrapper>
+    <PrivateRoute>
+      <Wrapper>
+        <ProjectCard
+          onClick={() => {
+            navigate("/project/project1");
+          }}
+        >
+          Project 1
+        </ProjectCard>
+      </Wrapper>
+    </PrivateRoute>
   );
 };
 
