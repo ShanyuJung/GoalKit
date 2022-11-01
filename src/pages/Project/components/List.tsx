@@ -1,12 +1,6 @@
-import { useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 const Wrapper = styled.div`
   padding: 5px;
@@ -23,19 +17,6 @@ interface Props {
 }
 
 const List = ({ title, cards, id }: Props) => {
-  const [displayCards, setDisplayCards] = useState(cards);
-
-  const onDragEndHandler = (result: DropResult) => {
-    const { source, destination } = result;
-    if (!destination) return;
-
-    const newCards = Array.from(displayCards);
-    const [newOrder] = newCards.splice(source.index, 1);
-    newCards.splice(destination.index, 0, newOrder);
-
-    setDisplayCards(newCards);
-  };
-
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (

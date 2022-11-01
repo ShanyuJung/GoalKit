@@ -7,8 +7,10 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import produce from "immer";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Wrapper = styled.div``;
 
@@ -17,43 +19,23 @@ const ListWrapper = styled.div`
   display: flex;
 `;
 
-const LISTS = [
-  {
-    title: "List1",
-    id: "listQWE",
-    cards: [
-      { title: "card1", id: "cardQWE" },
-      { title: "card2", id: "card123456" },
-    ],
-  },
-  {
-    title: "List2",
-    id: "listASD",
-    cards: [
-      { title: "card1", id: "cardASD" },
-      { title: "card2", id: "card23461" },
-      { title: "card3", id: "card233331" },
-    ],
-  },
-  {
-    title: "List3",
-    id: "list3re762r",
-    cards: [{ title: "card1", id: "card2463417" }],
-  },
-  {
-    title: "List4",
-    id: "list3re762eer",
-    cards: [{ title: "card1", id: "card24634ce17" }],
-  },
-  {
-    title: "List5",
-    id: "list3re62eer",
-    cards: [{ title: "card1", id: "card246e2ce17" }],
-  },
-];
+const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
 
 const Project = () => {
-  const [list, setList] = useState(LISTS);
+  const [list, setList] = useState<
+    { id: string; title: string; cards: Array<{ title: string; id: string }> }[]
+  >([]);
+
+  const updateDataHandler = async (
+    newList: {
+      id: string;
+      title: string;
+      cards: Array<{ title: string; id: string }>;
+    }[]
+  ) => {
+    const projectRef = doc(db, "projects", PROJECT_ID);
+    await updateDoc(projectRef, { lists: newList });
+  };
 
   const onDragEndHandler = (result: DropResult) => {
     const { source, destination } = result;
@@ -64,8 +46,8 @@ const Project = () => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
-
-      setList(newList);
+      updateDataHandler(newList);
+      // setList(newList);
     }
 
     if (result.type === "LIST") {
@@ -83,20 +65,31 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
-
-      setList(newList);
+      updateDataHandler(newList);
+      // setList(newList);
     }
   };
 
-  return (
-    <PrivateRoute>
-      <DragDropContext onDragEnd={onDragEndHandler}>
-        <Droppable droppableId="Project1" direction="horizontal" type="BOARD">
-          {(provided) => (
-            <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-              Project1
-              <ListWrapper>
-                {list.map((list, index) => {
+  useEffect(() => {
+    const projectRef = doc(db, "projects", PROJECT_ID);
+    const unsubscribe = onSnapshot(projectRef, (snapshot) => {
+      setList(snapshot.data()?.lists);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const projectBoard = () => {
+    return (
+      <Droppable droppableId="Project1" direction="horizontal" type="BOARD">
+        {(provided) => (
+          <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
+            Project1
+            <ListWrapper>
+              {list.length > 0 &&
+                list.map((list, index) => {
                   return (
                     <Draggable
                       key={`draggable-${list.id}`}
@@ -123,11 +116,18 @@ const Project = () => {
                     </Draggable>
                   );
                 })}
-                {provided.placeholder}
-              </ListWrapper>
-            </Wrapper>
-          )}
-        </Droppable>
+              {provided.placeholder}
+            </ListWrapper>
+          </Wrapper>
+        )}
+      </Droppable>
+    );
+  };
+
+  return (
+    <PrivateRoute>
+      <DragDropContext onDragEnd={onDragEndHandler}>
+        {projectBoard()}
       </DragDropContext>
     </PrivateRoute>
   );
