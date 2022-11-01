@@ -8,6 +8,7 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import { useState } from "react";
+import produce from "immer";
 
 const Wrapper = styled.div``;
 
@@ -58,25 +59,32 @@ const Project = () => {
     const { source, destination } = result;
     if (!destination) return;
 
-    if (result.type === "COLUMN") {
-      const newList = Array.from(list);
-      const [newOrder] = newList.splice(source.index, 1);
-      newList.splice(destination.index, 0, newOrder);
+    if (result.type === "BOARD") {
+      const newList = produce(list, (draftState) => {
+        const [newOrder] = draftState.splice(source.index, 1);
+        draftState.splice(destination.index, 0, newOrder);
+      });
 
       setList(newList);
     }
 
     if (result.type === "LIST") {
-      const newList = Array.from(list);
-      const prevListIndex = newList.findIndex((item) => {
-        return item.id === source.droppableId;
-      });
-      const newListIndex = newList.findIndex((item) => {
-        return item.id === destination.droppableId;
+      const newList = produce(list, (draftState) => {
+        const prevListIndex = draftState.findIndex((item) => {
+          return item.id === source.droppableId;
+        });
+        const newListIndex = draftState.findIndex((item) => {
+          return item.id === destination.droppableId;
+        });
+
+        const [newOrder] = draftState[prevListIndex].cards.splice(
+          source.index,
+          1
+        );
+        draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
 
-      const [newOrder] = newList[prevListIndex].cards.splice(source.index, 1);
-      newList[newListIndex].cards.splice(destination.index, 0, newOrder);
+      setList(newList);
     }
   };
 
