@@ -39,12 +39,22 @@ const LISTS = [
     id: "list3re762r",
     cards: [{ title: "card1", id: "card2463417" }],
   },
+  {
+    title: "List4",
+    id: "list3re762eer",
+    cards: [{ title: "card1", id: "card24634ce17" }],
+  },
+  {
+    title: "List5",
+    id: "list3re62eer",
+    cards: [{ title: "card1", id: "card246e2ce17" }],
+  },
 ];
 
 const Project = () => {
   const [list, setList] = useState(LISTS);
 
-  const onDragEnHandler = (result: DropResult) => {
+  const onDragEndHandler = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return;
 
@@ -72,8 +82,8 @@ const Project = () => {
 
   return (
     <PrivateRoute>
-      <DragDropContext onDragEnd={onDragEnHandler}>
-        <Droppable droppableId="Project1" direction="horizontal" type="COLUMN">
+      <DragDropContext onDragEnd={onDragEndHandler}>
+        <Droppable droppableId="Project1" direction="horizontal" type="BOARD">
           {(provided) => (
             <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
               Project1
