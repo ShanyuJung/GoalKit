@@ -3,9 +3,17 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PrivateRoute from "../../components/route/PrivateRoute";
 import { useAuth } from "../../contexts/AuthContext";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import produce from "immer";
+import NewWorkspace from "./components/NewWorkspace";
 
 const Wrapper = styled.div`
   display: flex;
@@ -37,33 +45,58 @@ interface Workspace {
 }
 
 const Dashboard = () => {
-  const [workspaces, setWorkspace] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspace] = useState<Workspace[] | never>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
 
-  useEffect(() => {
-    const getWorkspaceHandler = async () => {
-      if (isLoading) return;
-      try {
-        setIsLoading(true);
-        const userID = currentUser.uid;
-        const workspaceRef = collection(db, "workspaces");
-        const q = query(workspaceRef, where("owner", "==", userID));
-        const querySnapshot = await getDocs(q);
-        const newWorkspaces = produce(workspaces, (draftState) => {
-          querySnapshot.forEach((doc) => {
-            const docData = doc.data() as Workspace;
-            draftState.push(docData);
-          });
+  const getWorkspaceHandler = async () => {
+    if (isLoading) return;
+    try {
+      setIsLoading(true);
+      const userID = currentUser.uid;
+      const workspaceRef = collection(db, "workspaces");
+      const q = query(workspaceRef, where("owner", "==", userID));
+      const querySnapshot = await getDocs(q);
+      const emptyArr: Workspace[] = [];
+      const newWorkspaces = produce(emptyArr, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data() as Workspace;
+          draftState.push(docData);
         });
-        setWorkspace(newWorkspaces);
-      } catch (e) {
-        alert(e);
-      }
-      setIsLoading(false);
-    };
+      });
+      setWorkspace(newWorkspaces);
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
 
+  const UploadWorkspaceHandler = async (newWorkspaceTitle: string) => {
+    if (isLoading) return;
+    try {
+      setIsLoading(true);
+      const setRef = doc(collection(db, "workspaces"));
+      const userUid = currentUser.uid;
+      const newWorkspace = {
+        id: setRef.id,
+        title: newWorkspaceTitle,
+        projects: [],
+        owner: userUid,
+      };
+      await setDoc(setRef, newWorkspace);
+      await getWorkspaceHandler();
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
+
+  const newWorkspaceHandler = (newWorkspaceTitle: string) => {
+    UploadWorkspaceHandler(newWorkspaceTitle);
+  };
+
+  useEffect(() => {
     getWorkspaceHandler();
   }, []);
 
@@ -88,6 +121,7 @@ const Dashboard = () => {
                 </Workspace>
               );
             })}
+          <NewWorkspace onSubmit={newWorkspaceHandler} />
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>
