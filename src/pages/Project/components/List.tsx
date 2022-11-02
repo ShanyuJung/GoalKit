@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Card from "./Card";
-import { Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { Droppable, Draggable } from "react-beautiful-dnd";
+import NewElement from "./NewElement";
+import { useRef } from "react";
 
 const Wrapper = styled.div`
   padding: 5px;
@@ -14,9 +16,12 @@ interface Props {
   title: string;
   cards: { title: string; id: string }[];
   id: string;
+  newCardHandler: (newCardTitle: string) => void;
 }
 
-const List = ({ title, cards, id }: Props) => {
+const List = ({ title, cards, id, newCardHandler }: Props) => {
+  const newCardRef = useRef<HTMLTextAreaElement | null>(null);
+
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
@@ -45,6 +50,11 @@ const List = ({ title, cards, id }: Props) => {
             );
           })}
           {provided.placeholder}
+          <NewElement
+            onSubmit={newCardHandler}
+            placeholder="&#43; Add new card"
+            buttonText="Add new card"
+          />
         </Wrapper>
       )}
     </Droppable>

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import produce from "immer";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import NewElement from "./components/NewElement";
 
 const Wrapper = styled.div``;
 
@@ -70,6 +71,14 @@ const Project = () => {
     }
   };
 
+  const newCardHandler = (newCardTitle: string) => {
+    console.log(newCardTitle);
+  };
+
+  const newListHandler = (newListTitle: string) => {
+    console.log(newListTitle);
+  };
+
   useEffect(() => {
     const projectRef = doc(db, "projects", PROJECT_ID);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
@@ -109,6 +118,7 @@ const Project = () => {
                             title={list.title}
                             cards={list.cards}
                             key={list.id}
+                            newCardHandler={newCardHandler}
                             id={list.id}
                           />
                         </div>
@@ -117,6 +127,11 @@ const Project = () => {
                   );
                 })}
               {provided.placeholder}
+              <NewElement
+                onSubmit={newListHandler}
+                placeholder="&#43; Add new list"
+                buttonText="Add new list"
+              />
             </ListWrapper>
           </Wrapper>
         )}
