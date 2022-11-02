@@ -12,12 +12,17 @@ import produce from "immer";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewElement from "./components/NewElement";
+import { v4 as uuidv4 } from "uuid";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 100%;
+`;
 
 const ListWrapper = styled.div`
   border: 1px #000 solid;
   display: flex;
+  width: 100%;
+  overflow-x: scroll;
 `;
 
 const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
@@ -43,16 +48,16 @@ const Project = () => {
     if (!destination) return;
 
     if (result.type === "BOARD") {
-      const newList = produce(list, (draftState) => {
+      const newLists = produce(list, (draftState) => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
-      updateDataHandler(newList);
+      updateDataHandler(newLists);
       // setList(newList);
     }
 
     if (result.type === "LIST") {
-      const newList = produce(list, (draftState) => {
+      const newLists = produce(list, (draftState) => {
         const prevListIndex = draftState.findIndex((item) => {
           return item.id === source.droppableId;
         });
@@ -66,7 +71,7 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
-      updateDataHandler(newList);
+      updateDataHandler(newLists);
       // setList(newList);
     }
   };
@@ -76,8 +81,17 @@ const Project = () => {
   };
 
   const newListHandler = (newListTitle: string) => {
-    console.log(newListTitle);
+    const newId = uuidv4();
+    const newList = { id: newId, title: newListTitle, cards: [] };
+    const newLists = produce(list, (draftState) => {
+      draftState.push(newList);
+    });
+
+    updateDataHandler(newLists);
+    console.log(newListTitle, newId);
   };
+
+  console.log(list);
 
   useEffect(() => {
     const projectRef = doc(db, "projects", PROJECT_ID);
