@@ -120,7 +120,11 @@ const Project = () => {
 
   const projectBoard = () => {
     return (
-      <Droppable droppableId="Project1" direction="horizontal" type="BOARD">
+      <Droppable
+        droppableId={id || "default"}
+        direction="horizontal"
+        type="BOARD"
+      >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
             Project1

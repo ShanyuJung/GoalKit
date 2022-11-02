@@ -29,15 +29,15 @@ const Workspace = styled.div`
   margin: 10px;
 `;
 
+interface Workspace {
+  id: string;
+  owner: string;
+  title: string;
+  projects: { id: string; title: string }[];
+}
+
 const Dashboard = () => {
-  const [workspaces, setWorkspace] = useState<
-    {
-      id: string;
-      owner: string;
-      title: string;
-      projects: { id: string; title: string }[];
-    }[]
-  >([]);
+  const [workspaces, setWorkspace] = useState<Workspace[]>([]);
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
 
@@ -50,12 +50,7 @@ const Dashboard = () => {
       const querySnapshot = await getDocs(q);
       const newWorkspaces = produce(workspaces, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as {
-            id: string;
-            owner: string;
-            title: string;
-            projects: { id: string; title: string }[];
-          };
+          const docData = doc.data() as Workspace;
           draftState.push(docData);
         });
       });
