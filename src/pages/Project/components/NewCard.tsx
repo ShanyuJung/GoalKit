@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div``;
@@ -13,14 +13,13 @@ const Button = styled.button<{ isShow: boolean }>`
 `;
 
 interface Props {
-  onSubmit: (params: string) => void;
-  placeholder: string;
-  buttonText: string;
+  onSubmit: (newCardTitle: string, parentID: string) => void;
+  parentID: string;
 }
 
 export type Ref = HTMLTextAreaElement;
 
-const NewElement = ({ onSubmit, placeholder, buttonText }: Props) => {
+const NewCard = ({ onSubmit, parentID }: Props) => {
   const textRef = useRef<HTMLTextAreaElement | null>(null);
   const [isFocus, setIsFocus] = useState(true);
 
@@ -35,18 +34,18 @@ const NewElement = ({ onSubmit, placeholder, buttonText }: Props) => {
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     if (!textRef.current?.value) return;
-    onSubmit(textRef.current?.value || "");
+    onSubmit(textRef.current?.value || "", parentID);
     textRef.current!.value = "";
   };
 
   return (
     <Wrapper onFocus={focusHandler} onBlur={blurHandler}>
       <form onSubmit={onSubmitHandler}>
-        <TextArea placeholder={placeholder} ref={textRef} />
-        <Button isShow={isFocus}>{buttonText}</Button>
+        <TextArea placeholder="&#43; Add new card" ref={textRef} />
+        <Button isShow={isFocus}>Add new card</Button>
       </form>
     </Wrapper>
   );
 };
 
-export default NewElement;
+export default NewCard;

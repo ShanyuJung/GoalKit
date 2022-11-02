@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import produce from "immer";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import NewElement from "./components/NewElement";
+import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
 
 const Wrapper = styled.div`
@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const ListWrapper = styled.div`
+  padding: 20px;
   border: 1px #000 solid;
   display: flex;
   width: 100%;
@@ -76,8 +77,15 @@ const Project = () => {
     }
   };
 
-  const newCardHandler = (newCardTitle: string) => {
-    console.log(newCardTitle);
+  const newCardHandler = (newCardTitle: string, parentID: string) => {
+    const newId = uuidv4();
+    const newCard = { id: newId, title: newCardTitle };
+    const newLists = produce(list, (draftState) => {
+      const listIndex = list.findIndex((item) => item.id === parentID);
+      draftState[listIndex].cards.push(newCard);
+    });
+
+    updateDataHandler(newLists);
   };
 
   const newListHandler = (newListTitle: string) => {
@@ -141,11 +149,7 @@ const Project = () => {
                   );
                 })}
               {provided.placeholder}
-              <NewElement
-                onSubmit={newListHandler}
-                placeholder="&#43; Add new list"
-                buttonText="Add new list"
-              />
+              <NewList onSubmit={newListHandler} />
             </ListWrapper>
           </Wrapper>
         )}
