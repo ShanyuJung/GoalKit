@@ -72,7 +72,7 @@ const Dashboard = () => {
     setIsLoading(false);
   };
 
-  const UploadWorkspaceHandler = async (newWorkspaceTitle: string) => {
+  const uploadWorkspaceHandler = async (newWorkspaceTitle: string) => {
     if (isLoading) return;
     try {
       setIsLoading(true);
@@ -93,7 +93,7 @@ const Dashboard = () => {
   };
 
   const newWorkspaceHandler = (newWorkspaceTitle: string) => {
-    UploadWorkspaceHandler(newWorkspaceTitle);
+    uploadWorkspaceHandler(newWorkspaceTitle);
   };
 
   useEffect(() => {

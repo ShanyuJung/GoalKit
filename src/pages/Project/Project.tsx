@@ -19,6 +19,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
+const TitleWrapper = styled.div``;
+
 const ListWrapper = styled.div`
   padding: 20px;
   border: 1px #000 solid;
@@ -36,6 +38,7 @@ interface ListInterface {
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [list, setList] = useState<ListInterface[]>([]);
+  const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
 
@@ -111,6 +114,7 @@ const Project = () => {
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
       if (snapshot.data()) {
         setIsExist(true);
+        setTitle(snapshot.data()?.title);
         setList(snapshot.data()?.lists);
       } else setIsExist(false);
     });
@@ -129,7 +133,7 @@ const Project = () => {
       >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-            Project1
+            <TitleWrapper>{title}</TitleWrapper>
             <ListWrapper>
               {list.length > 0 &&
                 list.map((list, index) => {

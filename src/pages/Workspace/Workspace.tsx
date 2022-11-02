@@ -2,8 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PrivateRoute from "../../components/route/PrivateRoute";
-import { getDoc, doc } from "firebase/firestore";
+import {
+  getDoc,
+  collection,
+  setDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { db } from "../../firebase";
+import NewProject from "./components/NewProject";
 
 const Wrapper = styled.div``;
 
@@ -21,43 +29,76 @@ const Workspace = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    const getProjectHandler = async () => {
-      if (!id || isLoading) return;
-      try {
-        setIsLoading(true);
-        const workspaceRef = doc(db, "workspaces", id);
-        const docSnap = await getDoc(workspaceRef);
-        if (docSnap.exists()) {
-          setIsExist(true);
-          setProjects(docSnap.data().projects);
-        } else {
-          setIsExist(false);
-        }
-      } catch (e) {
-        alert(e);
+  const getProjectHandler = async () => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const workspaceRef = doc(db, "workspaces", id);
+      const docSnap = await getDoc(workspaceRef);
+      if (docSnap.exists()) {
+        setIsExist(true);
+        setProjects(docSnap.data().projects);
+      } else {
+        setIsExist(false);
       }
-      setIsLoading(false);
-    };
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
+
+  const updateProjectHandler = async (projectTitle: string) => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const setRef = doc(collection(db, "projects"));
+      const newProject = {
+        id: setRef.id,
+        lists: [],
+        title: projectTitle,
+      };
+      await setDoc(setRef, newProject);
+      const docRef = doc(db, "workspaces", id);
+      const newObj = {
+        id: setRef.id,
+        title: projectTitle,
+      };
+      await updateDoc(docRef, { projects: arrayUnion(newObj) });
+      await getProjectHandler();
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
+
+  const newProjectHandler = (newProjectTitle: string) => {
+    updateProjectHandler(newProjectTitle);
+  };
+
+  useEffect(() => {
     getProjectHandler();
   }, []);
 
   const projectList = () => {
     return (
       <>
-        {isExist &&
-          projects.map((project) => {
-            return (
-              <ProjectCard
-                key={project.id}
-                onClick={() => {
-                  navigate(`/project/${project.id}`);
-                }}
-              >
-                {project.title}
-              </ProjectCard>
-            );
-          })}
+        {isExist && (
+          <>
+            {projects.map((project) => {
+              return (
+                <ProjectCard
+                  key={project.id}
+                  onClick={() => {
+                    navigate(`/project/${project.id}`);
+                  }}
+                >
+                  {project.title}
+                </ProjectCard>
+              );
+            })}
+            <NewProject onSubmit={newProjectHandler} />
+          </>
+        )}
         {isExist === false && <div>workspace not exist.</div>}
       </>
     );
