@@ -18,20 +18,27 @@ const ProjectCard = styled.div`
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
     const getProjectHandler = async () => {
-      if (!id) return;
-      const workspaceRef = doc(db, "workspaces", id);
-      const docSnap = await getDoc(workspaceRef);
-      if (docSnap.exists()) {
-        setIsExist(true);
-        setProjects(docSnap.data().projects);
-      } else {
-        setIsExist(false);
+      if (!id || isLoading) return;
+      try {
+        setIsLoading(true);
+        const workspaceRef = doc(db, "workspaces", id);
+        const docSnap = await getDoc(workspaceRef);
+        if (docSnap.exists()) {
+          setIsExist(true);
+          setProjects(docSnap.data().projects);
+        } else {
+          setIsExist(false);
+        }
+      } catch (e) {
+        alert(e);
       }
+      setIsLoading(false);
     };
     getProjectHandler();
   }, []);

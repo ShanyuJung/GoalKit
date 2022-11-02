@@ -29,56 +29,67 @@ const ListWrapper = styled.div`
 
 // const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
 
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: { title: string; id: string }[];
+}
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [list, setList] = useState<
-    { id: string; title: string; cards: Array<{ title: string; id: string }> }[]
-  >([]);
+  const [list, setList] = useState<ListInterface[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
 
-  const updateDataHandler = async (
-    newList: {
-      id: string;
-      title: string;
-      cards: Array<{ title: string; id: string }>;
-    }[]
-  ) => {
-    if (!id) return;
-    const projectRef = doc(db, "projects", id);
-    await updateDoc(projectRef, { lists: newList });
+  const updateDataHandler = async (newList: ListInterface[]) => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { lists: newList });
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
   };
 
   const onDragEndHandler = (result: DropResult) => {
     const { source, destination } = result;
-    if (!destination) return;
+    if (!destination || isLoading) return;
 
-    if (result.type === "BOARD") {
-      const newLists = produce(list, (draftState) => {
-        const [newOrder] = draftState.splice(source.index, 1);
-        draftState.splice(destination.index, 0, newOrder);
-      });
-      updateDataHandler(newLists);
-      // setList(newList);
-    }
-
-    if (result.type === "LIST") {
-      const newLists = produce(list, (draftState) => {
-        const prevListIndex = draftState.findIndex((item) => {
-          return item.id === source.droppableId;
+    try {
+      setIsLoading(true);
+      if (result.type === "BOARD") {
+        const newLists = produce(list, (draftState) => {
+          const [newOrder] = draftState.splice(source.index, 1);
+          draftState.splice(destination.index, 0, newOrder);
         });
-        const newListIndex = draftState.findIndex((item) => {
-          return item.id === destination.droppableId;
-        });
+        updateDataHandler(newLists);
+        // setList(newList);
+      }
 
-        const [newOrder] = draftState[prevListIndex].cards.splice(
-          source.index,
-          1
-        );
-        draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
-      });
-      updateDataHandler(newLists);
-      // setList(newList);
+      if (result.type === "LIST") {
+        const newLists = produce(list, (draftState) => {
+          const prevListIndex = draftState.findIndex((item) => {
+            return item.id === source.droppableId;
+          });
+          const newListIndex = draftState.findIndex((item) => {
+            return item.id === destination.droppableId;
+          });
+
+          const [newOrder] = draftState[prevListIndex].cards.splice(
+            source.index,
+            1
+          );
+          draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
+        });
+        updateDataHandler(newLists);
+        // setList(newList);
+      }
+    } catch (e) {
+      alert(e);
     }
+    setIsLoading(false);
   };
 
   const newCardHandler = (newCardTitle: string, parentID: string) => {

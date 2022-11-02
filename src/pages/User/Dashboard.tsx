@@ -38,24 +38,30 @@ interface Workspace {
 
 const Dashboard = () => {
   const [workspaces, setWorkspace] = useState<Workspace[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
 
   useEffect(() => {
     const getWorkspaceHandler = async () => {
-      const userID = currentUser.uid;
-      const workspaceRef = collection(db, "workspaces");
-      const q = query(workspaceRef, where("owner", "==", userID));
-
-      const querySnapshot = await getDocs(q);
-      const newWorkspaces = produce(workspaces, (draftState) => {
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
-          draftState.push(docData);
+      if (isLoading) return;
+      try {
+        setIsLoading(true);
+        const userID = currentUser.uid;
+        const workspaceRef = collection(db, "workspaces");
+        const q = query(workspaceRef, where("owner", "==", userID));
+        const querySnapshot = await getDocs(q);
+        const newWorkspaces = produce(workspaces, (draftState) => {
+          querySnapshot.forEach((doc) => {
+            const docData = doc.data() as Workspace;
+            draftState.push(docData);
+          });
         });
-      });
-
-      setWorkspace(newWorkspaces);
+        setWorkspace(newWorkspaces);
+      } catch (e) {
+        alert(e);
+      }
+      setIsLoading(false);
     };
 
     getWorkspaceHandler();
