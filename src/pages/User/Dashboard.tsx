@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PrivateRoute from "../../components/route/PrivateRoute";
 import { useAuth } from "../../contexts/AuthContext";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
+import produce from "immer";
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,34 +30,63 @@ const Workspace = styled.div`
 `;
 
 const Dashboard = () => {
+  const [workspaces, setWorkspace] = useState<
+    {
+      id: string;
+      owner: string;
+      title: string;
+      projects: { id: string; title: string }[];
+    }[]
+  >([]);
   const navigate = useNavigate();
+  const { logout, currentUser } = useAuth();
 
-  const { logout } = useAuth();
+  useEffect(() => {
+    const getWorkspaceHandler = async () => {
+      const userID = currentUser.uid;
+      const workspaceRef = collection(db, "workspaces");
+      const q = query(workspaceRef, where("owner", "==", userID));
+
+      const querySnapshot = await getDocs(q);
+      const newWorkspaces = produce(workspaces, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data() as {
+            id: string;
+            owner: string;
+            title: string;
+            projects: { id: string; title: string }[];
+          };
+          draftState.push(docData);
+        });
+      });
+
+      setWorkspace(newWorkspaces);
+    };
+
+    getWorkspaceHandler();
+  }, []);
 
   return (
     <PrivateRoute>
       <Wrapper>
         <Sidebar>
           Sidebar
-          <button
-            onClick={() => {
-              logout();
-            }}
-          >
-            logout
-          </button>
+          <button onClick={logout}>logout</button>
         </Sidebar>
         <WorkspaceWrapper>
-          <Workspace
-            onClick={() => {
-              navigate("/workspace/workspace-1");
-            }}
-          >
-            workspace1
-          </Workspace>
-          <Workspace>workspace2</Workspace>
-          <Workspace>workspace3</Workspace>
-          <Workspace>workspace4</Workspace>
+          {workspaces.length > 0 &&
+            workspaces.map((workspace) => {
+              return (
+                <Workspace
+                  key={workspace.id}
+                  onClick={() => {
+                    navigate(`/workspace/${workspace.id}`);
+                  }}
+                >
+                  {workspace.title}
+                </Workspace>
+              );
+            })}
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>

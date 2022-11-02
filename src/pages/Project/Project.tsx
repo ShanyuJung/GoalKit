@@ -13,6 +13,7 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
+import { useParams } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -26,12 +27,14 @@ const ListWrapper = styled.div`
   overflow-x: scroll;
 `;
 
-const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
+// const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
 
 const Project = () => {
+  const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [list, setList] = useState<
     { id: string; title: string; cards: Array<{ title: string; id: string }> }[]
   >([]);
+  const { id } = useParams();
 
   const updateDataHandler = async (
     newList: {
@@ -40,7 +43,8 @@ const Project = () => {
       cards: Array<{ title: string; id: string }>;
     }[]
   ) => {
-    const projectRef = doc(db, "projects", PROJECT_ID);
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
     await updateDoc(projectRef, { lists: newList });
   };
 
@@ -99,12 +103,14 @@ const Project = () => {
     console.log(newListTitle, newId);
   };
 
-  console.log(list);
-
   useEffect(() => {
-    const projectRef = doc(db, "projects", PROJECT_ID);
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
-      setList(snapshot.data()?.lists);
+      if (snapshot.data()) {
+        setIsExist(true);
+        setList(snapshot.data()?.lists);
+      } else setIsExist(false);
     });
 
     return () => {
@@ -160,7 +166,7 @@ const Project = () => {
   return (
     <PrivateRoute>
       <DragDropContext onDragEnd={onDragEndHandler}>
-        {projectBoard()}
+        {isExist && projectBoard()}
       </DragDropContext>
     </PrivateRoute>
   );
