@@ -15,6 +15,7 @@ import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
+import CardDetail from "./components/CardDetail";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -30,15 +31,24 @@ const ListWrapper = styled.div`
   overflow-x: scroll;
 `;
 
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline: number };
+  description?: string;
+  owner?: string;
+  tags?: string[];
+}
+
 interface ListInterface {
   id: string;
   title: string;
-  cards: { title: string; id: string }[];
+  cards: CardInterface[];
 }
 
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [list, setList] = useState<ListInterface[]>([]);
+  const [lists, setLists] = useState<ListInterface[]>([]);
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -61,7 +71,7 @@ const Project = () => {
     if (!destination) return;
 
     if (result.type === "BOARD") {
-      const newLists = produce(list, (draftState) => {
+      const newLists = produce(lists, (draftState) => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
@@ -70,7 +80,7 @@ const Project = () => {
     }
 
     if (result.type === "LIST") {
-      const newLists = produce(list, (draftState) => {
+      const newLists = produce(lists, (draftState) => {
         const prevListIndex = draftState.findIndex((item) => {
           return item.id === source.droppableId;
         });
@@ -92,8 +102,8 @@ const Project = () => {
   const newCardHandler = (newCardTitle: string, parentID: string) => {
     const newId = uuidv4();
     const newCard = { id: newId, title: newCardTitle };
-    const newLists = produce(list, (draftState) => {
-      const listIndex = list.findIndex((item) => item.id === parentID);
+    const newLists = produce(lists, (draftState) => {
+      const listIndex = lists.findIndex((item) => item.id === parentID);
       draftState[listIndex].cards.push(newCard);
     });
 
@@ -103,7 +113,7 @@ const Project = () => {
   const newListHandler = (newListTitle: string) => {
     const newId = uuidv4();
     const newList = { id: newId, title: newListTitle, cards: [] };
-    const newLists = produce(list, (draftState) => {
+    const newLists = produce(lists, (draftState) => {
       draftState.push(newList);
     });
 
@@ -121,7 +131,7 @@ const Project = () => {
       if (snapshot.data()) {
         setIsExist(true);
         setTitle(snapshot.data()?.title);
-        setList(snapshot.data()?.lists);
+        setLists(snapshot.data()?.lists);
       } else setIsExist(false);
     });
 
@@ -141,8 +151,8 @@ const Project = () => {
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
             <TitleWrapper>{title}</TitleWrapper>
             <ListWrapper>
-              {list.length > 0 &&
-                list.map((list, index) => {
+              {lists.length > 0 &&
+                lists.map((list, index) => {
                   return (
                     <Draggable
                       key={`draggable-${list.id}`}
@@ -184,11 +194,12 @@ const Project = () => {
       <>
         {cardId && (
           <Modal onClose={onCloseHandler}>
-            <div>123</div>
+            {lists ? <CardDetail listsArray={lists} /> : <div></div>}
           </Modal>
         )}
         <DragDropContext onDragEnd={onDragEndHandler}>
           {isExist && projectBoard()}
+          {isExist === false && <div>Project is not exist.</div>}
         </DragDropContext>
       </>
     </PrivateRoute>
