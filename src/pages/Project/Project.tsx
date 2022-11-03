@@ -13,7 +13,8 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Modal from "../../components/modal/Modal";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -40,7 +41,8 @@ const Project = () => {
   const [list, setList] = useState<ListInterface[]>([]);
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { id } = useParams();
+  const navigate = useNavigate();
+  const { id, cardId } = useParams();
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
@@ -106,6 +108,10 @@ const Project = () => {
     });
 
     updateDataHandler(newLists);
+  };
+
+  const onCloseHandler = () => {
+    navigate(`/project/${id}`);
   };
 
   useEffect(() => {
@@ -175,9 +181,16 @@ const Project = () => {
 
   return (
     <PrivateRoute>
-      <DragDropContext onDragEnd={onDragEndHandler}>
-        {isExist && projectBoard()}
-      </DragDropContext>
+      <>
+        {cardId && (
+          <Modal onClose={onCloseHandler}>
+            <div>123</div>
+          </Modal>
+        )}
+        <DragDropContext onDragEnd={onDragEndHandler}>
+          {isExist && projectBoard()}
+        </DragDropContext>
+      </>
     </PrivateRoute>
   );
 };
