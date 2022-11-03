@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
@@ -15,9 +15,12 @@ const TitleInput = styled.input`
 `;
 
 const TextAreaWrapper = styled.div`
+  margin: 10px;
+`;
+
+const Form = styled.form`
   display: flex;
   flex-direction: column;
-  margin: 10px;
 `;
 
 const TextAreaLabel = styled.label``;
@@ -51,11 +54,12 @@ const TimeButton = styled.button``;
 interface CardInterface {
   title: string;
   id: string;
-  time?: { start?: number; deadline: number };
+  time?: { start?: number; deadline?: number };
   description?: string;
   owner?: string;
   tags?: string[];
 }
+
 interface ListInterface {
   id: string;
   title: string;
@@ -70,6 +74,9 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
   const [curCard, setCurCard] = useState<CardInterface | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const startTimeRef = useRef<HTMLInputElement | null>(null);
+  const deadlineRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
   useEffect(() => {
@@ -86,8 +93,6 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
     setCurCard(newCard);
   }, [listsArray, cardId]);
 
-  console.log(curCard);
-
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
     try {
@@ -98,6 +103,22 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
       alert(e);
     }
     setIsLoading(false);
+  };
+
+  const newListHandler = (newCard: CardInterface) => {
+    const newLists = produce(listsArray, (draftState) => {
+      const listIndex = draftState.findIndex((list) => {
+        return list.cards.some((card) => {
+          return card.id === cardId;
+        });
+      });
+      const cardIndex = draftState[listIndex].cards.findIndex((card) => {
+        return card.id === cardId;
+      });
+      if (listIndex === -1 || cardIndex == -1 || !newCard) return draftState;
+      draftState[listIndex].cards[cardIndex] = newCard;
+    });
+    return newLists;
   };
 
   const updateTitleHandler = () => {
@@ -115,20 +136,57 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
       }
     });
 
-    const newLists = produce(listsArray, (draftState) => {
-      const listIndex = draftState.findIndex((list) => {
-        return list.cards.some((card) => {
-          return card.id === cardId;
-        });
-      });
-      const cardIndex = draftState[listIndex].cards.findIndex((card) => {
-        return card.id === cardId;
-      });
-      if (listIndex === -1 || cardIndex == -1 || !newCard) return draftState;
-      draftState[listIndex].cards[cardIndex] = newCard;
+    if (newCard) {
+      const newLists = newListHandler(newCard);
+      updateDataHandler(newLists);
+    }
+  };
+
+  const updateDescriptionHandler = (event: FormEvent) => {
+    event.preventDefault();
+
+    if (
+      !descriptionRef.current?.value.trim() ||
+      descriptionRef.current?.value.trim() === curCard?.description
+    ) {
+      return;
+    }
+    const newDescription = descriptionRef.current.value.trim();
+    const newCard = produce(curCard, (draftState) => {
+      if (draftState) {
+        draftState.description = newDescription;
+      }
+    });
+    if (newCard) {
+      const newLists = newListHandler(newCard);
+      updateDataHandler(newLists);
+    }
+  };
+  const updateTimeHandler = (event: FormEvent) => {
+    event.preventDefault();
+    const time = startTimeRef.current?.value;
+    const deadline = deadlineRef.current?.value;
+    const obj: { start?: number; deadline?: number } = {};
+    const newTime = produce(obj, (draftState) => {
+      if (time) {
+        const newTime = new Date(`${time}:00Z`).getTime();
+        draftState.start = newTime;
+      }
+      if (deadline) {
+        const newTime = new Date(`${deadline}:00Z`).getTime();
+        draftState.deadline = newTime;
+      }
     });
 
-    updateDataHandler(newLists);
+    const newCard = produce(curCard, (draftState) => {
+      if (draftState) {
+        draftState.time = newTime;
+      }
+    });
+    if (newCard) {
+      const newLists = newListHandler(newCard);
+      updateDataHandler(newLists);
+    }
   };
 
   const cardInfo = () => {
@@ -143,29 +201,36 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
           onBlur={updateTitleHandler}
         />
         <TextAreaWrapper>
-          <TextAreaLabel htmlFor="description">Description</TextAreaLabel>
-          <TextArea
-            id="description"
-            name="description"
-            defaultValue={curCard.description}
-          />
-          <TextAreaButton>save</TextAreaButton>
+          {curCard.description && <div>{curCard.description}</div>}
+          <Form onSubmit={updateDescriptionHandler}>
+            <TextAreaLabel htmlFor="description">Description</TextAreaLabel>
+            <TextArea
+              id="description"
+              name="description"
+              defaultValue={curCard.description}
+              ref={descriptionRef}
+            />
+            <TextAreaButton>save</TextAreaButton>
+          </Form>
         </TextAreaWrapper>
         <TimeWrapper>
-          {curCard.time?.deadline && (
+          {curCard.time && (
             <TimeCheckboxWrapper>
               <TimeCheckbox type="checkbox" />
-              <TimeCheckboxLabel>{curCard.time.deadline}</TimeCheckboxLabel>
+              <TimeCheckboxLabel>{`${curCard.time.start}-${curCard.time.deadline}`}</TimeCheckboxLabel>
             </TimeCheckboxWrapper>
           )}
-          <TimeInputWrapper>
-            <TimeInputLabel>Start from:</TimeInputLabel>
-            <TimeInput type="datetime-local" />
-          </TimeInputWrapper>
-          <TimeInputWrapper>
-            <TimeInputLabel>Deadline :</TimeInputLabel>
-            <TimeInput type="datetime-local" />
-          </TimeInputWrapper>
+          <Form onSubmit={updateTimeHandler}>
+            <TimeInputWrapper>
+              <TimeInputLabel>Start from:</TimeInputLabel>
+              <TimeInput type="datetime-local" ref={startTimeRef} />
+            </TimeInputWrapper>
+            <TimeInputWrapper>
+              <TimeInputLabel>Deadline :</TimeInputLabel>
+              <TimeInput type="datetime-local" ref={deadlineRef} />
+            </TimeInputWrapper>
+            <TimeButton>save time</TimeButton>
+          </Form>
         </TimeWrapper>
       </>
     );

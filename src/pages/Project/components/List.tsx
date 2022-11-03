@@ -40,7 +40,7 @@ const List = ({ title, cards, id, newCardHandler }: Props) => {
                       snapshot.isDragging && !snapshot.isDropAnimating
                     }
                   >
-                    <Card title={card.title} key={card.id} cardId={card.id} />
+                    <Card key={card.id} cardInfo={card} />
                   </div>
                 )}
               </Draggable>
