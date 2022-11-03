@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import produce from "immer";
 import styled from "styled-components";
+import { db } from "../../../firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 const Wrapper = styled.div`
   display: flex;
@@ -66,7 +68,9 @@ interface Props {
 
 const CardDetail: React.FC<Props> = ({ listsArray }) => {
   const [curCard, setCurCard] = useState<CardInterface | undefined>(undefined);
-  const { cardId } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const titleRef = useRef<HTMLInputElement | null>(null);
+  const { id, cardId } = useParams();
 
   useEffect(() => {
     if (!cardId || listsArray.length === 0) return;
@@ -84,12 +88,60 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
 
   console.log(curCard);
 
+  const updateDataHandler = async (newList: ListInterface[]) => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { lists: newList });
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
+
+  const updateTitleHandler = () => {
+    if (
+      !titleRef.current?.value.trim() ||
+      titleRef.current?.value.trim() === curCard?.title
+    ) {
+      return;
+    }
+
+    const newTitle = titleRef.current.value.trim();
+    const newCard = produce(curCard, (draftState) => {
+      if (draftState) {
+        draftState.title = newTitle;
+      }
+    });
+
+    const newLists = produce(listsArray, (draftState) => {
+      const listIndex = draftState.findIndex((list) => {
+        return list.cards.some((card) => {
+          return card.id === cardId;
+        });
+      });
+      const cardIndex = draftState[listIndex].cards.findIndex((card) => {
+        return card.id === cardId;
+      });
+      if (listIndex === -1 || cardIndex == -1 || !newCard) return draftState;
+      draftState[listIndex].cards[cardIndex] = newCard;
+    });
+
+    updateDataHandler(newLists);
+  };
+
   const cardInfo = () => {
     if (!curCard) return;
 
     return (
       <>
-        <TitleInput type="text" defaultValue={curCard.title} disabled={true} />
+        <TitleInput
+          type="text"
+          ref={titleRef}
+          defaultValue={curCard.title}
+          onBlur={updateTitleHandler}
+        />
         <TextAreaWrapper>
           <TextAreaLabel htmlFor="description">Description</TextAreaLabel>
           <TextArea
