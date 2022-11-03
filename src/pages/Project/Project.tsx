@@ -11,30 +11,47 @@ import { useEffect, useState } from "react";
 import produce from "immer";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import NewList from "./components/NewList";
+import { v4 as uuidv4 } from "uuid";
+import { useParams } from "react-router-dom";
 
-const Wrapper = styled.div``;
-
-const ListWrapper = styled.div`
-  border: 1px #000 solid;
-  display: flex;
+const Wrapper = styled.div`
+  width: 100%;
 `;
 
-const PROJECT_ID = "UeoSW4gRXB7JkGcUpCrM";
+const TitleWrapper = styled.div``;
+
+const ListWrapper = styled.div`
+  padding: 20px;
+  border: 1px #000 solid;
+  display: flex;
+  width: 100%;
+  overflow-x: scroll;
+`;
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: { title: string; id: string }[];
+}
 
 const Project = () => {
-  const [list, setList] = useState<
-    { id: string; title: string; cards: Array<{ title: string; id: string }> }[]
-  >([]);
+  const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [list, setList] = useState<ListInterface[]>([]);
+  const [title, setTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams();
 
-  const updateDataHandler = async (
-    newList: {
-      id: string;
-      title: string;
-      cards: Array<{ title: string; id: string }>;
-    }[]
-  ) => {
-    const projectRef = doc(db, "projects", PROJECT_ID);
-    await updateDoc(projectRef, { lists: newList });
+  const updateDataHandler = async (newList: ListInterface[]) => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { lists: newList });
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
   };
 
   const onDragEndHandler = (result: DropResult) => {
@@ -42,16 +59,16 @@ const Project = () => {
     if (!destination) return;
 
     if (result.type === "BOARD") {
-      const newList = produce(list, (draftState) => {
+      const newLists = produce(list, (draftState) => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
-      updateDataHandler(newList);
+      updateDataHandler(newLists);
       // setList(newList);
     }
 
     if (result.type === "LIST") {
-      const newList = produce(list, (draftState) => {
+      const newLists = produce(list, (draftState) => {
         const prevListIndex = draftState.findIndex((item) => {
           return item.id === source.droppableId;
         });
@@ -65,15 +82,41 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
-      updateDataHandler(newList);
+      updateDataHandler(newLists);
       // setList(newList);
     }
   };
 
+  const newCardHandler = (newCardTitle: string, parentID: string) => {
+    const newId = uuidv4();
+    const newCard = { id: newId, title: newCardTitle };
+    const newLists = produce(list, (draftState) => {
+      const listIndex = list.findIndex((item) => item.id === parentID);
+      draftState[listIndex].cards.push(newCard);
+    });
+
+    updateDataHandler(newLists);
+  };
+
+  const newListHandler = (newListTitle: string) => {
+    const newId = uuidv4();
+    const newList = { id: newId, title: newListTitle, cards: [] };
+    const newLists = produce(list, (draftState) => {
+      draftState.push(newList);
+    });
+
+    updateDataHandler(newLists);
+  };
+
   useEffect(() => {
-    const projectRef = doc(db, "projects", PROJECT_ID);
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
-      setList(snapshot.data()?.lists);
+      if (snapshot.data()) {
+        setIsExist(true);
+        setTitle(snapshot.data()?.title);
+        setList(snapshot.data()?.lists);
+      } else setIsExist(false);
     });
 
     return () => {
@@ -83,10 +126,14 @@ const Project = () => {
 
   const projectBoard = () => {
     return (
-      <Droppable droppableId="Project1" direction="horizontal" type="BOARD">
+      <Droppable
+        droppableId={id || "default"}
+        direction="horizontal"
+        type="BOARD"
+      >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-            Project1
+            <TitleWrapper>{title}</TitleWrapper>
             <ListWrapper>
               {list.length > 0 &&
                 list.map((list, index) => {
@@ -109,6 +156,7 @@ const Project = () => {
                             title={list.title}
                             cards={list.cards}
                             key={list.id}
+                            newCardHandler={newCardHandler}
                             id={list.id}
                           />
                         </div>
@@ -117,6 +165,7 @@ const Project = () => {
                   );
                 })}
               {provided.placeholder}
+              <NewList onSubmit={newListHandler} />
             </ListWrapper>
           </Wrapper>
         )}
@@ -127,7 +176,7 @@ const Project = () => {
   return (
     <PrivateRoute>
       <DragDropContext onDragEnd={onDragEndHandler}>
-        {projectBoard()}
+        {isExist && projectBoard()}
       </DragDropContext>
     </PrivateRoute>
   );
