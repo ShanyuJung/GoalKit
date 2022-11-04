@@ -15,10 +15,11 @@ interface Props {
   title: string;
   cards: { title: string; id: string }[];
   id: string;
+  tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
 }
 
-const List = ({ title, cards, id, newCardHandler }: Props) => {
+const List = ({ title, cards, id, newCardHandler, tags }: Props) => {
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
@@ -40,7 +41,7 @@ const List = ({ title, cards, id, newCardHandler }: Props) => {
                       snapshot.isDragging && !snapshot.isDropAnimating
                     }
                   >
-                    <Card key={card.id} cardInfo={card} />
+                    <Card key={card.id} cardInfo={card} tags={tags} />
                   </div>
                 )}
               </Draggable>

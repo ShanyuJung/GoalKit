@@ -37,7 +37,7 @@ interface CardInterface {
   time?: { start?: number; deadline: number };
   description?: string;
   owner?: string;
-  tags?: string[];
+  tagsIDs?: string[];
 }
 
 interface ListInterface {
@@ -46,9 +46,19 @@ interface ListInterface {
   cards: CardInterface[];
 }
 
+interface ProjectInterface {
+  id: string;
+  title: string;
+  lists: ListInterface[];
+  tags?: { id: string; colorCode: string; title: string }[];
+}
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
+  const [project, setProject] = useState<ProjectInterface | undefined>(
+    undefined
+  );
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -130,6 +140,8 @@ const Project = () => {
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
       if (snapshot.data()) {
         setIsExist(true);
+        const newProject = snapshot.data() as ProjectInterface;
+        setProject(newProject);
         setTitle(snapshot.data()?.title);
         setLists(snapshot.data()?.lists);
       } else setIsExist(false);
@@ -174,6 +186,7 @@ const Project = () => {
                             key={list.id}
                             newCardHandler={newCardHandler}
                             id={list.id}
+                            tags={project?.tags || undefined}
                           />
                         </div>
                       )}
@@ -194,7 +207,14 @@ const Project = () => {
       <>
         {cardId && (
           <Modal onClose={onCloseHandler}>
-            {lists ? <CardDetail listsArray={lists} /> : <div></div>}
+            {lists ? (
+              <CardDetail
+                listsArray={lists}
+                tags={project?.tags || undefined}
+              />
+            ) : (
+              <div></div>
+            )}
           </Modal>
         )}
         <DragDropContext onDragEnd={onDragEndHandler}>

@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,13 +52,29 @@ const TimeCheckboxLabel = styled.label``;
 
 const TimeButton = styled.button``;
 
+const TagsContainer = styled.div``;
+
+const TagList = styled.div``;
+
+const TagWrapper = styled.div``;
+
+const TagCheckbox = styled.input``;
+
+const TagCheckboxLabel = styled.label``;
+
+const NewTagInputForm = styled.form``;
+
+const NewTagInput = styled.input``;
+
+const NewTagButton = styled.button``;
+
 interface CardInterface {
   title: string;
   id: string;
   time?: { start?: number; deadline?: number };
   description?: string;
   owner?: string;
-  tags?: string[];
+  tagsIDs?: string[];
 }
 
 interface ListInterface {
@@ -68,15 +85,17 @@ interface ListInterface {
 
 interface Props {
   listsArray: ListInterface[];
+  tags?: { id: string; colorCode: string; title: string }[];
 }
 
-const CardDetail: React.FC<Props> = ({ listsArray }) => {
+const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
   const [curCard, setCurCard] = useState<CardInterface | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
+  const newTagRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
   useEffect(() => {
@@ -189,6 +208,35 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
     }
   };
 
+  const createTagHandler = async (newTag: {
+    id: string;
+    colorCode: string;
+    title: string;
+  }) => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { tags: arrayUnion(newTag) });
+    } catch (e) {
+      alert(e);
+    }
+    setIsLoading(false);
+  };
+
+  const tagFormHandler = (event: FormEvent) => {
+    event.preventDefault();
+    if (!newTagRef.current?.value.trim()) return;
+    const newId = uuidv4();
+    const newTag = {
+      id: newId,
+      title: newTagRef.current?.value.trim(),
+      colorCode: "#ccc",
+    };
+
+    createTagHandler(newTag);
+  };
+
   const cardInfo = () => {
     if (!curCard) return;
 
@@ -232,6 +280,30 @@ const CardDetail: React.FC<Props> = ({ listsArray }) => {
             <TimeButton>save time</TimeButton>
           </Form>
         </TimeWrapper>
+        <TagsContainer>
+          <TagList>
+            {tags &&
+              tags.map((tag) => {
+                return (
+                  <TagWrapper key={tag.id}>
+                    <TagCheckbox
+                      type="checkbox"
+                      id={tag.id}
+                      name="tags"
+                      value={tag.id}
+                    />
+                    <TagCheckboxLabel htmlFor={tag.id}>
+                      {tag.title}
+                    </TagCheckboxLabel>
+                  </TagWrapper>
+                );
+              })}
+          </TagList>
+          <NewTagInputForm onSubmit={tagFormHandler}>
+            <NewTagInput type="text" required ref={newTagRef} />
+            <NewTagButton>add tag</NewTagButton>
+          </NewTagInputForm>
+        </TagsContainer>
       </>
     );
   };
