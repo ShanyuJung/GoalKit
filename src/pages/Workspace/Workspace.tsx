@@ -12,11 +12,15 @@ import {
   query,
   where,
   getDocs,
+  onSnapshot,
+  serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewProject from "./components/NewProject";
 import produce from "immer";
-import { async } from "@firebase/util";
+import { v4 as uuidv4 } from "uuid";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Wrapper = styled.div`
   display: flex;
@@ -52,19 +56,44 @@ const ProjectCard = styled.div`
   margin: 5px;
 `;
 
+const ChatRoomWrapper = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  min-width: 200px;
+  height: 500px;
+  border: 1px #000 solid;
+`;
+
+const MessageInputForm = styled.form``;
+
+const MessageInput = styled.input``;
+
+const MessageButton = styled.button``;
+
 interface UserInterface {
   uid: string;
   email: string;
   displayName: string;
 }
 
+interface MessageInterface {
+  userID: string;
+  time: Timestamp;
+  message: string;
+}
+
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [messages, setMessages] = useState<MessageInterface[]>([]);
+  const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
   const memberRef = useRef<HTMLInputElement | null>(null);
+  const messageRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { currentUser } = useAuth();
 
   const getProjectHandler = async () => {
     if (!id || isLoading) return;
@@ -149,8 +178,43 @@ const Workspace = () => {
     setIsLoading(false);
   };
 
+  const sendMessageHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!messageRef.current?.value.trim() || !id) return;
+    const newMessage = messageRef.current?.value.trim();
+    const newId = uuidv4();
+    const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
+    await setDoc(newMessageRef, {
+      message: newMessage,
+      userID: currentUser.uid,
+      time: serverTimestamp(),
+    });
+
+    console.log(newMessage);
+  };
+
   useEffect(() => {
     getProjectHandler();
+  }, []);
+
+  useEffect(() => {
+    if (!id) return;
+    const chatRoomRef = collection(db, "chatRooms", id, "messages");
+    const unsubscribe = onSnapshot(chatRoomRef, (querySnapshot) => {
+      const data = querySnapshot.docs;
+      const messageFormat: MessageInterface[] = [];
+      const messageList = produce(messageFormat, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data() as MessageInterface;
+          draftState.push(data);
+        });
+      });
+      setMessages(messageList);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const projectList = () => {
@@ -178,6 +242,22 @@ const Workspace = () => {
     );
   };
 
+  const chatRoom = () => {
+    return (
+      <ChatRoomWrapper>
+        <div>chatroom</div>
+        {messages.length > 0 &&
+          messages.map((message) => {
+            return <div>{`${message.userID}:${message.message}`}</div>;
+          })}
+        <MessageInputForm onSubmit={sendMessageHandler}>
+          <MessageInput type="text" ref={messageRef} />
+          <MessageButton>send message</MessageButton>
+        </MessageInputForm>
+      </ChatRoomWrapper>
+    );
+  };
+
   return (
     <PrivateRoute>
       <Wrapper>
@@ -193,9 +273,16 @@ const Workspace = () => {
               <MemberButton>Add member</MemberButton>
             </MemberForm>
           </MemberWrapper>
-          <ChatRoomButton>chat room</ChatRoomButton>
+          <ChatRoomButton
+            onClick={() => {
+              setIsShowChatRoom((prev) => !prev);
+            }}
+          >
+            chat room
+          </ChatRoomButton>
         </SidebarWrapper>
         <ProjectsWrapper>{projectList()}</ProjectsWrapper>
+        <>{isShowChatRoom && chatRoom()}</>
       </Wrapper>
     </PrivateRoute>
   );

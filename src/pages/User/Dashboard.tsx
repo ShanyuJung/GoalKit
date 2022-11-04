@@ -10,11 +10,11 @@ import {
   getDocs,
   setDoc,
   doc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import produce from "immer";
 import NewWorkspace from "./components/NewWorkspace";
-import { async } from "@firebase/util";
 
 const Wrapper = styled.div`
   display: flex;
@@ -70,7 +70,7 @@ const Dashboard = () => {
     setWorkspace(newWorkspaces);
   };
 
-  const uploadWorkspaceHandler = async (newWorkspaceTitle: string) => {
+  const newWorkspaceHandler = async (newWorkspaceTitle: string) => {
     if (isLoading) return;
     try {
       setIsLoading(true);
@@ -84,15 +84,13 @@ const Dashboard = () => {
         members: [userUid],
       };
       await setDoc(setRef, newWorkspace);
+      const roomRef = doc(db, "chatRooms", setRef.id);
+      await setDoc(roomRef, { message: "create room succeed." });
       await getWorkspaceHandler();
     } catch (e) {
-      alert(e);
+      console.log(e);
     }
     setIsLoading(false);
-  };
-
-  const newWorkspaceHandler = (newWorkspaceTitle: string) => {
-    uploadWorkspaceHandler(newWorkspaceTitle);
   };
 
   const getGuestWorkspaceHandler = async () => {
