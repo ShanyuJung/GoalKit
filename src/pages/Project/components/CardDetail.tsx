@@ -269,7 +269,6 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
           draftState.tagsIDs = newState;
         }
       });
-      console.log(newCard);
       if (newCard) {
         const newLists = newListHandler(newCard);
         updateDataHandler(newLists);
@@ -339,7 +338,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
                       type="checkbox"
                       id={tag.id}
                       name="tags"
-                      value={tag.id}
+                      value={tag.id || ""}
                       onChange={selectTagHandler}
                       checked={curCard.tagsIDs?.includes(tag.id)}
                     />
