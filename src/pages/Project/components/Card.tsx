@@ -51,9 +51,12 @@ const Card: React.FC<Props> = ({ cardInfo, tags }) => {
   const tagsCollection = () => {
     return (
       <TagsContainer>
-        {tags &&
+        {cardInfo.tagsIDs &&
+          tags &&
           tags.map((tag) => {
-            return <Tag key={tag.id}>{tag.title}</Tag>;
+            if (cardInfo.tagsIDs?.includes(tag.id)) {
+              return <Tag key={tag.id}>{tag.title}</Tag>;
+            }
           })}
       </TagsContainer>
     );

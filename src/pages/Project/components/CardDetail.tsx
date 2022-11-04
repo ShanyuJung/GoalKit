@@ -56,6 +56,8 @@ const TagsContainer = styled.div``;
 
 const TagList = styled.div``;
 
+const TagSelectorList = styled.div``;
+
 const TagWrapper = styled.div``;
 
 const TagCheckbox = styled.input``;
@@ -237,6 +239,44 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
     createTagHandler(newTag);
   };
 
+  const selectTagHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newTag = event.target.value;
+      const newCard = produce(curCard, (draftState) => {
+        if (draftState && !draftState?.tagsIDs) {
+          draftState.tagsIDs = [newTag];
+        } else if (
+          draftState?.tagsIDs &&
+          !draftState.tagsIDs?.find((id) => id === newTag)
+        ) {
+          draftState.tagsIDs.push(newTag);
+        }
+      });
+      if (newCard) {
+        const newLists = newListHandler(newCard);
+        updateDataHandler(newLists);
+      }
+    } else {
+      const newTag = event.target.value;
+      const newCard = produce(curCard, (draftState) => {
+        if (draftState && !draftState?.tagsIDs) {
+          return;
+        } else if (
+          draftState?.tagsIDs &&
+          draftState.tagsIDs?.find((id) => id === newTag)
+        ) {
+          const newState = draftState.tagsIDs.filter((id) => id !== newTag);
+          draftState.tagsIDs = newState;
+        }
+      });
+      console.log(newCard);
+      if (newCard) {
+        const newLists = newListHandler(newCard);
+        updateDataHandler(newLists);
+      }
+    }
+  };
+
   const cardInfo = () => {
     if (!curCard) return;
 
@@ -282,6 +322,15 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
         </TimeWrapper>
         <TagsContainer>
           <TagList>
+            {curCard.tagsIDs &&
+              tags &&
+              tags.map((tag) => {
+                if (curCard.tagsIDs?.includes(tag.id)) {
+                  return <div key={tag.id}>{tag.title}</div>;
+                }
+              })}
+          </TagList>
+          <TagSelectorList>
             {tags &&
               tags.map((tag) => {
                 return (
@@ -291,6 +340,8 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
                       id={tag.id}
                       name="tags"
                       value={tag.id}
+                      onChange={selectTagHandler}
+                      checked={curCard.tagsIDs?.includes(tag.id)}
                     />
                     <TagCheckboxLabel htmlFor={tag.id}>
                       {tag.title}
@@ -298,7 +349,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
                   </TagWrapper>
                 );
               })}
-          </TagList>
+          </TagSelectorList>
           <NewTagInputForm onSubmit={tagFormHandler}>
             <NewTagInput type="text" required ref={newTagRef} />
             <NewTagButton>add tag</NewTagButton>
