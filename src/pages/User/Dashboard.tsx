@@ -42,6 +42,7 @@ interface Workspace {
   owner: string;
   title: string;
   projects: { id: string; title: string }[];
+  members: string[];
 }
 
 const Dashboard = () => {
@@ -83,6 +84,7 @@ const Dashboard = () => {
         title: newWorkspaceTitle,
         projects: [],
         owner: userUid,
+        members: [userUid],
       };
       await setDoc(setRef, newWorkspace);
       await getWorkspaceHandler();
