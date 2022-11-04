@@ -24,6 +24,7 @@ root.render(
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="workspace/:id" element={<Workspace />} />
         <Route path="project/:id" element={<Project />} />
+        <Route path="project/:id/card/:cardId" element={<Project />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
