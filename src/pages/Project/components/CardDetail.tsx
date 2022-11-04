@@ -101,17 +101,21 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
   const { id, cardId } = useParams();
 
   useEffect(() => {
-    if (!cardId || listsArray.length === 0) return;
-    const [newList] = listsArray.filter((list) => {
-      return list.cards.some((card) => {
+    const curCardHandler = () => {
+      if (!cardId || listsArray.length === 0) return;
+      const [newList] = listsArray.filter((list) => {
+        return list.cards.some((card) => {
+          return card.id === cardId;
+        });
+      });
+      const [newCard] = newList.cards.filter((card) => {
         return card.id === cardId;
       });
-    });
-    const [newCard] = newList.cards.filter((card) => {
-      return card.id === cardId;
-    });
 
-    setCurCard(newCard);
+      setCurCard(newCard);
+    };
+
+    curCardHandler();
   }, [listsArray, cardId]);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
