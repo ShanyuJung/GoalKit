@@ -189,8 +189,6 @@ const Workspace = () => {
       userID: currentUser.uid,
       time: serverTimestamp(),
     });
-
-    console.log(newMessage);
   };
 
   useEffect(() => {
@@ -207,6 +205,9 @@ const Workspace = () => {
         querySnapshot.forEach((doc) => {
           const data = doc.data() as MessageInterface;
           draftState.push(data);
+        });
+        draftState.sort((a, b) => {
+          return a.time.seconds - b.time.seconds;
         });
       });
       setMessages(messageList);
