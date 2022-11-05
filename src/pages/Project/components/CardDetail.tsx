@@ -70,12 +70,22 @@ const NewTagInput = styled.input``;
 
 const NewTagButton = styled.button``;
 
+const OwnerContainer = styled.div``;
+
+const OwnerList = styled.div``;
+
+const OwnerWrapper = styled.div``;
+
+const OwnerButtonWrapper = styled.div``;
+
+const OwnerButton = styled.button``;
+
 interface CardInterface {
   title: string;
   id: string;
   time?: { start?: number; deadline?: number };
   description?: string;
-  owner?: string;
+  owner?: string[];
   tagsIDs?: string[];
 }
 
@@ -88,11 +98,13 @@ interface ListInterface {
 interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
+  members?: string[];
 }
 
-const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
+const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [curCard, setCurCard] = useState<CardInterface | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [workspaceMembers, setWorkspaceMembers] = useState<string[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const startTimeRef = useRef<HTMLInputElement | null>(null);
@@ -280,6 +292,22 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
     }
   };
 
+  const addOwnerHandler = (ownerID: string) => {
+    const isOwnerExist = curCard?.owner?.includes(ownerID);
+    if (isOwnerExist) return;
+    const newCard = produce(curCard, (draftState) => {
+      if (draftState && !draftState?.owner) {
+        draftState.owner = [ownerID];
+      } else if (draftState?.owner) {
+        draftState.owner.push(ownerID);
+      }
+    });
+    if (newCard) {
+      const newLists = newListHandler(newCard);
+      updateDataHandler(newLists);
+    }
+  };
+
   const cardInfo = () => {
     if (!curCard) return;
 
@@ -358,6 +386,28 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags }) => {
             <NewTagButton>add tag</NewTagButton>
           </NewTagInputForm>
         </TagsContainer>
+        <OwnerContainer>
+          <OwnerList>
+            {curCard.owner &&
+              curCard.owner?.map((owner) => {
+                return <OwnerWrapper key={owner}>{owner}</OwnerWrapper>;
+              })}
+          </OwnerList>
+          <OwnerButtonWrapper>
+            {members?.map((member) => {
+              return (
+                <OwnerButton
+                  key={`newOwner-${member}`}
+                  onClick={() => {
+                    addOwnerHandler(member);
+                  }}
+                >
+                  {member}
+                </OwnerButton>
+              );
+            })}
+          </OwnerButtonWrapper>
+        </OwnerContainer>
       </>
     );
   };

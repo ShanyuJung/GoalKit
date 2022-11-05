@@ -10,7 +10,6 @@ import {
   getDocs,
   setDoc,
   doc,
-  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import produce from "immer";

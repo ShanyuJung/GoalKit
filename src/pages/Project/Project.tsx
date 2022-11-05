@@ -9,7 +9,15 @@ import {
 } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
@@ -36,7 +44,7 @@ interface CardInterface {
   id: string;
   time?: { start?: number; deadline: number };
   description?: string;
-  owner?: string;
+  owner?: string[];
   tagsIDs?: string[];
 }
 
@@ -53,13 +61,21 @@ interface ProjectInterface {
   tags?: { id: string; colorCode: string; title: string }[];
 }
 
+interface Workspace {
+  id: string;
+  owner: string;
+  title: string;
+  projects: { id: string; title: string }[];
+  members: string[];
+}
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [title, setTitle] = useState("");
+  const [members, setMembers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
@@ -134,6 +150,30 @@ const Project = () => {
     navigate(`/project/${id}`);
   };
 
+  const getMembersHandler = async () => {
+    if (!project) return;
+    const workspaceRef = collection(db, "workspaces");
+    const q = query(
+      workspaceRef,
+      where("projects", "array-contains-any", [
+        { id: id, title: project?.title },
+      ])
+    );
+    const querySnapshot = await getDocs(q);
+    const emptyArr: Workspace[] = [];
+    const newWorkspaces = produce(emptyArr, (draftState) => {
+      querySnapshot.forEach((doc) => {
+        const docData = doc.data() as Workspace;
+        draftState.push(docData);
+      });
+    });
+    setMembers(newWorkspaces[0].members);
+  };
+
+  useEffect(() => {
+    getMembersHandler();
+  }, [project]);
+
   useEffect(() => {
     if (!id) return;
     const projectRef = doc(db, "projects", id);
@@ -142,7 +182,6 @@ const Project = () => {
         setIsExist(true);
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
-        setTitle(snapshot.data()?.title);
         setLists(snapshot.data()?.lists);
       } else setIsExist(false);
     });
@@ -161,7 +200,7 @@ const Project = () => {
       >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-            <TitleWrapper>{title}</TitleWrapper>
+            <TitleWrapper>{project && project.title}</TitleWrapper>
             <ListWrapper>
               {lists.length > 0 &&
                 lists.map((list, index) => {
@@ -211,6 +250,7 @@ const Project = () => {
               <CardDetail
                 listsArray={lists}
                 tags={project?.tags || undefined}
+                members={members}
               />
             ) : (
               <div></div>

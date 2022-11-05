@@ -81,6 +81,7 @@ interface MessageInterface {
   userID: string;
   time: Timestamp;
   message: string;
+  id: string;
 }
 
 const Workspace = () => {
@@ -188,7 +189,9 @@ const Workspace = () => {
       message: newMessage,
       userID: currentUser.uid,
       time: serverTimestamp(),
+      id: newId,
     });
+    messageRef.current.value = "";
   };
 
   useEffect(() => {
@@ -249,7 +252,11 @@ const Workspace = () => {
         <div>chatroom</div>
         {messages.length > 0 &&
           messages.map((message) => {
-            return <div>{`${message.userID}:${message.message}`}</div>;
+            return (
+              <div
+                key={message.id}
+              >{`${message.userID}:${message.message}`}</div>
+            );
           })}
         <MessageInputForm onSubmit={sendMessageHandler}>
           <MessageInput type="text" ref={messageRef} />
