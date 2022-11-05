@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   margin: 5px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const TitleWrapper = styled.div``;
@@ -22,12 +23,16 @@ const TagWrapper = styled.div``;
 
 const Tag = styled.div``;
 
+const OwnerContainer = styled.div``;
+
+const OwnerWrapper = styled.div``;
+
 interface CardInterface {
   title: string;
   id: string;
   time?: { start?: number; deadline?: number };
   description?: string;
-  owner?: string;
+  owner?: string[];
   tagsIDs?: string[];
 }
 
@@ -62,6 +67,17 @@ const Card: React.FC<Props> = ({ cardInfo, tags }) => {
     );
   };
 
+  const ownerList = () => {
+    return (
+      <OwnerContainer>
+        {cardInfo.owner &&
+          cardInfo.owner.map((owner) => {
+            return <OwnerWrapper key={owner}>{owner}</OwnerWrapper>;
+          })}
+      </OwnerContainer>
+    );
+  };
+
   return (
     <Wrapper
       onClick={() => {
@@ -74,6 +90,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags }) => {
       )}
       {cardInfo.time && <TimeWrapper>{deadline()}</TimeWrapper>}
       {cardInfo.tagsIDs && tags && tagsCollection()}
+      {cardInfo.owner && ownerList()}
     </Wrapper>
   );
 };

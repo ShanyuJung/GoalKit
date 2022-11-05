@@ -42,37 +42,34 @@ interface Workspace {
   owner: string;
   title: string;
   projects: { id: string; title: string }[];
+  members: string[];
 }
 
 const Dashboard = () => {
   const [workspaces, setWorkspace] = useState<Workspace[] | never>([]);
+  const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[] | never>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
 
   const getWorkspaceHandler = async () => {
-    if (isLoading) return;
-    try {
-      setIsLoading(true);
-      const userID = currentUser.uid;
-      const workspaceRef = collection(db, "workspaces");
-      const q = query(workspaceRef, where("owner", "==", userID));
-      const querySnapshot = await getDocs(q);
-      const emptyArr: Workspace[] = [];
-      const newWorkspaces = produce(emptyArr, (draftState) => {
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
-          draftState.push(docData);
-        });
+    const userID = currentUser.uid;
+    const workspaceRef = collection(db, "workspaces");
+    const q = query(workspaceRef, where("owner", "==", userID));
+    const querySnapshot = await getDocs(q);
+    const emptyArr: Workspace[] = [];
+    const newWorkspaces = produce(emptyArr, (draftState) => {
+      querySnapshot.forEach((doc) => {
+        const docData = doc.data() as Workspace;
+        draftState.push(docData);
       });
-      setWorkspace(newWorkspaces);
-    } catch (e) {
-      alert(e);
-    }
-    setIsLoading(false);
+    });
+    setWorkspace(newWorkspaces);
   };
 
-  const uploadWorkspaceHandler = async (newWorkspaceTitle: string) => {
+  const newWorkspaceHandler = async (newWorkspaceTitle: string) => {
     if (isLoading) return;
     try {
       setIsLoading(true);
@@ -83,21 +80,52 @@ const Dashboard = () => {
         title: newWorkspaceTitle,
         projects: [],
         owner: userUid,
+        members: [userUid],
       };
       await setDoc(setRef, newWorkspace);
+      const roomRef = doc(db, "chatRooms", setRef.id);
+      await setDoc(roomRef, { message: "create room succeed." });
       await getWorkspaceHandler();
     } catch (e) {
-      alert(e);
+      console.log(e);
     }
     setIsLoading(false);
   };
 
-  const newWorkspaceHandler = (newWorkspaceTitle: string) => {
-    uploadWorkspaceHandler(newWorkspaceTitle);
+  const getGuestWorkspaceHandler = async () => {
+    const userID = currentUser.uid;
+    const workspaceRef = collection(db, "workspaces");
+    const q = query(
+      workspaceRef,
+      where("members", "array-contains-any", [userID])
+    );
+    const querySnapshot = await getDocs(q);
+    const emptyArr: Workspace[] = [];
+    const newWorkspaces = produce(emptyArr, (draftState) => {
+      querySnapshot.forEach((doc) => {
+        const docData = doc.data() as Workspace;
+        if (docData.owner !== userID) {
+          draftState.push(docData);
+        }
+      });
+    });
+    setGuestWorkspace(newWorkspaces);
   };
 
   useEffect(() => {
-    getWorkspaceHandler();
+    const getDataHandler = async () => {
+      if (isLoading) return;
+      try {
+        setIsLoading(true);
+        await getWorkspaceHandler();
+        await getGuestWorkspaceHandler();
+      } catch (e) {
+        alert(e);
+      }
+      setIsLoading(false);
+    };
+
+    getDataHandler();
   }, []);
 
   return (
@@ -108,8 +136,23 @@ const Dashboard = () => {
           <button onClick={logout}>logout</button>
         </Sidebar>
         <WorkspaceWrapper>
+          <div>My workspace</div>
           {workspaces.length > 0 &&
             workspaces.map((workspace) => {
+              return (
+                <Workspace
+                  key={workspace.id}
+                  onClick={() => {
+                    navigate(`/workspace/${workspace.id}`);
+                  }}
+                >
+                  {workspace.title}
+                </Workspace>
+              );
+            })}
+          <div>Guest workspace</div>
+          {guestWorkspaces.length > 0 &&
+            guestWorkspaces.map((workspace) => {
               return (
                 <Workspace
                   key={workspace.id}
