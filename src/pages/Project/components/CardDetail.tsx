@@ -336,7 +336,12 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           {curCard.time && (
             <TimeCheckboxWrapper>
               <TimeCheckbox type="checkbox" />
-              <TimeCheckboxLabel>{`${curCard.time.start}-${curCard.time.deadline}`}</TimeCheckboxLabel>
+              <TimeCheckboxLabel>
+                {curCard.time.start &&
+                  `${new Date(curCard.time.start).toDateString()}-`}
+                {curCard.time.deadline &&
+                  `${new Date(curCard.time.deadline).toDateString()}`}
+              </TimeCheckboxLabel>
             </TimeCheckboxWrapper>
           )}
           <Form onSubmit={updateTimeHandler}>
