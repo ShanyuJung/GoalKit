@@ -114,7 +114,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getDataHandler = async () => {
-      if (isLoading) return;
+      if (isLoading || !currentUser) return;
       try {
         setIsLoading(true);
         await getWorkspaceHandler();

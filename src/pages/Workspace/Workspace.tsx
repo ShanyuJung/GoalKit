@@ -15,6 +15,7 @@ import {
   onSnapshot,
   serverTimestamp,
   Timestamp,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewProject from "./components/NewProject";
@@ -200,7 +201,10 @@ const Workspace = () => {
 
   useEffect(() => {
     if (!id) return;
-    const chatRoomRef = collection(db, "chatRooms", id, "messages");
+    const chatRoomRef = query(
+      collection(db, "chatRooms", id, "messages"),
+      orderBy("time", "asc")
+    );
     const unsubscribe = onSnapshot(chatRoomRef, (querySnapshot) => {
       const data = querySnapshot.docs;
       const messageFormat: MessageInterface[] = [];
@@ -208,9 +212,6 @@ const Workspace = () => {
         querySnapshot.forEach((doc) => {
           const data = doc.data() as MessageInterface;
           draftState.push(data);
-        });
-        draftState.sort((a, b) => {
-          return a.time.seconds - b.time.seconds;
         });
       });
       setMessages(messageList);
