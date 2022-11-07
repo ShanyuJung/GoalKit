@@ -177,6 +177,8 @@ const Workspace = () => {
     } catch (e) {
       alert(e);
     }
+    memberRef.current.value = "";
+    alert("Add User to workspace.");
     setIsLoading(false);
   };
 
