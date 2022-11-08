@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
@@ -101,34 +101,67 @@ interface Props {
   members?: string[];
 }
 
+const initialState = {
+  title: "",
+  id: "",
+};
+
+interface InitialState {
+  type: "INITIAL_STATE";
+  payload: CardInterface;
+}
+
+interface TitlePayloadAction {
+  type: "UPDATE_TITLE";
+  payload: {
+    title: string;
+  };
+}
+
+interface DescriptionPayloadAction {
+  type: "UPDATE_DESCRIPTION";
+  payload: {
+    description: string;
+  };
+}
+
+interface TimePayloadAction {
+  type: "UPDATE_TIME";
+  payload: {
+    time: { start?: number; deadline?: number };
+  };
+}
+
+interface TagPayloadAction {
+  type: "UPDATE_TAG";
+  payload: {
+    tagsIDs: string[];
+  };
+}
+
+interface OwnerPayloadAction {
+  type: "UPDATE_OWNER";
+  payload: {
+    owner: string[];
+  };
+}
+
+type Action =
+  | TitlePayloadAction
+  | TimePayloadAction
+  | InitialState
+  | DescriptionPayloadAction
+  | TagPayloadAction
+  | OwnerPayloadAction;
+
 const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
-  const [curCard, setCurCard] = useState<CardInterface | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [workspaceMembers, setWorkspaceMembers] = useState<string[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
   const newTagRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
-
-  useEffect(() => {
-    const curCardHandler = () => {
-      if (!cardId || listsArray.length === 0) return;
-      const [newList] = listsArray.filter((list) => {
-        return list.cards.some((card) => {
-          return card.id === cardId;
-        });
-      });
-      const [newCard] = newList.cards.filter((card) => {
-        return card.id === cardId;
-      });
-
-      setCurCard(newCard);
-    };
-
-    curCardHandler();
-  }, [listsArray, cardId]);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
@@ -158,25 +191,55 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
     return newLists;
   };
 
+  const cardDetailReducer = (state: CardInterface, action: Action) => {
+    switch (action.type) {
+      case "INITIAL_STATE":
+        return {
+          ...state,
+          ...action.payload,
+        };
+      case "UPDATE_TITLE":
+        return {
+          ...state,
+          title: action.payload.title,
+        };
+      case "UPDATE_DESCRIPTION":
+        return {
+          ...state,
+          description: action.payload.description,
+        };
+      case "UPDATE_TIME":
+        return {
+          ...state,
+          time: action.payload.time,
+        };
+      case "UPDATE_TAG":
+        return {
+          ...state,
+          tagsIDs: action.payload.tagsIDs,
+        };
+      case "UPDATE_OWNER":
+        return {
+          ...state,
+          owner: action.payload.owner,
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(cardDetailReducer, initialState);
+
   const updateTitleHandler = () => {
-    if (
-      !titleRef.current?.value.trim() ||
-      titleRef.current?.value.trim() === curCard?.title
-    ) {
+    if (!titleRef.current?.value.trim()) {
+      alert("Empty title is not allowed!");
       return;
     }
-
-    const newTitle = titleRef.current.value.trim();
-    const newCard = produce(curCard, (draftState) => {
-      if (draftState) {
-        draftState.title = newTitle;
-      }
-    });
-
-    if (newCard) {
-      const newLists = newListHandler(newCard);
-      updateDataHandler(newLists);
+    if (titleRef.current?.value.trim() === state.title) {
+      return;
     }
+    const newTitle = titleRef.current.value.trim();
+    dispatch({ type: "UPDATE_TITLE", payload: { title: newTitle } });
   };
 
   const updateDescriptionHandler = (event: FormEvent) => {
@@ -184,21 +247,17 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
 
     if (
       !descriptionRef.current?.value.trim() ||
-      descriptionRef.current?.value.trim() === curCard?.description
+      descriptionRef.current?.value.trim() === state?.description
     ) {
       return;
     }
     const newDescription = descriptionRef.current.value.trim();
-    const newCard = produce(curCard, (draftState) => {
-      if (draftState) {
-        draftState.description = newDescription;
-      }
+    dispatch({
+      type: "UPDATE_DESCRIPTION",
+      payload: { description: newDescription },
     });
-    if (newCard) {
-      const newLists = newListHandler(newCard);
-      updateDataHandler(newLists);
-    }
   };
+
   const updateTimeHandler = (event: FormEvent) => {
     event.preventDefault();
     const time = startTimeRef.current?.value;
@@ -214,16 +273,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
         draftState.deadline = newTime;
       }
     });
-
-    const newCard = produce(curCard, (draftState) => {
-      if (draftState) {
-        draftState.time = newTime;
-      }
-    });
-    if (newCard) {
-      const newLists = newListHandler(newCard);
-      updateDataHandler(newLists);
-    }
+    dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
   };
 
   const createTagHandler = async (newTag: {
@@ -256,87 +306,99 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   };
 
   const selectTagHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTag = event.target.value;
+    const curTags: string[] = state.tagsIDs || [];
     if (event.target.checked) {
-      const newTag = event.target.value;
-      const newCard = produce(curCard, (draftState) => {
-        if (draftState && !draftState?.tagsIDs) {
-          draftState.tagsIDs = [newTag];
-        } else if (
-          draftState?.tagsIDs &&
-          !draftState.tagsIDs?.find((id) => id === newTag)
-        ) {
-          draftState.tagsIDs.push(newTag);
+      const newTags = produce(curTags, (draftState) => {
+        if (!draftState.find((id) => id === newTag)) {
+          draftState.push(newTag);
         }
       });
-      if (newCard) {
-        const newLists = newListHandler(newCard);
-        updateDataHandler(newLists);
-      }
+      dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
     } else {
-      const newTag = event.target.value;
-      const newCard = produce(curCard, (draftState) => {
-        if (draftState && !draftState?.tagsIDs) {
-          return;
-        } else if (
-          draftState?.tagsIDs &&
-          draftState.tagsIDs?.find((id) => id === newTag)
-        ) {
-          const newState = draftState.tagsIDs.filter((id) => id !== newTag);
-          draftState.tagsIDs = newState;
-        }
+      const newTags = produce(curTags, (draftState) => {
+        draftState.forEach((id, index, arr) => {
+          if (id === newTag) {
+            arr.splice(index, 1);
+            return true;
+          }
+          return false;
+        });
       });
-      if (newCard) {
-        const newLists = newListHandler(newCard);
-        updateDataHandler(newLists);
-      }
+      dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
     }
   };
 
   const addOwnerHandler = (ownerID: string) => {
-    const isOwnerExist = curCard?.owner?.includes(ownerID);
+    const isOwnerExist = state.owner?.includes(ownerID);
     if (isOwnerExist) return;
-    const newCard = produce(curCard, (draftState) => {
-      if (draftState && !draftState?.owner) {
-        draftState.owner = [ownerID];
-      } else if (draftState?.owner) {
-        draftState.owner.push(ownerID);
-      }
+    const curOwners: string[] = state.owner || [];
+    const newOwners = produce(curOwners, (draftState) => {
+      draftState.push(ownerID);
     });
-    if (newCard) {
-      const newLists = newListHandler(newCard);
-      updateDataHandler(newLists);
-    }
+    dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
   };
 
+  useEffect(() => {
+    const curCardHandler = () => {
+      if (!cardId || listsArray.length === 0) return;
+      const [newList] = listsArray.filter((list) => {
+        return list.cards.some((card) => {
+          return card.id === cardId;
+        });
+      });
+      const [newCard] = newList.cards.filter((card) => {
+        return card.id === cardId;
+      });
+      dispatch({ type: "INITIAL_STATE", payload: newCard });
+    };
+
+    curCardHandler();
+  }, [listsArray, cardId]);
+
+  useEffect(() => {
+    if (state.id === "") return;
+    console.log(2);
+    const newLists = newListHandler(state);
+    updateDataHandler(newLists);
+  }, [state]);
+
+  console.log(state);
+
   const cardInfo = () => {
-    if (!curCard) return;
+    if (state.id === "") return;
 
     return (
       <>
         <TitleInput
           type="text"
           ref={titleRef}
-          defaultValue={curCard.title}
+          defaultValue={state.title}
           onBlur={updateTitleHandler}
         />
         <TextAreaWrapper>
-          {curCard.description && <div>{curCard.description}</div>}
+          {state.description && <div>{state.description}</div>}
           <Form onSubmit={updateDescriptionHandler}>
             <TextAreaLabel htmlFor="description">Description</TextAreaLabel>
             <TextArea
               id="description"
               name="description"
-              defaultValue={curCard.description}
+              defaultValue={state.description}
               ref={descriptionRef}
             />
             <TextAreaButton>save</TextAreaButton>
           </Form>
         </TextAreaWrapper>
         <TimeWrapper>
-          {curCard.time && (
+          {(state.time?.start || state.time?.deadline) && (
             <TimeCheckboxWrapper>
               <TimeCheckbox type="checkbox" />
-              <TimeCheckboxLabel>{`${curCard.time.start}-${curCard.time.deadline}`}</TimeCheckboxLabel>
+              <TimeCheckboxLabel>
+                {state.time.start &&
+                  `${new Date(state.time.start).toDateString()}-`}
+                {state.time.deadline &&
+                  `${new Date(state.time.deadline).toDateString()}`}
+              </TimeCheckboxLabel>
             </TimeCheckboxWrapper>
           )}
           <Form onSubmit={updateTimeHandler}>
@@ -353,10 +415,10 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
         </TimeWrapper>
         <TagsContainer>
           <TagList>
-            {curCard.tagsIDs &&
+            {state.tagsIDs &&
               tags &&
               tags.map((tag) => {
-                if (curCard.tagsIDs?.includes(tag.id)) {
+                if (state.tagsIDs?.includes(tag.id)) {
                   return <div key={tag.id}>{tag.title}</div>;
                 }
               })}
@@ -372,7 +434,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
                       name="tags"
                       value={tag.id || ""}
                       onChange={selectTagHandler}
-                      checked={curCard.tagsIDs?.includes(tag.id)}
+                      checked={state.tagsIDs?.includes(tag.id) || false}
                     />
                     <TagCheckboxLabel htmlFor={tag.id}>
                       {tag.title}
@@ -386,10 +448,11 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
             <NewTagButton>add tag</NewTagButton>
           </NewTagInputForm>
         </TagsContainer>
+
         <OwnerContainer>
           <OwnerList>
-            {curCard.owner &&
-              curCard.owner?.map((owner) => {
+            {state.owner &&
+              state.owner?.map((owner) => {
                 return <OwnerWrapper key={owner}>{owner}</OwnerWrapper>;
               })}
           </OwnerList>
