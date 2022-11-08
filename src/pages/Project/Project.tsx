@@ -24,6 +24,24 @@ import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/CardDetail";
+import ProjectSidebar from "./components/ProjectSidebar";
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+`;
+
+const BorderWrapper = styled.div`
+  height: calc(100vh - 50px);
+  overflow-x: scroll;
+`;
+
+const SubNavbar = styled.div`
+  height: 40px;
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+`;
 
 const Wrapper = styled.div`
   width: 100%;
@@ -35,7 +53,7 @@ const ListWrapper = styled.div`
   padding: 20px;
   border: 1px #000 solid;
   display: flex;
-  width: 100%;
+  width: fit-content;
   overflow-x: scroll;
 `;
 
@@ -150,27 +168,27 @@ const Project = () => {
     navigate(`/project/${id}`);
   };
 
-  const getMembersHandler = async () => {
-    if (!project) return;
-    const workspaceRef = collection(db, "workspaces");
-    const q = query(
-      workspaceRef,
-      where("projects", "array-contains-any", [
-        { id: id, title: project?.title },
-      ])
-    );
-    const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
-    const newWorkspaces = produce(emptyArr, (draftState) => {
-      querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
-        draftState.push(docData);
-      });
-    });
-    setMembers(newWorkspaces[0].members);
-  };
-
   useEffect(() => {
+    const getMembersHandler = async () => {
+      if (!project) return;
+      const workspaceRef = collection(db, "workspaces");
+      const q = query(
+        workspaceRef,
+        where("projects", "array-contains-any", [
+          { id: id, title: project?.title },
+        ])
+      );
+      const querySnapshot = await getDocs(q);
+      const emptyArr: Workspace[] = [];
+      const newWorkspaces = produce(emptyArr, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data() as Workspace;
+          draftState.push(docData);
+        });
+      });
+      setMembers(newWorkspaces[0].members);
+    };
+
     getMembersHandler();
   }, [project]);
 
@@ -200,7 +218,6 @@ const Project = () => {
       >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-            <TitleWrapper>{project && project.title}</TitleWrapper>
             <ListWrapper>
               {lists.length > 0 &&
                 lists.map((list, index) => {
@@ -257,10 +274,18 @@ const Project = () => {
             )}
           </Modal>
         )}
-        <DragDropContext onDragEnd={onDragEndHandler}>
-          {isExist && projectBoard()}
-          {isExist === false && <div>Project is not exist.</div>}
-        </DragDropContext>
+        <Container>
+          <ProjectSidebar title={project?.title} />
+          <BorderWrapper>
+            <SubNavbar>
+              <TitleWrapper>{project && project.title}</TitleWrapper>
+            </SubNavbar>
+            <DragDropContext onDragEnd={onDragEndHandler}>
+              {isExist && projectBoard()}
+              {isExist === false && <div>Project is not exist.</div>}
+            </DragDropContext>
+          </BorderWrapper>
+        </Container>
       </>
     </PrivateRoute>
   );
