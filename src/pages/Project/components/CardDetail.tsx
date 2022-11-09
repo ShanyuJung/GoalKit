@@ -5,14 +5,33 @@ import styled from "styled-components";
 import { db } from "../../../firebase";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import { ReactComponent as cardIcon } from "../../../assets/details-svgrepo-com.svg";
+import Description from "./Description";
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+  height: 36px;
+`;
+
+const CardLogo = styled(cardIcon)`
+  path {
+    fill: #828282;
+  }
+`;
 
 const TitleInput = styled.input`
   margin: 10px;
+  font-size: 24px;
+  font-weight: 900;
+  border: none;
+  flex-grow: 1;
+  box-sizing: border-box;
 `;
 
 const TextAreaWrapper = styled.div`
@@ -164,7 +183,6 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
   const newTagRef = useRef<HTMLInputElement | null>(null);
@@ -249,19 +267,19 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
     dispatch({ type: "UPDATE_TITLE", payload: { title: newTitle } });
   };
 
-  const updateDescriptionHandler = (event: FormEvent) => {
-    event.preventDefault();
+  const updateDescriptionHandler = (text: string) => {
+    console.log(text);
 
-    if (
-      !descriptionRef.current?.value.trim() ||
-      descriptionRef.current?.value.trim() === state?.description
-    ) {
-      return;
-    }
-    const newDescription = descriptionRef.current.value.trim();
+    // if (
+    //   !descriptionRef.current?.value.trim() ||
+    //   descriptionRef.current?.value.trim() === state?.description
+    // ) {
+    //   return;
+    // }
+    // const newDescription = descriptionRef.current.value.trim();
     dispatch({
       type: "UPDATE_DESCRIPTION",
-      payload: { description: newDescription },
+      payload: { description: text },
     });
   };
 
@@ -392,25 +410,19 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
 
     return (
       <>
-        <TitleInput
-          type="text"
-          ref={titleRef}
-          defaultValue={state.title}
-          onBlur={updateTitleHandler}
+        <TitleWrapper>
+          <CardLogo />
+          <TitleInput
+            type="text"
+            ref={titleRef}
+            defaultValue={state.title}
+            onBlur={updateTitleHandler}
+          />
+        </TitleWrapper>
+        <Description
+          onSubmit={updateDescriptionHandler}
+          text={state.description || ""}
         />
-        <TextAreaWrapper>
-          {state.description && <div>{state.description}</div>}
-          <Form onSubmit={updateDescriptionHandler}>
-            <TextAreaLabel htmlFor="description">Description</TextAreaLabel>
-            <TextArea
-              id="description"
-              name="description"
-              defaultValue={state.description}
-              ref={descriptionRef}
-            />
-            <TextAreaButton>save</TextAreaButton>
-          </Form>
-        </TextAreaWrapper>
         <TimeWrapper>
           {(state.time?.start || state.time?.deadline) && (
             <TimeCheckboxWrapper>

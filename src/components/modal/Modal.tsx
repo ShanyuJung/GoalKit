@@ -23,6 +23,8 @@ const ModalOverlay = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   z-index: 30;
   animation: slide-down 300ms ease-out forwards;
+  max-height: 80vh;
+  overflow-y: scroll;
 
   @media (min-width: 768px) {
     .modal {
