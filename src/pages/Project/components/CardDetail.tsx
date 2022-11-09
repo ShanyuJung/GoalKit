@@ -358,12 +358,9 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
 
   useEffect(() => {
     if (state.id === "") return;
-    console.log(2);
     const newLists = newListHandler(state);
     updateDataHandler(newLists);
   }, [state]);
-
-  console.log(state);
 
   const cardInfo = () => {
     if (state.id === "") return;

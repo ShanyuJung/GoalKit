@@ -33,25 +33,33 @@ const Container = styled.div`
 
 const BorderWrapper = styled.div`
   height: calc(100vh - 50px);
+  flex-grow: 1;
   overflow-x: scroll;
 `;
 
 const SubNavbar = styled.div`
   height: 40px;
-  padding: 0px 20px;
+  padding: 0px 40px;
   display: flex;
   align-items: center;
+  position: fixed;
+  width: 100%;
+  background-color: #fff;
+  z-index: 9;
+`;
+
+const TitleWrapper = styled.div`
+  font-size: 20px;
+  font-weight: bolder;
 `;
 
 const Wrapper = styled.div`
+  margin-top: 40px;
   width: 100%;
 `;
 
-const TitleWrapper = styled.div``;
-
 const ListWrapper = styled.div`
-  padding: 20px;
-  border: 1px #000 solid;
+  padding: 0px 20px;
   display: flex;
   width: fit-content;
   overflow-x: scroll;
@@ -179,18 +187,20 @@ const Project = () => {
         ])
       );
       const querySnapshot = await getDocs(q);
-      const emptyArr: Workspace[] = [];
-      const newWorkspaces = produce(emptyArr, (draftState) => {
+      const emptyWorkspaceArr: Workspace[] = [];
+      const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
         querySnapshot.forEach((doc) => {
           const docData = doc.data() as Workspace;
           draftState.push(docData);
         });
       });
-      setMembers(newWorkspaces[0].members);
+      setMembers(curWorkspaces[0].members);
     };
 
     getMembersHandler();
   }, [project]);
+
+  console.log(members);
 
   useEffect(() => {
     if (!id) return;
