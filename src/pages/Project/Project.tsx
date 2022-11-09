@@ -271,6 +271,7 @@ const Project = () => {
                             newCardHandler={newCardHandler}
                             id={list.id}
                             tags={project?.tags || undefined}
+                            members={members}
                           />
                         </div>
                       )}

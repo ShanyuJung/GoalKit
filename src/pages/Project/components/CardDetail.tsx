@@ -380,7 +380,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
 
     setOwnerInfoHandler();
   }, [state.owner, members]);
-  console.log(ownerInfo);
+
   useEffect(() => {
     if (state.id === "") return;
     const newLists = newListHandler(state);

@@ -44,15 +44,27 @@ const Title = styled.div`
   font-size: 16px;
 `;
 
+const NewCardWrapper = styled.div`
+  margin: 10px;
+  width: 230px;
+`;
+
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 interface Props {
   title: string;
   cards: { title: string; id: string }[];
   id: string;
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
+  members: Member[];
 }
 
-const List = ({ title, cards, id, newCardHandler, tags }: Props) => {
+const List = ({ title, cards, id, newCardHandler, tags, members }: Props) => {
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
@@ -75,14 +87,21 @@ const List = ({ title, cards, id, newCardHandler, tags }: Props) => {
                         snapshot.isDragging && !snapshot.isDropAnimating
                       }
                     >
-                      <Card key={card.id} cardInfo={card} tags={tags} />
+                      <Card
+                        key={card.id}
+                        cardInfo={card}
+                        tags={tags}
+                        members={members}
+                      />
                     </div>
                   )}
                 </Draggable>
               );
             })}
             {provided.placeholder}
-            <NewCard onSubmit={newCardHandler} parentID={id} />
+            <NewCardWrapper>
+              <NewCard onSubmit={newCardHandler} parentID={id} />
+            </NewCardWrapper>
           </Wrapper>
         </Container>
       )}

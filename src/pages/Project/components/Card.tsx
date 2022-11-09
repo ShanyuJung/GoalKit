@@ -30,7 +30,16 @@ const DescriptionIcon = styled(DescriptionLogo)`
   }
 `;
 
-const TimeWrapper = styled.div``;
+const TimeWrapper = styled.div`
+  background-color: #dcedc8;
+  width: fit-content;
+  padding: 1px 5px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  border-radius: 5px;
+`;
 
 const TagsContainer = styled.div`
   display: flex;
@@ -73,9 +82,22 @@ const Tag = styled.div`
   font-size: 10px;
 `;
 
-const OwnerContainer = styled.div``;
+const OwnerContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 0px 5px;
+`;
 
-const OwnerWrapper = styled.div``;
+const OwnerWrapper = styled.div`
+  background-color: #c5cae9;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 interface CardInterface {
   title: string;
@@ -86,20 +108,28 @@ interface CardInterface {
   tagsIDs?: string[];
 }
 
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 interface Props {
   cardInfo: CardInterface;
   tags?: { id: string; colorCode: string; title: string }[];
+  members: Member[];
 }
 
-const Card: React.FC<Props> = ({ cardInfo, tags }) => {
+const Card: React.FC<Props> = ({ cardInfo, tags, members }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const deadline = () => {
     if (cardInfo.time?.deadline) {
-      return new Date(cardInfo.time?.deadline).toDateString();
-    } else {
-      return "";
+      const date = new Date(cardInfo.time?.deadline);
+      const month = date.getMonth();
+      const day = date.getDate();
+      return `Deadline: ${month + 1}/${day}`;
     }
   };
 
@@ -126,8 +156,15 @@ const Card: React.FC<Props> = ({ cardInfo, tags }) => {
     return (
       <OwnerContainer>
         {cardInfo.owner &&
-          cardInfo.owner.map((owner) => {
-            return <OwnerWrapper key={owner}>{owner}</OwnerWrapper>;
+          members &&
+          members.map((owner) => {
+            if (cardInfo.owner?.includes(owner.uid)) {
+              return (
+                <OwnerWrapper key={owner.uid}>
+                  {owner.displayName.charAt(0)}
+                </OwnerWrapper>
+              );
+            }
           })}
       </OwnerContainer>
     );
@@ -143,7 +180,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags }) => {
         {cardInfo.tagsIDs && tags && tagsCollection()}
         <TitleWrapper>{cardInfo.title}</TitleWrapper>
         {cardInfo.description && <DescriptionIcon />}
-        {cardInfo.time && <TimeWrapper>{deadline()}</TimeWrapper>}
+        {cardInfo.time?.deadline && <TimeWrapper>{deadline()}</TimeWrapper>}
         {cardInfo.owner && ownerList()}
       </Wrapper>
     </Container>
