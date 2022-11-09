@@ -95,10 +95,16 @@ interface ListInterface {
   cards: CardInterface[];
 }
 
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
-  members?: string[];
+  members?: Member[];
 }
 
 const initialState = {
@@ -156,6 +162,7 @@ type Action =
 
 const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const startTimeRef = useRef<HTMLInputElement | null>(null);
@@ -357,6 +364,24 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   }, [listsArray, cardId]);
 
   useEffect(() => {
+    const setOwnerInfoHandler = () => {
+      if (!state.owner || !members) return;
+
+      const emptyArr: Member[] = [];
+      const newOwnerInfo = produce(emptyArr, (draftState) => {
+        members.forEach((member) => {
+          if (state.owner?.includes(member.uid)) {
+            draftState.push(member);
+          }
+        });
+      });
+      setOwnerInfo([...newOwnerInfo]);
+    };
+
+    setOwnerInfoHandler();
+  }, [state.owner, members]);
+  console.log(ownerInfo);
+  useEffect(() => {
     if (state.id === "") return;
     const newLists = newListHandler(state);
     updateDataHandler(newLists);
@@ -448,21 +473,25 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
 
         <OwnerContainer>
           <OwnerList>
-            {state.owner &&
-              state.owner?.map((owner) => {
-                return <OwnerWrapper key={owner}>{owner}</OwnerWrapper>;
+            {ownerInfo &&
+              ownerInfo?.map((owner) => {
+                return (
+                  <OwnerWrapper key={owner.uid}>
+                    {owner.displayName}
+                  </OwnerWrapper>
+                );
               })}
           </OwnerList>
           <OwnerButtonWrapper>
             {members?.map((member) => {
               return (
                 <OwnerButton
-                  key={`newOwner-${member}`}
+                  key={`newOwner-${member.uid}`}
                   onClick={() => {
-                    addOwnerHandler(member);
+                    addOwnerHandler(member.uid);
                   }}
                 >
-                  {member}
+                  {member.displayName}
                 </OwnerButton>
               );
             })}

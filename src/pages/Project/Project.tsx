@@ -59,7 +59,7 @@ const Wrapper = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  padding: 0px 20px;
+  padding: 0px 20px 10px 20px;
   display: flex;
   width: fit-content;
   overflow-x: scroll;
@@ -95,13 +95,19 @@ interface Workspace {
   members: string[];
 }
 
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
@@ -194,13 +200,25 @@ const Project = () => {
           draftState.push(docData);
         });
       });
-      setMembers(curWorkspaces[0].members);
+      const usersRef = collection(db, "users");
+      const userQ = query(
+        usersRef,
+        where("uid", "in", curWorkspaces[0].members)
+      );
+      const userQuerySnapshot = await getDocs(userQ);
+      const emptyMemberArr: Member[] = [];
+      const curMembers = produce(emptyMemberArr, (draftState) => {
+        userQuerySnapshot.forEach((doc) => {
+          const docData = doc.data() as Member;
+          draftState.push(docData);
+        });
+      });
+
+      setMembers(curMembers);
     };
 
     getMembersHandler();
   }, [project]);
-
-  console.log(members);
 
   useEffect(() => {
     if (!id) return;
