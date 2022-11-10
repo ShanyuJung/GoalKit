@@ -1,13 +1,13 @@
-import { FormEvent, useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
+import { doc, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
+import Tags from "./Tags";
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,51 +34,6 @@ const TitleInput = styled.input`
   flex-grow: 1;
   box-sizing: border-box;
 `;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const TimeWrapper = styled.div`
-  margin: 10px;
-`;
-
-const TimeInputWrapper = styled.div`
-  margin: 10px;
-`;
-
-const TimeInputLabel = styled.label``;
-
-const TimeInput = styled.input``;
-
-const TimeCheckboxWrapper = styled.div`
-  margin: 10px;
-`;
-
-const TimeCheckbox = styled.input``;
-
-const TimeCheckboxLabel = styled.label``;
-
-const TimeButton = styled.button``;
-
-const TagsContainer = styled.div``;
-
-const TagList = styled.div``;
-
-const TagSelectorList = styled.div``;
-
-const TagWrapper = styled.div``;
-
-const TagCheckbox = styled.input``;
-
-const TagCheckboxLabel = styled.label``;
-
-const NewTagInputForm = styled.form``;
-
-const NewTagInput = styled.input``;
-
-const NewTagButton = styled.button``;
 
 const OwnerContainer = styled.div``;
 
@@ -174,8 +129,6 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const startTimeRef = useRef<HTMLInputElement | null>(null);
-  const deadlineRef = useRef<HTMLInputElement | null>(null);
   const newTagRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
@@ -266,75 +219,12 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   };
 
   const updateTimeHandler = (curStart: number, curDeadline: number) => {
-    // event.preventDefault();
-    // const time = startTimeRef.current?.value;
-    // const deadline = deadlineRef.current?.value;
-    // const obj: { start?: number; deadline?: number } = {};
-    // const newTime = produce(obj, (draftState) => {
-    //   if (time) {
-    //     const newTime = new Date(`${time}:00Z`).getTime();
-    //     draftState.start = newTime;
-    //   }
-    //   if (deadline) {
-    //     const newTime = new Date(`${deadline}:00Z`).getTime();
-    //     draftState.deadline = newTime;
-    //   }
-    // });
     const newTime = { start: curStart, deadline: curDeadline };
     dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
   };
 
-  const createTagHandler = async (newTag: {
-    id: string;
-    colorCode: string;
-    title: string;
-  }) => {
-    if (!id || isLoading) return;
-    try {
-      setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, { tags: arrayUnion(newTag) });
-    } catch (e) {
-      alert(e);
-    }
-    setIsLoading(false);
-  };
-
-  const tagFormHandler = (event: FormEvent) => {
-    event.preventDefault();
-    if (!newTagRef.current?.value.trim()) return;
-    const newId = uuidv4();
-    const newTag = {
-      id: newId,
-      title: newTagRef.current?.value.trim(),
-      colorCode: "#ccc",
-    };
-
-    createTagHandler(newTag);
-  };
-
-  const selectTagHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newTag = event.target.value;
-    const curTags: string[] = state.tagsIDs || [];
-    if (event.target.checked) {
-      const newTags = produce(curTags, (draftState) => {
-        if (!draftState.find((id) => id === newTag)) {
-          draftState.push(newTag);
-        }
-      });
-      dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
-    } else {
-      const newTags = produce(curTags, (draftState) => {
-        draftState.forEach((id, index, arr) => {
-          if (id === newTag) {
-            arr.splice(index, 1);
-            return true;
-          }
-          return false;
-        });
-      });
-      dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
-    }
+  const selectTagHandler = (newTags: string[]) => {
+    dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
   };
 
   const addOwnerHandler = (ownerID: string) => {
@@ -411,42 +301,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           curDeadline={state.time?.deadline}
           onSubmit={updateTimeHandler}
         />
-        <TagsContainer>
-          <TagList>
-            {state.tagsIDs &&
-              tags &&
-              tags.map((tag) => {
-                if (state.tagsIDs?.includes(tag.id)) {
-                  return <div key={tag.id}>{tag.title}</div>;
-                }
-              })}
-          </TagList>
-          <TagSelectorList>
-            {tags &&
-              tags.map((tag) => {
-                return (
-                  <TagWrapper key={tag.id}>
-                    <TagCheckbox
-                      type="checkbox"
-                      id={tag.id}
-                      name="tags"
-                      value={tag.id || ""}
-                      onChange={selectTagHandler}
-                      checked={state.tagsIDs?.includes(tag.id) || false}
-                    />
-                    <TagCheckboxLabel htmlFor={tag.id}>
-                      {tag.title}
-                    </TagCheckboxLabel>
-                  </TagWrapper>
-                );
-              })}
-          </TagSelectorList>
-          <NewTagInputForm onSubmit={tagFormHandler}>
-            <NewTagInput type="text" required ref={newTagRef} />
-            <NewTagButton>add tag</NewTagButton>
-          </NewTagInputForm>
-        </TagsContainer>
-
+        <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <OwnerContainer>
           <OwnerList>
             {ownerInfo &&
