@@ -8,6 +8,7 @@ import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-c
 import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
+import Owners from "./Owners";
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,16 +35,6 @@ const TitleInput = styled.input`
   flex-grow: 1;
   box-sizing: border-box;
 `;
-
-const OwnerContainer = styled.div``;
-
-const OwnerList = styled.div``;
-
-const OwnerWrapper = styled.div``;
-
-const OwnerButtonWrapper = styled.div``;
-
-const OwnerButton = styled.button``;
 
 interface CardInterface {
   title: string;
@@ -302,32 +293,11 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           onSubmit={updateTimeHandler}
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
-        <OwnerContainer>
-          <OwnerList>
-            {ownerInfo &&
-              ownerInfo?.map((owner) => {
-                return (
-                  <OwnerWrapper key={owner.uid}>
-                    {owner.displayName}
-                  </OwnerWrapper>
-                );
-              })}
-          </OwnerList>
-          <OwnerButtonWrapper>
-            {members?.map((member) => {
-              return (
-                <OwnerButton
-                  key={`newOwner-${member.uid}`}
-                  onClick={() => {
-                    addOwnerHandler(member.uid);
-                  }}
-                >
-                  {member.displayName}
-                </OwnerButton>
-              );
-            })}
-          </OwnerButtonWrapper>
-        </OwnerContainer>
+        <Owners
+          ownerInfo={ownerInfo}
+          members={members}
+          addOwnerHandler={addOwnerHandler}
+        />
       </>
     );
   };
