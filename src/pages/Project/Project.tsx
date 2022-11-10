@@ -23,19 +23,45 @@ import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
-import CardDetail from "./components/CardDetail";
+import CardDetail from "./components/detail/CardDetail";
+import ProjectSidebar from "./components/ProjectSidebar";
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+`;
+
+const BorderWrapper = styled.div`
+  height: calc(100vh - 50px);
+  flex-grow: 1;
+  overflow-x: scroll;
+`;
+
+const SubNavbar = styled.div`
+  height: 40px;
+  padding: 0px 40px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  background-color: #fff;
+  z-index: 9;
+`;
+
+const TitleWrapper = styled.div`
+  font-size: 20px;
+  font-weight: bolder;
+`;
 
 const Wrapper = styled.div`
+  margin-top: 40px;
   width: 100%;
 `;
 
-const TitleWrapper = styled.div``;
-
 const ListWrapper = styled.div`
-  padding: 20px;
-  border: 1px #000 solid;
+  padding: 0px 20px 10px 20px;
   display: flex;
-  width: 100%;
+  width: fit-content;
   overflow-x: scroll;
 `;
 
@@ -69,13 +95,19 @@ interface Workspace {
   members: string[];
 }
 
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
@@ -150,27 +182,41 @@ const Project = () => {
     navigate(`/project/${id}`);
   };
 
-  const getMembersHandler = async () => {
-    if (!project) return;
-    const workspaceRef = collection(db, "workspaces");
-    const q = query(
-      workspaceRef,
-      where("projects", "array-contains-any", [
-        { id: id, title: project?.title },
-      ])
-    );
-    const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
-    const newWorkspaces = produce(emptyArr, (draftState) => {
-      querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
-        draftState.push(docData);
-      });
-    });
-    setMembers(newWorkspaces[0].members);
-  };
-
   useEffect(() => {
+    const getMembersHandler = async () => {
+      if (!project) return;
+      const workspaceRef = collection(db, "workspaces");
+      const q = query(
+        workspaceRef,
+        where("projects", "array-contains-any", [
+          { id: id, title: project?.title },
+        ])
+      );
+      const querySnapshot = await getDocs(q);
+      const emptyWorkspaceArr: Workspace[] = [];
+      const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data() as Workspace;
+          draftState.push(docData);
+        });
+      });
+      const usersRef = collection(db, "users");
+      const userQ = query(
+        usersRef,
+        where("uid", "in", curWorkspaces[0].members)
+      );
+      const userQuerySnapshot = await getDocs(userQ);
+      const emptyMemberArr: Member[] = [];
+      const curMembers = produce(emptyMemberArr, (draftState) => {
+        userQuerySnapshot.forEach((doc) => {
+          const docData = doc.data() as Member;
+          draftState.push(docData);
+        });
+      });
+
+      setMembers(curMembers);
+    };
+
     getMembersHandler();
   }, [project]);
 
@@ -200,7 +246,6 @@ const Project = () => {
       >
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
-            <TitleWrapper>{project && project.title}</TitleWrapper>
             <ListWrapper>
               {lists.length > 0 &&
                 lists.map((list, index) => {
@@ -226,6 +271,7 @@ const Project = () => {
                             newCardHandler={newCardHandler}
                             id={list.id}
                             tags={project?.tags || undefined}
+                            members={members}
                           />
                         </div>
                       )}
@@ -257,10 +303,18 @@ const Project = () => {
             )}
           </Modal>
         )}
-        <DragDropContext onDragEnd={onDragEndHandler}>
-          {isExist && projectBoard()}
-          {isExist === false && <div>Project is not exist.</div>}
-        </DragDropContext>
+        <Container>
+          <ProjectSidebar title={project?.title} />
+          <BorderWrapper>
+            <SubNavbar>
+              <TitleWrapper>{project && project.title}</TitleWrapper>
+            </SubNavbar>
+            <DragDropContext onDragEnd={onDragEndHandler}>
+              {isExist && projectBoard()}
+              {isExist === false && <div>Project is not exist.</div>}
+            </DragDropContext>
+          </BorderWrapper>
+        </Container>
       </>
     </PrivateRoute>
   );

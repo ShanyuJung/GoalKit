@@ -15,14 +15,16 @@ const Backdrop = styled.div`
 const ModalOverlay = styled.div`
   position: fixed;
   top: 15vh;
-  left: 5%;
-  width: 90%;
+  left: calc(50vw - 250px);
+  width: 500px;
   background-color: white;
   padding: 1rem;
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   z-index: 30;
   animation: slide-down 300ms ease-out forwards;
+  max-height: 80vh;
+  overflow-y: scroll;
 
   @media (min-width: 768px) {
     .modal {

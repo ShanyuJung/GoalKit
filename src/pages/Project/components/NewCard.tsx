@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Wrapper = styled.div``;
 
 const TextArea = styled.textarea`
+  width: 100%;
   resize: none;
   cursor: pointer;
 `;
