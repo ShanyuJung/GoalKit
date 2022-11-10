@@ -16,7 +16,6 @@ import {
   serverTimestamp,
   ref,
   onValue,
-  push,
 } from "firebase/database";
 
 interface AuthContextInterface {
@@ -72,6 +71,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
+    const isOfflineForDatabase = {
+      state: "offline",
+      last_changed: serverTimestamp(),
+    };
+    set(userStatusDatabaseRef, isOfflineForDatabase);
+
     return signOut(auth);
   };
 
@@ -86,13 +94,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       setIsLoading(false);
       setCurrentUser(user);
+      console.log(user);
     });
 
     return unsubscribe;
   }, []);
 
   useEffect(() => {
-    if (currentUser.uid === undefined) return;
+    if (!currentUser || currentUser.uid === undefined) return;
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
@@ -117,7 +126,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
       }
     });
-  }, [currentUser.uid]);
+  }, [currentUser]);
 
   return (
     <AuthContext.Provider value={value}>
