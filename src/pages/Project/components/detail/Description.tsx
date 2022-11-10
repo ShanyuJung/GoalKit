@@ -74,6 +74,7 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
       !descriptionRef.current ||
       descriptionRef.current?.value.trim() === text
     ) {
+      setIsEdit(false);
       return;
     }
     const newDescription = descriptionRef.current.value.trim();
@@ -81,8 +82,6 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
     onSubmit(newDescription);
     setIsEdit(false);
   };
-
-  console.log(isEdit);
 
   return (
     <TextAreaWrapper>
@@ -120,6 +119,7 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
           <ButtonWrapper>
             <TextAreaButton>save</TextAreaButton>
             <TextAreaButton
+              type="button"
               onClick={() => {
                 setIsEdit(false);
               }}

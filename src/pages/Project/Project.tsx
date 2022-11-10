@@ -23,7 +23,7 @@ import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
-import CardDetail from "./components/CardDetail";
+import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
 
 const Container = styled.div`

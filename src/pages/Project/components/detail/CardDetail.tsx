@@ -2,11 +2,12 @@ import { FormEvent, useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
-import { db } from "../../../firebase";
+import { db } from "../../../../firebase";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import { ReactComponent as cardIcon } from "../../../assets/details-svgrepo-com.svg";
+import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import Description from "./Description";
+import Time from "./Time";
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,20 +35,10 @@ const TitleInput = styled.input`
   box-sizing: border-box;
 `;
 
-const TextAreaWrapper = styled.div`
-  margin: 10px;
-`;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
 `;
-
-const TextAreaLabel = styled.label``;
-
-const TextArea = styled.textarea``;
-
-const TextAreaButton = styled.button``;
 
 const TimeWrapper = styled.div`
   margin: 10px;
@@ -268,36 +259,28 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   };
 
   const updateDescriptionHandler = (text: string) => {
-    console.log(text);
-
-    // if (
-    //   !descriptionRef.current?.value.trim() ||
-    //   descriptionRef.current?.value.trim() === state?.description
-    // ) {
-    //   return;
-    // }
-    // const newDescription = descriptionRef.current.value.trim();
     dispatch({
       type: "UPDATE_DESCRIPTION",
       payload: { description: text },
     });
   };
 
-  const updateTimeHandler = (event: FormEvent) => {
-    event.preventDefault();
-    const time = startTimeRef.current?.value;
-    const deadline = deadlineRef.current?.value;
-    const obj: { start?: number; deadline?: number } = {};
-    const newTime = produce(obj, (draftState) => {
-      if (time) {
-        const newTime = new Date(`${time}:00Z`).getTime();
-        draftState.start = newTime;
-      }
-      if (deadline) {
-        const newTime = new Date(`${deadline}:00Z`).getTime();
-        draftState.deadline = newTime;
-      }
-    });
+  const updateTimeHandler = (curStart: number, curDeadline: number) => {
+    // event.preventDefault();
+    // const time = startTimeRef.current?.value;
+    // const deadline = deadlineRef.current?.value;
+    // const obj: { start?: number; deadline?: number } = {};
+    // const newTime = produce(obj, (draftState) => {
+    //   if (time) {
+    //     const newTime = new Date(`${time}:00Z`).getTime();
+    //     draftState.start = newTime;
+    //   }
+    //   if (deadline) {
+    //     const newTime = new Date(`${deadline}:00Z`).getTime();
+    //     draftState.deadline = newTime;
+    //   }
+    // });
+    const newTime = { start: curStart, deadline: curDeadline };
     dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
   };
 
@@ -423,30 +406,11 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           onSubmit={updateDescriptionHandler}
           text={state.description || ""}
         />
-        <TimeWrapper>
-          {(state.time?.start || state.time?.deadline) && (
-            <TimeCheckboxWrapper>
-              <TimeCheckbox type="checkbox" />
-              <TimeCheckboxLabel>
-                {state.time.start &&
-                  `${new Date(state.time.start).toDateString()}-`}
-                {state.time.deadline &&
-                  `${new Date(state.time.deadline).toDateString()}`}
-              </TimeCheckboxLabel>
-            </TimeCheckboxWrapper>
-          )}
-          <Form onSubmit={updateTimeHandler}>
-            <TimeInputWrapper>
-              <TimeInputLabel>Start from:</TimeInputLabel>
-              <TimeInput type="datetime-local" ref={startTimeRef} />
-            </TimeInputWrapper>
-            <TimeInputWrapper>
-              <TimeInputLabel>Deadline :</TimeInputLabel>
-              <TimeInput type="datetime-local" ref={deadlineRef} />
-            </TimeInputWrapper>
-            <TimeButton>save time</TimeButton>
-          </Form>
-        </TimeWrapper>
+        <Time
+          curStart={state.time?.start}
+          curDeadline={state.time?.deadline}
+          onSubmit={updateTimeHandler}
+        />
         <TagsContainer>
           <TagList>
             {state.tagsIDs &&
