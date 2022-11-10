@@ -7,7 +7,17 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { auth, db, firebaseConfig } from "../firebase";
+import { initializeApp } from "firebase/app";
+import {
+  getDatabase,
+  set,
+  onDisconnect,
+  serverTimestamp,
+  ref,
+  onValue,
+  push,
+} from "firebase/database";
 
 interface AuthContextInterface {
   currentUser: any;
@@ -26,10 +36,10 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<{
-    uid: string;
+    uid: string | undefined;
     email: string | null;
     displayName: string;
-  }>();
+  }>({ uid: undefined, email: null, displayName: "" });
   const [isLoading, setIsLoading] = useState(true);
 
   const signup = async (
@@ -80,6 +90,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (currentUser.uid === undefined) return;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
+
+    var isOfflineForDatabase = {
+      state: "offline",
+      last_changed: serverTimestamp(),
+    };
+
+    var isOnlineForDatabase = {
+      state: "online",
+      last_changed: serverTimestamp(),
+    };
+
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        onDisconnect(userStatusDatabaseRef)
+          .set(isOfflineForDatabase)
+          .then(function () {
+            set(userStatusDatabaseRef, isOnlineForDatabase);
+          });
+      }
+    });
+  }, [currentUser.uid]);
 
   return (
     <AuthContext.Provider value={value}>
