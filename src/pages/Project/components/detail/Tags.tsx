@@ -5,14 +5,34 @@ import { FormEvent, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 
-const TagsContainer = styled.div``;
+const TagsContainer = styled.div`
+  margin: 0px 10px;
+`;
+
+const TagTitle = styled.div`
+  font-size: 16px;
+  font-weight: 900;
+`;
 
 const TagList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
   margin: 5px 0px;
+`;
+
+const TagEditButton = styled.button<{ isEdit: boolean }>`
+  background-color: #ddd;
+  border: 1px #999 solid;
+  border-radius: 5px;
+  margin: 0px 5px;
+  display: ${(props) => (props.isEdit ? "none" : "block")};
+
+  &:hover {
+    background-color: #999;
+  }
 `;
 
 const TagWrapper = styled.div`
@@ -49,21 +69,86 @@ const Tag = styled.div`
   font-size: 14px;
 `;
 
-const TagSelectorList = styled.div``;
+const TagSelectorList = styled.div<{ isEdit: boolean }>`
+  display: ${(props) => (props.isEdit ? "flex" : "none")};
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px 0px;
+  width: 260px;
+`;
+
+const TagSelectorTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const TagSelectorTitle = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+const TagSelectorCloseButton = styled(closeIcon)`
+  width: 30px;
+  height: 30px;
+  path {
+    fill: #999;
+  }
+
+  &:hover {
+    path {
+      fill: #555;
+    }
+  }
+`;
 
 const TagSelectorWrapper = styled.div`
   font-size: 14px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 `;
 
 const TagCheckbox = styled.input``;
 
-const TagCheckboxLabel = styled.label``;
+const TagCheckboxLabel = styled.label`
+  margin: 0px 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 2px 10px;
+  width: 200px;
+  border-radius: 5px;
+  background-color: #faf3c0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e6c60d80;
+  }
+`;
 
 const NewTagInputForm = styled.form``;
 
-const NewTagInput = styled.input``;
+const NewTagInput = styled.input`
+  width: 180px;
+  margin-right: 5px;
+`;
 
-const NewTagButton = styled.button``;
+const NewTagButton = styled.button`
+  width: 70px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #42a5f5;
+  height: 26px;
+  line-height: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1976d2;
+  }
+`;
 
 interface Props {
   tagsIDs: string[] | undefined;
@@ -73,6 +158,7 @@ interface Props {
 
 const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const newTagRef = useRef<HTMLInputElement | null>(null);
   const { id } = useParams();
 
@@ -131,6 +217,7 @@ const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
 
   return (
     <TagsContainer>
+      <TagTitle>Tags:</TagTitle>
       <TagList>
         {tagsIDs &&
           tags &&
@@ -144,8 +231,24 @@ const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
               );
             }
           })}
+        <TagEditButton
+          isEdit={isEdit}
+          onClick={() => {
+            setIsEdit(true);
+          }}
+        >
+          Edit
+        </TagEditButton>
       </TagList>
-      <TagSelectorList>
+      <TagSelectorList isEdit={isEdit}>
+        <TagSelectorTitleWrapper>
+          <TagSelectorTitle>Edit Tags</TagSelectorTitle>
+          <TagSelectorCloseButton
+            onClick={() => {
+              setIsEdit(false);
+            }}
+          />
+        </TagSelectorTitleWrapper>
         {tags &&
           tags.map((tag) => {
             return (
@@ -164,11 +267,11 @@ const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
               </TagSelectorWrapper>
             );
           })}
+        <NewTagInputForm onSubmit={tagFormHandler}>
+          <NewTagInput type="text" required ref={newTagRef} />
+          <NewTagButton>add tag</NewTagButton>
+        </NewTagInputForm>
       </TagSelectorList>
-      <NewTagInputForm onSubmit={tagFormHandler}>
-        <NewTagInput type="text" required ref={newTagRef} />
-        <NewTagButton>add tag</NewTagButton>
-      </NewTagInputForm>
     </TagsContainer>
   );
 };
