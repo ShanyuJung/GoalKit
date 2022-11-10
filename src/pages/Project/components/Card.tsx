@@ -2,7 +2,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as DescriptionLogo } from "../../../assets/text-description-svgrepo-com.svg";
 
-const Container = styled.div`
+interface IsDraggingProps {
+  isDragging: boolean;
+}
+
+const Container = styled.div<IsDraggingProps>`
   width: 240px;
   min-height: 60px;
   margin: 10px 5px;
@@ -13,6 +17,7 @@ const Container = styled.div`
   font-weight: 400;
   line-height: 20px;
   box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.15);
+  outline: ${(props) => (props.isDragging ? "2px solid blue" : "none")};
 `;
 
 const Wrapper = styled.div`
@@ -118,9 +123,10 @@ interface Props {
   cardInfo: CardInterface;
   tags?: { id: string; colorCode: string; title: string }[];
   members: Member[];
+  draggingCards: string[] | undefined;
 }
 
-const Card: React.FC<Props> = ({ cardInfo, tags, members }) => {
+const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -172,6 +178,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members }) => {
 
   return (
     <Container
+      isDragging={draggingCards?.includes(cardInfo.id) || false}
       onClick={() => {
         navigate(`/project/${id}/card/${cardInfo.id}`);
       }}

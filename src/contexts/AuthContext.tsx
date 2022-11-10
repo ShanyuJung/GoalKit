@@ -94,7 +94,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       setIsLoading(false);
       setCurrentUser(user);
-      console.log(user);
     });
 
     return unsubscribe;
@@ -104,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!currentUser || currentUser.uid === undefined) return;
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
+    const userStatusDatabaseRef = ref(db, `/status/${currentUser.uid}`);
 
     var isOfflineForDatabase = {
       state: "offline",

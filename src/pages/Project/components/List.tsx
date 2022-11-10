@@ -3,17 +3,22 @@ import Card from "./Card";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
 
-const Container = styled.div`
+interface IsDraggingProps {
+  isDragging: boolean;
+}
+
+const Container = styled.div<IsDraggingProps>`
   border-radius: 10px;
   margin: 0px 5px;
   background-color: #ebecf0;
   padding: 10px 3px 10px 10px;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+  outline: ${(props) => (props.isDragging ? "2px solid blue" : "none")};
 `;
 
 const Wrapper = styled.div`
-  max-height: calc(100vh - 150px);
-  overflow-y: scroll;
+  /* max-height: calc(100vh - 150px);
+  overflow-y: scroll; */
 
   &::-webkit-scrollbar {
     width: 7px;
@@ -62,13 +67,28 @@ interface Props {
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
   members: Member[];
+  draggingLists: string[] | undefined;
+  draggingCards: string[] | undefined;
 }
 
-const List = ({ title, cards, id, newCardHandler, tags, members }: Props) => {
+const List = ({
+  title,
+  cards,
+  id,
+  newCardHandler,
+  tags,
+  members,
+  draggingLists,
+  draggingCards,
+}: Props) => {
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
-        <Container {...provided.droppableProps} ref={provided.innerRef}>
+        <Container
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+          isDragging={draggingLists?.includes(id) || false}
+        >
           <Title>{title}</Title>
           <Wrapper>
             {cards.map((card, index) => {
@@ -92,6 +112,7 @@ const List = ({ title, cards, id, newCardHandler, tags, members }: Props) => {
                         cardInfo={card}
                         tags={tags}
                         members={members}
+                        draggingCards={draggingCards}
                       />
                     </div>
                   )}

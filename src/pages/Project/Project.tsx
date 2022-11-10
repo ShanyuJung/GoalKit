@@ -6,10 +6,13 @@ import {
   Droppable,
   Draggable,
   DropResult,
+  DragStart,
 } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import produce from "immer";
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   getDocs,
@@ -25,6 +28,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
+import { async } from "@firebase/util";
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +38,7 @@ const Container = styled.div`
 const BorderWrapper = styled.div`
   height: calc(100vh - 50px);
   flex-grow: 1;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
 `;
 
 const SubNavbar = styled.div`
@@ -85,6 +89,8 @@ interface ProjectInterface {
   title: string;
   lists: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
+  draggingLists?: string[];
+  draggingCards?: string[];
 }
 
 interface Workspace {
@@ -124,8 +130,30 @@ const Project = () => {
     setIsLoading(false);
   };
 
+  const isDraggingHandler = async ({ draggableId, type }: DragStart) => {
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
+    if (type === "BOARD") {
+      await updateDoc(projectRef, { draggingLists: arrayUnion(draggableId) });
+    }
+    if (type === "LIST") {
+      await updateDoc(projectRef, { draggingCards: arrayUnion(draggableId) });
+    }
+  };
+
+  const isDroppedHandler = async (draggableId: string, type: string) => {
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
+    if (type === "BOARD") {
+      await updateDoc(projectRef, { draggingLists: arrayRemove(draggableId) });
+    }
+    if (type === "LIST") {
+      await updateDoc(projectRef, { draggingCards: arrayRemove(draggableId) });
+    }
+  };
+
   const onDragEndHandler = (result: DropResult) => {
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
     if (!destination) return;
 
     if (result.type === "BOARD") {
@@ -133,8 +161,9 @@ const Project = () => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
+      isDroppedHandler(draggableId, result.type);
+      setLists(newLists);
       updateDataHandler(newLists);
-      // setList(newList);
     }
 
     if (result.type === "LIST") {
@@ -152,8 +181,9 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
+      isDroppedHandler(draggableId, result.type);
+      setLists(newLists);
       updateDataHandler(newLists);
-      // setList(newList);
     }
   };
 
@@ -272,6 +302,8 @@ const Project = () => {
                             id={list.id}
                             tags={project?.tags || undefined}
                             members={members}
+                            draggingLists={project?.draggingLists || undefined}
+                            draggingCards={project?.draggingCards || undefined}
                           />
                         </div>
                       )}
@@ -309,7 +341,10 @@ const Project = () => {
             <SubNavbar>
               <TitleWrapper>{project && project.title}</TitleWrapper>
             </SubNavbar>
-            <DragDropContext onDragEnd={onDragEndHandler}>
+            <DragDropContext
+              onDragEnd={onDragEndHandler}
+              onDragStart={isDraggingHandler}
+            >
               {isExist && projectBoard()}
               {isExist === false && <div>Project is not exist.</div>}
             </DragDropContext>
