@@ -120,7 +120,6 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const newTagRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
   const updateDataHandler = async (newList: ListInterface[]) => {
