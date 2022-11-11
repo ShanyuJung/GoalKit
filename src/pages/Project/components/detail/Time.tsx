@@ -119,6 +119,10 @@ const Time: React.FC<Props> = ({ curStart, curDeadline, onSubmit }) => {
     if (startTime && deadline) {
       const newStartTime = new Date(`${startTime}:00Z`).getTime();
       const newDeadline = new Date(`${deadline}:00Z`).getTime();
+      if (newStartTime >= newDeadline) {
+        alert("Start time must not be later than deadline!");
+        return;
+      }
       onSubmit(newStartTime, newDeadline);
       setIsEdit(false);
     }
