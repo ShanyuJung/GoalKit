@@ -28,7 +28,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
-import { async } from "@firebase/util";
 
 const Container = styled.div`
   display: flex;
@@ -38,6 +37,7 @@ const Container = styled.div`
 const BorderWrapper = styled.div`
   height: calc(100vh - 50px);
   flex-grow: 1;
+  padding-left: 260px;
   /* overflow-x: scroll; */
 `;
 
@@ -284,6 +284,9 @@ const Project = () => {
                       key={`draggable-${list.id}`}
                       draggableId={list.id}
                       index={index}
+                      isDragDisabled={
+                        project?.draggingLists?.includes(list.id) || false
+                      }
                     >
                       {(provided, snapshot) => (
                         <div
@@ -344,6 +347,9 @@ const Project = () => {
             <DragDropContext
               onDragEnd={onDragEndHandler}
               onDragStart={isDraggingHandler}
+              onDragUpdate={(e) => {
+                console.log(e);
+              }}
             >
               {isExist && projectBoard()}
               {isExist === false && <div>Project is not exist.</div>}

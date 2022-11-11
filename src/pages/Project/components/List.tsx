@@ -97,6 +97,7 @@ const List = ({
                   key={`draggable-card-${card.id}`}
                   draggableId={card.id}
                   index={index}
+                  isDragDisabled={draggingCards?.includes(card.id) || false}
                 >
                   {(provided, snapshot) => (
                     <div
