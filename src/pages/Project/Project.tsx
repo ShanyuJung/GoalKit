@@ -18,6 +18,7 @@ import {
   getDocs,
   onSnapshot,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -28,6 +29,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
+import OnlineMembers from "./components/OnlineMembers";
 
 const Container = styled.div`
   display: flex;
@@ -42,12 +44,13 @@ const BorderWrapper = styled.div`
 `;
 
 const SubNavbar = styled.div`
+  width: calc(100vw - 260px);
   height: 40px;
   padding: 0px 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: fixed;
-  width: 100%;
   background-color: #fff;
   z-index: 9;
 `;
@@ -105,6 +108,8 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
 }
 
 const Project = () => {
@@ -114,6 +119,7 @@ const Project = () => {
     undefined
   );
   const [members, setMembers] = useState<Member[]>([]);
+  const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
@@ -243,12 +249,14 @@ const Project = () => {
           draftState.push(docData);
         });
       });
-
+      setMemberIDs(curWorkspaces[0].members);
       setMembers(curMembers);
     };
 
     getMembersHandler();
   }, [project]);
+
+  console.log(memberIDs);
 
   useEffect(() => {
     if (!id) return;
@@ -343,13 +351,11 @@ const Project = () => {
           <BorderWrapper>
             <SubNavbar>
               <TitleWrapper>{project && project.title}</TitleWrapper>
+              <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
             <DragDropContext
               onDragEnd={onDragEndHandler}
               onDragStart={isDraggingHandler}
-              onDragUpdate={(e) => {
-                console.log(e);
-              }}
             >
               {isExist && projectBoard()}
               {isExist === false && <div>Project is not exist.</div>}

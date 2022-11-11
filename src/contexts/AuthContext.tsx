@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!currentUser || currentUser.uid === undefined) return;
+
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const userStatusDatabaseRef = ref(db, `/status/${currentUser.uid}`);
