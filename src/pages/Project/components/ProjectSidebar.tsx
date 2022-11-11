@@ -1,9 +1,10 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import produce from "immer";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import styled from "styled-components";
 import { db } from "../../../firebase";
+import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
 
 interface StylesProps {
   isShow: boolean;
@@ -19,12 +20,13 @@ const SidebarWrapper = styled.div<StylesProps>`
   position: fixed;
 `;
 
-const WorkspaceTitleWrapper = styled.div`
+const WorkspaceTitleWrapper = styled.div<StylesProps>`
   height: 70px;
   display: flex;
   align-items: center;
   padding: 0px 20px;
   justify-content: space-between;
+  border-bottom: ${(props) => (props.isShow ? "1px #ddd solid" : "none")};
 `;
 
 const WorkspaceTitle = styled.div<StylesProps>`
@@ -61,6 +63,50 @@ const ToggleButton = styled.button<StylesProps>`
   &:hover {
     background-color: ${(props) =>
       props.isShow ? "#64b5f6" : "rgba(100,181,246,0.2)"};
+  }
+`;
+
+const LinkList = styled.div<StylesProps>`
+  display: ${(props) => (props.isShow ? "flex" : "none")};
+  flex-direction: column;
+  width: 100%;
+`;
+
+const LinkWrapper = styled.div`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0px 20px;
+`;
+
+const StyledLink = styled(Link)`
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  &:hover {
+    font-size: 22px;
+    font-weight: 900;
+  }
+`;
+
+const ChartLogo = styled(chartIcon)`
+  width: 20px;
+  margin-right: 10px;
+  path {
+    fill: #fff;
+  }
+
+  rect {
+    fill: #fff;
   }
 `;
 
@@ -109,7 +155,7 @@ const ProjectSidebar = ({ title }: Props) => {
 
   return (
     <SidebarWrapper isShow={isShow}>
-      <WorkspaceTitleWrapper>
+      <WorkspaceTitleWrapper isShow={isShow}>
         <WorkspaceTitle
           isShow={isShow}
           onClick={() => {
@@ -127,6 +173,14 @@ const ProjectSidebar = ({ title }: Props) => {
           {isShow ? "<" : ">"}
         </ToggleButton>
       </WorkspaceTitleWrapper>
+      <LinkList isShow={isShow}>
+        <LinkWrapper>
+          <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
+            <ChartLogo />
+            Chart
+          </StyledLink>
+        </LinkWrapper>
+      </LinkList>
     </SidebarWrapper>
   );
 };
