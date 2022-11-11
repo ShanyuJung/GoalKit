@@ -63,7 +63,7 @@ const Wrapper = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  padding: 0px 20px 10px 20px;
+  padding: 10px 20px 10px 20px;
   display: flex;
   width: fit-content;
   overflow-x: scroll;
@@ -154,6 +154,7 @@ const Project = () => {
 
   const onDragEndHandler = (result: DropResult) => {
     const { source, destination, draggableId } = result;
+    isDroppedHandler(draggableId, result.type);
     if (!destination) return;
 
     if (result.type === "BOARD") {
@@ -161,7 +162,6 @@ const Project = () => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
-      isDroppedHandler(draggableId, result.type);
       setLists(newLists);
       updateDataHandler(newLists);
     }
@@ -181,10 +181,10 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
-      isDroppedHandler(draggableId, result.type);
       setLists(newLists);
       updateDataHandler(newLists);
     }
+    // isDroppedHandler(draggableId, result.type);
   };
 
   const newCardHandler = (newCardTitle: string, parentID: string) => {
