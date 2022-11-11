@@ -6,15 +6,19 @@ import {
   Droppable,
   Draggable,
   DropResult,
+  DragStart,
 } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import produce from "immer";
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   getDocs,
   onSnapshot,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -25,6 +29,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
+import OnlineMembers from "./components/OnlineMembers";
 
 const Container = styled.div`
   display: flex;
@@ -34,16 +39,18 @@ const Container = styled.div`
 const BorderWrapper = styled.div`
   height: calc(100vh - 50px);
   flex-grow: 1;
-  overflow-x: scroll;
+  padding-left: 260px;
+  /* overflow-x: scroll; */
 `;
 
 const SubNavbar = styled.div`
+  width: calc(100vw - 260px);
   height: 40px;
   padding: 0px 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: fixed;
-  width: 100%;
   background-color: #fff;
   z-index: 9;
 `;
@@ -59,7 +66,7 @@ const Wrapper = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  padding: 0px 20px 10px 20px;
+  padding: 10px 20px 10px 20px;
   display: flex;
   width: fit-content;
   overflow-x: scroll;
@@ -85,6 +92,8 @@ interface ProjectInterface {
   title: string;
   lists: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
+  draggingLists?: string[];
+  draggingCards?: string[];
 }
 
 interface Workspace {
@@ -99,6 +108,8 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
 }
 
 const Project = () => {
@@ -108,6 +119,7 @@ const Project = () => {
     undefined
   );
   const [members, setMembers] = useState<Member[]>([]);
+  const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
@@ -124,8 +136,31 @@ const Project = () => {
     setIsLoading(false);
   };
 
+  const isDraggingHandler = async ({ draggableId, type }: DragStart) => {
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
+    if (type === "BOARD") {
+      await updateDoc(projectRef, { draggingLists: arrayUnion(draggableId) });
+    }
+    if (type === "LIST") {
+      await updateDoc(projectRef, { draggingCards: arrayUnion(draggableId) });
+    }
+  };
+
+  const isDroppedHandler = async (draggableId: string, type: string) => {
+    if (!id) return;
+    const projectRef = doc(db, "projects", id);
+    if (type === "BOARD") {
+      await updateDoc(projectRef, { draggingLists: arrayRemove(draggableId) });
+    }
+    if (type === "LIST") {
+      await updateDoc(projectRef, { draggingCards: arrayRemove(draggableId) });
+    }
+  };
+
   const onDragEndHandler = (result: DropResult) => {
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
+    isDroppedHandler(draggableId, result.type);
     if (!destination) return;
 
     if (result.type === "BOARD") {
@@ -133,8 +168,8 @@ const Project = () => {
         const [newOrder] = draftState.splice(source.index, 1);
         draftState.splice(destination.index, 0, newOrder);
       });
+      setLists(newLists);
       updateDataHandler(newLists);
-      // setList(newList);
     }
 
     if (result.type === "LIST") {
@@ -152,9 +187,10 @@ const Project = () => {
         );
         draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
       });
+      setLists(newLists);
       updateDataHandler(newLists);
-      // setList(newList);
     }
+    // isDroppedHandler(draggableId, result.type);
   };
 
   const newCardHandler = (newCardTitle: string, parentID: string) => {
@@ -213,12 +249,14 @@ const Project = () => {
           draftState.push(docData);
         });
       });
-
+      setMemberIDs(curWorkspaces[0].members);
       setMembers(curMembers);
     };
 
     getMembersHandler();
   }, [project]);
+
+  console.log(memberIDs);
 
   useEffect(() => {
     if (!id) return;
@@ -254,6 +292,9 @@ const Project = () => {
                       key={`draggable-${list.id}`}
                       draggableId={list.id}
                       index={index}
+                      isDragDisabled={
+                        project?.draggingLists?.includes(list.id) || false
+                      }
                     >
                       {(provided, snapshot) => (
                         <div
@@ -272,6 +313,8 @@ const Project = () => {
                             id={list.id}
                             tags={project?.tags || undefined}
                             members={members}
+                            draggingLists={project?.draggingLists || undefined}
+                            draggingCards={project?.draggingCards || undefined}
                           />
                         </div>
                       )}
@@ -308,8 +351,12 @@ const Project = () => {
           <BorderWrapper>
             <SubNavbar>
               <TitleWrapper>{project && project.title}</TitleWrapper>
+              <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
-            <DragDropContext onDragEnd={onDragEndHandler}>
+            <DragDropContext
+              onDragEnd={onDragEndHandler}
+              onDragStart={isDraggingHandler}
+            >
               {isExist && projectBoard()}
               {isExist === false && <div>Project is not exist.</div>}
             </DragDropContext>
