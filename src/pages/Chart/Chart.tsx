@@ -10,17 +10,9 @@ import GanttChart from "./components/GanttChart";
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
 `;
 
-const Wrapper = styled.div`
-  width: 100%;
-  padding: 20px;
-`;
-
-const ChartDashboardWrapper = styled.div``;
-
-const ViewModeButton = styled.button``;
+const ChartArea = styled.div``;
 
 interface CardInterface {
   title: string;
@@ -72,7 +64,11 @@ const Chart = () => {
     if (chartType === "gantt") return <GanttChart lists={lists} />;
   };
 
-  return <Container>{isExist && chartHandler()}</Container>;
+  return (
+    <Container>
+      <ChartArea>{isExist && chartHandler()}</ChartArea>
+    </Container>
+  );
 };
 
 export default Chart;
