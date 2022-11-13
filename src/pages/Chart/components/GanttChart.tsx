@@ -168,6 +168,7 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
   useEffect(() => {
     const listTransformHandler = () => {
       if (lists.length === 0) return;
+
       const newTasks: Task[] = [];
       lists.forEach((list) => {
         list.cards.forEach((card) => {
@@ -210,18 +211,24 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
   }, [lists]);
 
   const displayChart = () => {
-    if (tasks.length > 0) {
+    if (tasks.length === 0) {
       return (
-        <Gantt
-          tasks={tasks}
-          rowHeight={40}
-          fontSize={"10px"}
-          viewMode={view}
-          listCellWidth={isHeader ? "155px" : ""}
-          columnWidth={columnWidth}
-        />
+        <div>
+          There is no task card with planning time, add planning time to
+          generate gantt chart.
+        </div>
       );
     }
+    return (
+      <Gantt
+        tasks={tasks}
+        rowHeight={40}
+        fontSize={"10px"}
+        viewMode={view}
+        listCellWidth={isHeader ? "155px" : ""}
+        columnWidth={columnWidth}
+      />
+    );
   };
 
   return (

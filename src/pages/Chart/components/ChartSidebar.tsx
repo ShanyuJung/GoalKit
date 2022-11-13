@@ -35,6 +35,8 @@ const LinkWrapper = styled.div`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  height: 50px;
+  width: 100%;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -82,7 +84,7 @@ const ChartSidebar: React.FC<Props> = ({ isShow }) => {
         <LinkWrapper>
           <StyledLink to={`/project/${id}/`} relative="path">
             <ChartLogo />
-            <LinkText>Back to Project</LinkText>
+            <LinkText>Back to Board</LinkText>
           </StyledLink>
         </LinkWrapper>
       </LinkList>
