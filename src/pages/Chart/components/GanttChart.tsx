@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
 import { useParams } from "react-router-dom";
 
-const Container = styled.div`
+interface StylesProps {
+  isShowSidebar: boolean;
+}
+
+const Container = styled.div<StylesProps>`
   display: flex;
   flex-direction: column;
+  padding-left: ${(props) => (props.isShowSidebar ? "280px" : "20px")};
+  transition: padding 0.3s;
 `;
 
 const Wrapper = styled.div`
@@ -122,9 +128,10 @@ interface ListInterface {
 
 interface Props {
   lists: ListInterface[];
+  isShowSidebar: boolean;
 }
 
-const GanttChart: React.FC<Props> = ({ lists }) => {
+const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [view, setView] = useState(ViewMode.Day);
   const [columnWidth, setColumnWidth] = useState(45);
@@ -193,8 +200,6 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
           }
         });
       });
-
-      console.log(newTasks);
       setTasks(newTasks);
     };
     listTransformHandler();
@@ -216,7 +221,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
   };
 
   return (
-    <Container>
+    <Container isShowSidebar={isShowSidebar}>
       <Wrapper>
         <ChartDashboardWrapper>
           <ViewModeSelectWrapper>

@@ -1,18 +1,37 @@
 import styled from "styled-components";
-import { Gantt, Task, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
-import { TaskType } from "gantt-task-react/dist/types/public-types";
 import GanttChart from "./components/GanttChart";
+import ChartSidebar from "./components/ChartSidebar";
 
 const Container = styled.div`
   display: flex;
 `;
 
 const ChartArea = styled.div``;
+
+const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1976d2;
+  top: 60px;
+  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
+  height: 30px;
+  width: 30px;
+  background-color: aliceblue;
+  border-color: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12;
+  transition: left 0.3s;
+`;
 
 interface CardInterface {
   title: string;
@@ -41,7 +60,7 @@ interface ProjectInterface {
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
-  const [view, setView] = useState(ViewMode.Day);
+  const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 
   useEffect(() => {
@@ -61,11 +80,21 @@ const Chart = () => {
   }, []);
 
   const chartHandler = () => {
-    if (chartType === "gantt") return <GanttChart lists={lists} />;
+    if (chartType === "gantt")
+      return <GanttChart lists={lists} isShowSidebar={isShowSidebar} />;
   };
 
   return (
     <Container>
+      <ChartSidebar isShow={isShowSidebar} />
+      <ShowSidebarButton
+        isShowSidebar={isShowSidebar}
+        onClick={() => {
+          setIsShowSidebar((prev) => !prev);
+        }}
+      >
+        {isShowSidebar ? "<" : ">"}
+      </ShowSidebarButton>
       <ChartArea>{isExist && chartHandler()}</ChartArea>
     </Container>
   );
