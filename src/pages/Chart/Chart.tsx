@@ -11,7 +11,9 @@ const Container = styled.div`
   display: flex;
 `;
 
-const ChartArea = styled.div``;
+const ChartArea = styled.div`
+  overflow: scroll;
+`;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   position: absolute;

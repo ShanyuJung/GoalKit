@@ -130,12 +130,20 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const deadline = () => {
-    if (cardInfo.time?.deadline) {
-      const date = new Date(cardInfo.time?.deadline);
-      const month = date.getMonth();
-      const day = date.getDate();
-      return `Deadline: ${month + 1}/${day}`;
+  const time = () => {
+    if (cardInfo.time?.start && cardInfo.time?.deadline) {
+      const startDate = new Date(cardInfo.time.start);
+      const startMonth = startDate.getMonth();
+      const startDay = startDate.getDate();
+
+      const deadlineDate = new Date(cardInfo.time?.deadline);
+      const deadlineMonth = deadlineDate.getMonth();
+      const deadlineDay = deadlineDate.getDate();
+      return (
+        <TimeWrapper>{`${startMonth + 1}/${startDay} - ${
+          deadlineMonth + 1
+        }/${deadlineDay}`}</TimeWrapper>
+      );
     }
   };
 
@@ -187,7 +195,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
         {cardInfo.tagsIDs && tags && tagsCollection()}
         <TitleWrapper>{cardInfo.title}</TitleWrapper>
         {cardInfo.description && <DescriptionIcon />}
-        {cardInfo.time?.deadline && <TimeWrapper>{deadline()}</TimeWrapper>}
+        {cardInfo.time?.start && cardInfo.time?.deadline && time()}
         {cardInfo.owner && ownerList()}
       </Wrapper>
     </Container>

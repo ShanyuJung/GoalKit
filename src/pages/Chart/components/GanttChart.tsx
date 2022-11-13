@@ -171,7 +171,11 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
       const newTasks: Task[] = [];
       lists.forEach((list) => {
         list.cards.forEach((card) => {
-          if (card.time?.start && card.time?.deadline) {
+          if (
+            card.time?.start &&
+            card.time?.deadline &&
+            card.time?.start < card.time?.deadline
+          ) {
             const newStart = new Date(card.time?.start);
             const newDeadline = new Date(card.time.deadline);
 

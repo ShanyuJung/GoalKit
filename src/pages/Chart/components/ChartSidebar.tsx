@@ -42,6 +42,9 @@ const StyledLink = styled(Link)`
 `;
 
 const LinkText = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: #fff;
   font-size: 20px;
   font-weight: 600;
