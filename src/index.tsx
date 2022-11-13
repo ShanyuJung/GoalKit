@@ -10,6 +10,7 @@ import Login from "./pages/Login/Login";
 import Dashboard from "./pages/User/Dashboard";
 import Workspace from "./pages/Workspace/Workspace";
 import Project from "./pages/Project/Project";
+import Chart from "./pages/Chart/Chart";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -25,6 +26,7 @@ root.render(
         <Route path="workspace/:id" element={<Workspace />} />
         <Route path="project/:id" element={<Project />} />
         <Route path="project/:id/card/:cardId" element={<Project />} />
+        <Route path="project/:id/chart/:chartType" element={<Chart />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

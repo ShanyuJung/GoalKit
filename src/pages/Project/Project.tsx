@@ -36,10 +36,11 @@ const Container = styled.div`
   flex-wrap: nowrap;
 `;
 
-const BorderWrapper = styled.div`
+const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 50px);
   flex-grow: 1;
-  padding-left: 260px;
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  transition: padding 0.3s;
   /* overflow-x: scroll; */
 `;
 
@@ -70,6 +71,26 @@ const ListWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow-x: scroll;
+`;
+
+const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1976d2;
+  top: 60px;
+  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
+  height: 30px;
+  width: 30px;
+  background-color: aliceblue;
+  border-color: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12;
+  transition: left 0.3s;
 `;
 
 interface CardInterface {
@@ -121,6 +142,7 @@ const Project = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
 
@@ -256,8 +278,6 @@ const Project = () => {
     getMembersHandler();
   }, [project]);
 
-  console.log(memberIDs);
-
   useEffect(() => {
     if (!id) return;
     const projectRef = doc(db, "projects", id);
@@ -347,8 +367,16 @@ const Project = () => {
           </Modal>
         )}
         <Container>
-          <ProjectSidebar title={project?.title} />
-          <BorderWrapper>
+          <ProjectSidebar title={project?.title} isShow={isShowSidebar} />
+          <ShowSidebarButton
+            isShowSidebar={isShowSidebar}
+            onClick={() => {
+              setIsShowSidebar((prev) => !prev);
+            }}
+          >
+            {isShowSidebar ? "<" : ">"}
+          </ShowSidebarButton>
+          <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar>
               <TitleWrapper>{project && project.title}</TitleWrapper>
               <OnlineMembers memberIDs={memberIDs} />
