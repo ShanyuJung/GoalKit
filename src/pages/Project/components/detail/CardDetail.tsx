@@ -43,6 +43,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: number;
 }
 
 interface ListInterface {
@@ -108,13 +110,21 @@ interface OwnerPayloadAction {
   };
 }
 
+interface CompletePayloadAction {
+  type: "UPDATE_COMPLETE";
+  payload: {
+    complete: boolean;
+  };
+}
+
 type Action =
   | TitlePayloadAction
   | TimePayloadAction
   | InitialState
   | DescriptionPayloadAction
   | TagPayloadAction
-  | OwnerPayloadAction;
+  | OwnerPayloadAction
+  | CompletePayloadAction;
 
 const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -182,6 +192,11 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           ...state,
           owner: action.payload.owner,
         };
+      case "UPDATE_COMPLETE":
+        return {
+          ...state,
+          complete: action.payload.complete,
+        };
       default:
         return state;
     }
@@ -225,6 +240,10 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
       draftState.push(ownerID);
     });
     dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
+  };
+
+  const completeTaskHandler = (isChecked: boolean) => {
+    dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
 
   useEffect(() => {
@@ -289,7 +308,9 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
         <Time
           curStart={state.time?.start}
           curDeadline={state.time?.deadline}
+          isComplete={state.complete || false}
           onSubmit={updateTimeHandler}
+          onCheck={completeTaskHandler}
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners

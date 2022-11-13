@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as DescriptionLogo } from "../../../assets/text-description-svgrepo-com.svg";
@@ -35,8 +36,8 @@ const DescriptionIcon = styled(DescriptionLogo)`
   }
 `;
 
-const TimeWrapper = styled.div`
-  background-color: #dcedc8;
+const TimeWrapper = styled.div<{ colorCode: string }>`
+  background-color: ${(props) => props.colorCode};
   width: fit-content;
   padding: 1px 5px;
   height: 20px;
@@ -111,6 +112,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: number;
 }
 
 interface Member {
@@ -127,6 +130,7 @@ interface Props {
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
+  const [timeLabelColor, setTimeLabelColor] = useState("#FDD835");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -140,9 +144,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       const deadlineMonth = deadlineDate.getMonth();
       const deadlineDay = deadlineDate.getDate();
       return (
-        <TimeWrapper>{`${startMonth + 1}/${startDay} - ${
-          deadlineMonth + 1
-        }/${deadlineDay}`}</TimeWrapper>
+        <TimeWrapper colorCode={timeLabelColor}>{`${
+          startMonth + 1
+        }/${startDay} - ${deadlineMonth + 1}/${deadlineDay}`}</TimeWrapper>
       );
     }
   };
@@ -183,6 +187,21 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       </OwnerContainer>
     );
   };
+
+  useEffect(() => {
+    const TimeCheckboxColorHandler = () => {
+      if (cardInfo.complete) {
+        setTimeLabelColor("#74992e");
+      } else if (!cardInfo.complete && cardInfo.time?.deadline) {
+        const curTime = new Date().getTime();
+        const newColorCode =
+          cardInfo.time.deadline < curTime ? "#EF5350 " : "#FDD835 ";
+        setTimeLabelColor(newColorCode);
+      }
+    };
+
+    TimeCheckboxColorHandler();
+  }, [cardInfo]);
 
   return (
     <Container
