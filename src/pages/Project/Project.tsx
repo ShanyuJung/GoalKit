@@ -74,7 +74,7 @@ const ListWrapper = styled.div`
 `;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
