@@ -114,7 +114,9 @@ const Time: React.FC<Props> = ({
 }) => {
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
-  const [timeCheckboxColor, setTimeCheckboxColor] = useState("#FDD835");
+  const [timeCheckboxColor, setTimeCheckboxColor] = useState(
+    "rgba(253, 216, 53, 0.9)"
+  );
   const [isEdit, setIsEdit] = useState(false);
   const { cardId } = useParams();
 
@@ -151,10 +153,13 @@ const Time: React.FC<Props> = ({
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (isComplete) {
-        setTimeCheckboxColor("#74992e");
+        setTimeCheckboxColor("rgba(139, 195, 74 , 0.5)");
       } else if (!isComplete && curDeadline) {
         const curTime = new Date().getTime();
-        const newColorCode = curDeadline < curTime ? "#EF5350" : "#FDD835";
+        const newColorCode =
+          curDeadline < curTime
+            ? "rgba(239, 83, 80, 0.9)"
+            : "rgba(253, 216, 53, 0.9)";
         setTimeCheckboxColor(newColorCode);
       }
     };

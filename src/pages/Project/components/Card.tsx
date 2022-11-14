@@ -130,7 +130,9 @@ interface Props {
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
-  const [timeLabelColor, setTimeLabelColor] = useState("#FDD835");
+  const [timeLabelColor, setTimeLabelColor] = useState(
+    "rgba(253, 216, 53, 0.9)"
+  );
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -191,11 +193,13 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (cardInfo.complete) {
-        setTimeLabelColor("#74992e");
+        setTimeLabelColor("rgba(139, 195, 74, 0.5)");
       } else if (!cardInfo.complete && cardInfo.time?.deadline) {
         const curTime = new Date().getTime();
         const newColorCode =
-          cardInfo.time.deadline < curTime ? "#EF5350 " : "#FDD835 ";
+          cardInfo.time.deadline < curTime
+            ? "rgba(239, 83, 80, 0.9)"
+            : "rgba(253, 216, 53, 0.9)";
         setTimeLabelColor(newColorCode);
       }
     };
