@@ -259,7 +259,6 @@ const Project = () => {
         (list) => list.id === targetListID
       );
       draftState.splice(deleteListIndex, 1);
-      console.log(deleteListIndex);
     });
 
     updateDataHandler(newLists);
