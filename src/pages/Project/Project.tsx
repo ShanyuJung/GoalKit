@@ -44,8 +44,8 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   /* overflow-x: scroll; */
 `;
 
-const SubNavbar = styled.div`
-  width: calc(100vw - 260px);
+const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
+  width: ${(props) => (props.isShowSidebar ? "calc(100vw - 260px)" : "100%")};
   height: 40px;
   padding: 0px 40px;
   display: flex;
@@ -54,6 +54,7 @@ const SubNavbar = styled.div`
   position: fixed;
   background-color: #fff;
   z-index: 9;
+  transition: width 0.3s;
 `;
 
 const TitleWrapper = styled.div`
@@ -407,7 +408,7 @@ const Project = () => {
             {isShowSidebar ? "<" : ">"}
           </ShowSidebarButton>
           <BorderWrapper isShowSidebar={isShowSidebar}>
-            <SubNavbar>
+            <SubNavbar isShowSidebar={isShowSidebar}>
               <TitleWrapper>{project && project.title}</TitleWrapper>
               <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
