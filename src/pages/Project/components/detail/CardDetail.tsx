@@ -19,7 +19,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  width: 410px;
 `;
 const TitleWrapper = styled.div`
   display: flex;
@@ -52,7 +52,7 @@ interface CardInterface {
   owner?: string[];
   tagsIDs?: string[];
   complete?: boolean;
-  progress?: number;
+  progress?: string[];
 }
 
 interface ListInterface {

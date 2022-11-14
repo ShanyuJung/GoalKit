@@ -102,7 +102,7 @@ interface CardInterface {
   owner?: string[];
   tagsIDs?: string[];
   complete?: boolean;
-  progress?: number;
+  progress?: string[];
 }
 
 interface ListInterface {

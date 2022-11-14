@@ -118,6 +118,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: string[];
 }
 
 interface ListInterface {

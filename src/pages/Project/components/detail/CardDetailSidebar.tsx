@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
+import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -23,6 +24,7 @@ const ButtonList = styled.div`
 
 const TrashLogo = styled(TrashIcon)`
   height: 16px;
+  width: 16px;
   margin-right: 10px;
 
   path {
@@ -43,10 +45,21 @@ const CardFeatureButton = styled.button`
   padding: 5px 10px;
   border: none;
   color: #666;
+  cursor: pointer;
 
   &:hover {
     color: #111;
     background-color: #ccc;
+  }
+`;
+
+const ToDoLogo = styled(ToDoIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  path {
+    fill: #777;
   }
 `;
 
@@ -57,6 +70,8 @@ interface Props {
 const CardDetailSideBar: React.FC<Props> = ({ onDelete }) => {
   const { id, cardId } = useParams();
   const navigate = useNavigate();
+
+  const addToDoListHandler = () => {};
 
   const checkDeleteCardHandler = () => {
     const r = window.confirm("Check to delete selected card");
@@ -70,6 +85,12 @@ const CardDetailSideBar: React.FC<Props> = ({ onDelete }) => {
     <Wrapper>
       <ListTitle>Edit Card</ListTitle>
       <ButtonList>
+        <ButtonListItem>
+          <CardFeatureButton onClick={addToDoListHandler}>
+            <ToDoLogo />
+            Add to do list
+          </CardFeatureButton>
+        </ButtonListItem>
         <ButtonListItem>
           <CardFeatureButton onClick={checkDeleteCardHandler}>
             <TrashLogo />
