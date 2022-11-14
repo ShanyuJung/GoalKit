@@ -9,16 +9,24 @@ import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
 import Owners from "./Owners";
+import CardDetailSideBar from "./CardDetailSidebar";
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 `;
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 0px 10px;
   height: 36px;
+  width: 100%;
 `;
 
 const CardLogo = styled(cardIcon)`
@@ -63,6 +71,7 @@ interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
   members?: Member[];
+  onDelete: (targetCardID: string) => void;
 }
 
 const initialState = {
@@ -126,7 +135,12 @@ type Action =
   | OwnerPayloadAction
   | CompletePayloadAction;
 
-const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
+const CardDetail: React.FC<Props> = ({
+  listsArray,
+  tags,
+  members,
+  onDelete,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -291,16 +305,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
     if (state.id === "") return;
 
     return (
-      <>
-        <TitleWrapper>
-          <CardLogo />
-          <TitleInput
-            type="text"
-            ref={titleRef}
-            defaultValue={state.title}
-            onBlur={updateTitleHandler}
-          />
-        </TitleWrapper>
+      <Wrapper>
         <Description
           onSubmit={updateDescriptionHandler}
           text={state.description || ""}
@@ -318,11 +323,25 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           members={members}
           addOwnerHandler={addOwnerHandler}
         />
-      </>
+      </Wrapper>
     );
   };
 
-  return <Wrapper>{cardInfo()}</Wrapper>;
+  return (
+    <Container>
+      <TitleWrapper>
+        <CardLogo />
+        <TitleInput
+          type="text"
+          ref={titleRef}
+          defaultValue={state.title}
+          onBlur={updateTitleHandler}
+        />
+      </TitleWrapper>
+      <>{cardInfo()}</>
+      <CardDetailSideBar onDelete={onDelete} />
+    </Container>
+  );
 };
 
 export default CardDetail;

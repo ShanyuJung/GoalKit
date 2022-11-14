@@ -238,6 +238,21 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
+  const deleteCardHandler = (targetCardID: string) => {
+    const parentIndex = lists.findIndex((list) => {
+      return list.cards.find((card) => card.id === targetCardID);
+    });
+    const targetIndex = lists[parentIndex].cards.findIndex((card) => {
+      return card.id === targetCardID;
+    });
+
+    const newLists = produce(lists, (draftState) => {
+      draftState[parentIndex].cards.splice(targetIndex, 1);
+    });
+
+    updateDataHandler(newLists);
+  };
+
   const deleteListHandler = (targetListID: string) => {
     const newLists = produce(lists, (draftState) => {
       const deleteListIndex = draftState.findIndex(
@@ -375,6 +390,7 @@ const Project = () => {
                 listsArray={lists}
                 tags={project?.tags || undefined}
                 members={members}
+                onDelete={deleteCardHandler}
               />
             ) : (
               <div></div>

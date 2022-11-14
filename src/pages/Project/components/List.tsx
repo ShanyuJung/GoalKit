@@ -154,7 +154,7 @@ const List = ({
     if (r === true) {
       deleteList(id);
     } else {
-      return;
+      setIsShowModal(false);
     }
   };
 
