@@ -238,6 +238,18 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
+  const deleteListHandler = (targetListID: string) => {
+    const newLists = produce(lists, (draftState) => {
+      const deleteListIndex = draftState.findIndex(
+        (list) => list.id === targetListID
+      );
+      draftState.splice(deleteListIndex, 1);
+      console.log(deleteListIndex);
+    });
+
+    updateDataHandler(newLists);
+  };
+
   const onCloseHandler = () => {
     navigate(`/project/${id}`);
   };
@@ -337,6 +349,7 @@ const Project = () => {
                             members={members}
                             draggingLists={project?.draggingLists || undefined}
                             draggingCards={project?.draggingCards || undefined}
+                            deleteList={deleteListHandler}
                           />
                         </div>
                       )}

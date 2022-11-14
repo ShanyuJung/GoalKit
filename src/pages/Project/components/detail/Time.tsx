@@ -153,7 +153,7 @@ const Time: React.FC<Props> = ({
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (isComplete) {
-        setTimeCheckboxColor("rgba(139, 195, 74 , 0.5)");
+        setTimeCheckboxColor("#74992e");
       } else if (!isComplete && curDeadline) {
         const curTime = new Date().getTime();
         const newColorCode =

@@ -2,6 +2,9 @@ import styled from "styled-components";
 import Card from "./Card";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
+import { ReactComponent as MoreIcon } from "../../../assets/more-svgrepo-com.svg";
+import { ReactComponent as TrashIcon } from "../../../assets/trash-svgrepo-com.svg";
+import { useState } from "react";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -43,10 +46,71 @@ const Wrapper = styled.div`
   }
 `;
 
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Title = styled.div`
   margin: 0px 15px;
   font-weight: 900;
-  font-size: 16px;
+  font-size: 20px;
+`;
+
+const MoreLogo = styled(MoreIcon)`
+  height: 18px;
+  cursor: pointer;
+
+  circle {
+    fill: #929292;
+  }
+
+  &:hover {
+    circle {
+      fill: #828282;
+    }
+  }
+`;
+
+const MoreModal = styled.div<{ isShow: boolean }>`
+  display: ${(props) => (props.isShow ? "block" : "none")};
+  background-color: #ddd;
+  position: relative;
+  width: 100px;
+  top: 25px;
+  right: -55px;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+`;
+
+const ModalList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ModalListItem = styled.div`
+  padding: 5px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: #ccc;
+  }
+`;
+
+const TrashLogo = styled(TrashIcon)`
+  height: 16px;
+  margin-right: 5px;
+
+  path {
+    fill: #777;
+  }
 `;
 
 const NewCardWrapper = styled.div`
@@ -69,6 +133,7 @@ interface Props {
   members: Member[];
   draggingLists: string[] | undefined;
   draggingCards: string[] | undefined;
+  deleteList: (targetListID: string) => void;
 }
 
 const List = ({
@@ -80,7 +145,19 @@ const List = ({
   members,
   draggingLists,
   draggingCards,
+  deleteList,
 }: Props) => {
+  const [isShowModal, setIsShowModal] = useState(false);
+
+  const checkDeleteListHandler = () => {
+    const r = window.confirm("Check to delete selected list");
+    if (r === true) {
+      deleteList(id);
+    } else {
+      return;
+    }
+  };
+
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
@@ -89,7 +166,22 @@ const List = ({
           ref={provided.innerRef}
           isDragging={draggingLists?.includes(id) || false}
         >
-          <Title>{title}</Title>
+          <TitleWrapper>
+            <Title>{title}</Title>
+            <MoreModal isShow={isShowModal}>
+              <ModalList>
+                <ModalListItem onClick={checkDeleteListHandler}>
+                  <TrashLogo />
+                  Delete list
+                </ModalListItem>
+              </ModalList>
+            </MoreModal>
+            <MoreLogo
+              onClick={() => {
+                setIsShowModal((prev) => !prev);
+              }}
+            />
+          </TitleWrapper>
           <Wrapper>
             {cards.map((card, index) => {
               return (

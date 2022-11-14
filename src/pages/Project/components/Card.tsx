@@ -27,7 +27,11 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const TitleWrapper = styled.div``;
+const TitleWrapper = styled.div`
+  margin: 5px 0px;
+  font-size: 16px;
+  font-weight: 600;
+`;
 
 const DescriptionIcon = styled(DescriptionLogo)`
   margin: 4px 0px;
