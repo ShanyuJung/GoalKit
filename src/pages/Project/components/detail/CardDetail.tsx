@@ -9,16 +9,24 @@ import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
 import Owners from "./Owners";
+import CardDetailSideBar from "./CardDetailSidebar";
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 `;
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 0px 10px;
   height: 36px;
+  width: 100%;
 `;
 
 const CardLogo = styled(cardIcon)`
@@ -43,6 +51,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: number;
 }
 
 interface ListInterface {
@@ -61,6 +71,7 @@ interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
   members?: Member[];
+  onDelete: (targetCardID: string) => void;
 }
 
 const initialState = {
@@ -108,15 +119,28 @@ interface OwnerPayloadAction {
   };
 }
 
+interface CompletePayloadAction {
+  type: "UPDATE_COMPLETE";
+  payload: {
+    complete: boolean;
+  };
+}
+
 type Action =
   | TitlePayloadAction
   | TimePayloadAction
   | InitialState
   | DescriptionPayloadAction
   | TagPayloadAction
-  | OwnerPayloadAction;
+  | OwnerPayloadAction
+  | CompletePayloadAction;
 
-const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
+const CardDetail: React.FC<Props> = ({
+  listsArray,
+  tags,
+  members,
+  onDelete,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -182,6 +206,11 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           ...state,
           owner: action.payload.owner,
         };
+      case "UPDATE_COMPLETE":
+        return {
+          ...state,
+          complete: action.payload.complete,
+        };
       default:
         return state;
     }
@@ -225,6 +254,10 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
       draftState.push(ownerID);
     });
     dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
+  };
+
+  const completeTaskHandler = (isChecked: boolean) => {
+    dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
 
   useEffect(() => {
@@ -272,16 +305,7 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
     if (state.id === "") return;
 
     return (
-      <>
-        <TitleWrapper>
-          <CardLogo />
-          <TitleInput
-            type="text"
-            ref={titleRef}
-            defaultValue={state.title}
-            onBlur={updateTitleHandler}
-          />
-        </TitleWrapper>
+      <Wrapper>
         <Description
           onSubmit={updateDescriptionHandler}
           text={state.description || ""}
@@ -289,7 +313,9 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
         <Time
           curStart={state.time?.start}
           curDeadline={state.time?.deadline}
+          isComplete={state.complete || false}
           onSubmit={updateTimeHandler}
+          onCheck={completeTaskHandler}
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
@@ -297,11 +323,25 @@ const CardDetail: React.FC<Props> = ({ listsArray, tags, members }) => {
           members={members}
           addOwnerHandler={addOwnerHandler}
         />
-      </>
+      </Wrapper>
     );
   };
 
-  return <Wrapper>{cardInfo()}</Wrapper>;
+  return (
+    <Container>
+      <TitleWrapper>
+        <CardLogo />
+        <TitleInput
+          type="text"
+          ref={titleRef}
+          defaultValue={state.title}
+          onBlur={updateTitleHandler}
+        />
+      </TitleWrapper>
+      <>{cardInfo()}</>
+      <CardDetailSideBar onDelete={onDelete} />
+    </Container>
+  );
 };
 
 export default CardDetail;

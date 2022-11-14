@@ -100,6 +100,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: number;
 }
 
 interface ListInterface {
@@ -236,6 +238,32 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
+  const deleteCardHandler = (targetCardID: string) => {
+    const parentIndex = lists.findIndex((list) => {
+      return list.cards.find((card) => card.id === targetCardID);
+    });
+    const targetIndex = lists[parentIndex].cards.findIndex((card) => {
+      return card.id === targetCardID;
+    });
+
+    const newLists = produce(lists, (draftState) => {
+      draftState[parentIndex].cards.splice(targetIndex, 1);
+    });
+
+    updateDataHandler(newLists);
+  };
+
+  const deleteListHandler = (targetListID: string) => {
+    const newLists = produce(lists, (draftState) => {
+      const deleteListIndex = draftState.findIndex(
+        (list) => list.id === targetListID
+      );
+      draftState.splice(deleteListIndex, 1);
+    });
+
+    updateDataHandler(newLists);
+  };
+
   const onCloseHandler = () => {
     navigate(`/project/${id}`);
   };
@@ -335,6 +363,7 @@ const Project = () => {
                             members={members}
                             draggingLists={project?.draggingLists || undefined}
                             draggingCards={project?.draggingCards || undefined}
+                            deleteList={deleteListHandler}
                           />
                         </div>
                       )}
@@ -360,6 +389,7 @@ const Project = () => {
                 listsArray={lists}
                 tags={project?.tags || undefined}
                 members={members}
+                onDelete={deleteCardHandler}
               />
             ) : (
               <div></div>

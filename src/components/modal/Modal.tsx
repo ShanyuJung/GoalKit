@@ -16,7 +16,7 @@ const ModalOverlay = styled.div`
   position: fixed;
   top: 15vh;
   left: calc(50vw - 250px);
-  width: 500px;
+  width: 700px;
   background-color: white;
   padding: 1rem;
   border-radius: 14px;

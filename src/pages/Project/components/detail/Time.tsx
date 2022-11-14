@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
@@ -17,11 +17,11 @@ const TimeTitle = styled.div`
   font-weight: 900;
 `;
 
-const TimeCheckboxWrapper = styled.div`
+const TimeCheckboxWrapper = styled.div<{ colorCode: string }>`
   margin: 5px;
   display: flex;
   align-items: center;
-  background-color: #ddd;
+  background-color: ${(props) => props.colorCode};
   width: fit-content;
   border-radius: 5px;
 `;
@@ -35,7 +35,10 @@ const TimeLogo = styled(dateIcon)`
   }
 `;
 
-const TimeCheckbox = styled.input``;
+const TimeCheckbox = styled.input`
+  accent-color: #74992e;
+  border-color: transparent;
+`;
 
 const TimeCheckboxLabel = styled.label`
   padding: 5px 10px;
@@ -97,12 +100,23 @@ const TimeButton = styled.button`
 interface Props {
   curStart: number | undefined;
   curDeadline: number | undefined;
+  isComplete: boolean;
   onSubmit(start: number, deadline: number): void;
+  onCheck(isChecked: boolean): void;
 }
 
-const Time: React.FC<Props> = ({ curStart, curDeadline, onSubmit }) => {
+const Time: React.FC<Props> = ({
+  curStart,
+  curDeadline,
+  onSubmit,
+  isComplete,
+  onCheck,
+}) => {
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
+  const [timeCheckboxColor, setTimeCheckboxColor] = useState(
+    "rgba(253, 216, 53, 0.9)"
+  );
   const [isEdit, setIsEdit] = useState(false);
   const { cardId } = useParams();
 
@@ -128,12 +142,42 @@ const Time: React.FC<Props> = ({ curStart, curDeadline, onSubmit }) => {
     }
   };
 
+  const onCheckHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      onCheck(true);
+    } else {
+      onCheck(false);
+    }
+  };
+
+  useEffect(() => {
+    const TimeCheckboxColorHandler = () => {
+      if (isComplete) {
+        setTimeCheckboxColor("#74992e");
+      } else if (!isComplete && curDeadline) {
+        const curTime = new Date().getTime();
+        const newColorCode =
+          curDeadline < curTime
+            ? "rgba(239, 83, 80, 0.9)"
+            : "rgba(253, 216, 53, 0.9)";
+        setTimeCheckboxColor(newColorCode);
+      }
+    };
+
+    TimeCheckboxColorHandler();
+  }, [isComplete]);
+
   return (
     <TimeWrapper>
       <TimeTitle>Date:</TimeTitle>
       {curStart && curDeadline ? (
-        <TimeCheckboxWrapper>
-          <TimeCheckbox type="checkbox" id={`time-checkbox-${cardId}`} />
+        <TimeCheckboxWrapper colorCode={timeCheckboxColor}>
+          <TimeCheckbox
+            type="checkbox"
+            id={`time-checkbox-${cardId}`}
+            checked={isComplete}
+            onChange={onCheckHandler}
+          />
           <TimeLogo />
           <TimeCheckboxLabel htmlFor={`time-checkbox-${cardId}`}>
             {`${new Date(curStart).toLocaleDateString()} - ${new Date(

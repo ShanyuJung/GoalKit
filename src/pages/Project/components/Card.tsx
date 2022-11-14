@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as DescriptionLogo } from "../../../assets/text-description-svgrepo-com.svg";
@@ -26,7 +27,11 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const TitleWrapper = styled.div``;
+const TitleWrapper = styled.div`
+  margin: 5px 0px;
+  font-size: 16px;
+  font-weight: 600;
+`;
 
 const DescriptionIcon = styled(DescriptionLogo)`
   margin: 4px 0px;
@@ -35,8 +40,8 @@ const DescriptionIcon = styled(DescriptionLogo)`
   }
 `;
 
-const TimeWrapper = styled.div`
-  background-color: #dcedc8;
+const TimeWrapper = styled.div<{ colorCode: string }>`
+  background-color: ${(props) => props.colorCode};
   width: fit-content;
   padding: 1px 5px;
   height: 20px;
@@ -111,6 +116,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  progress?: number;
 }
 
 interface Member {
@@ -127,6 +134,9 @@ interface Props {
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
+  const [timeLabelColor, setTimeLabelColor] = useState(
+    "rgba(253, 216, 53, 0.9)"
+  );
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -140,9 +150,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       const deadlineMonth = deadlineDate.getMonth();
       const deadlineDay = deadlineDate.getDate();
       return (
-        <TimeWrapper>{`${startMonth + 1}/${startDay} - ${
-          deadlineMonth + 1
-        }/${deadlineDay}`}</TimeWrapper>
+        <TimeWrapper colorCode={timeLabelColor}>{`${
+          startMonth + 1
+        }/${startDay} - ${deadlineMonth + 1}/${deadlineDay}`}</TimeWrapper>
       );
     }
   };
@@ -183,6 +193,23 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       </OwnerContainer>
     );
   };
+
+  useEffect(() => {
+    const TimeCheckboxColorHandler = () => {
+      if (cardInfo.complete) {
+        setTimeLabelColor("rgba(139, 195, 74, 0.5)");
+      } else if (!cardInfo.complete && cardInfo.time?.deadline) {
+        const curTime = new Date().getTime();
+        const newColorCode =
+          cardInfo.time.deadline < curTime
+            ? "rgba(239, 83, 80, 0.9)"
+            : "rgba(253, 216, 53, 0.9)";
+        setTimeLabelColor(newColorCode);
+      }
+    };
+
+    TimeCheckboxColorHandler();
+  }, [cardInfo]);
 
   return (
     <Container
