@@ -50,7 +50,7 @@ const DropdownButton: React.FC<Props> = ({ logo, text, children }) => {
     setIsToggle((prev) => !prev);
   };
 
-  useOnClickOutside(btnRef, ref, () => setIsToggle(false));
+  useOnClickOutside(ref, () => setIsToggle(false), btnRef);
 
   return (
     <ButtonListItem>
