@@ -119,7 +119,7 @@ interface CardInterface {
   owner?: string[];
   tagsIDs?: string[];
   complete?: boolean;
-  progress?: string[];
+  todo?: { title: string; isDone: boolean; id: string }[];
 }
 
 interface ListInterface {

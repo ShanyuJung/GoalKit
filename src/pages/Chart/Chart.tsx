@@ -43,6 +43,8 @@ interface CardInterface {
   description?: string;
   owner?: string[];
   tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
 }
 
 interface ListInterface {
@@ -87,7 +89,7 @@ const Chart = () => {
       return <GanttChart lists={lists} isShowSidebar={isShowSidebar} />;
     }
     if (chartType === "progress") {
-      return <ProgressChart isShowSidebar={isShowSidebar} />;
+      return <ProgressChart lists={lists} isShowSidebar={isShowSidebar} />;
     }
   };
 

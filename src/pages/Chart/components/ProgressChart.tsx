@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from "recharts";
+import { useCallback, useEffect, useState } from "react";
+import produce from "immer";
 
 interface StylesProps {
   isShowSidebar: boolean;
@@ -11,12 +14,202 @@ const Container = styled.div<StylesProps>`
   transition: padding 0.3s;
 `;
 
+const Wrapper = styled.div`
+  width: 100%;
+  padding: 20px;
+`;
+
+const ChartWrapper = styled.div`
+  width: 100%;
+`;
+
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline: number };
+  description?: string;
+  owner?: string[];
+  tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
+}
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}
+
 interface Props {
+  lists: ListInterface[];
   isShowSidebar: boolean;
 }
 
-const ProgressChart: React.FC<Props> = ({ isShowSidebar }) => {
-  return <Container isShowSidebar={isShowSidebar}>Progress</Container>;
+interface PieChartProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  payload: { name: string; value: number };
+  percent: number;
+  value: number;
+}
+
+const DUMMY_DATA = [
+  { name: "Complete", value: 0 },
+  { name: "In Progress", value: 0 },
+  { name: "Over Time", value: 0 },
+  { name: "Without Time", value: 0 },
+];
+
+const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];
+
+const renderActiveShape = (props: PieChartProps) => {
+  const RADIAN = Math.PI / 180;
+  const {
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+    payload,
+    percent,
+    value,
+  } = props;
+  const sin = Math.sin(-RADIAN * midAngle);
+  const cos = Math.cos(-RADIAN * midAngle);
+  const sx = cx + (outerRadius + 10) * cos;
+  const sy = cy + (outerRadius + 10) * sin;
+  const mx = cx + (outerRadius + 30) * cos;
+  const my = cy + (outerRadius + 30) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const ey = my;
+  const textAnchor = cos >= 0 ? "start" : "end";
+
+  return (
+    <g>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+        {payload.name}
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        innerRadius={outerRadius + 6}
+        outerRadius={outerRadius + 10}
+        fill={fill}
+      />
+      <path
+        d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`}
+        stroke={fill}
+        fill="none"
+      />
+      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+      <text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        textAnchor={textAnchor}
+        fill="#333"
+      >{`${value} Task Card`}</text>
+      <text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        dy={18}
+        textAnchor={textAnchor}
+        fill="#999"
+      >
+        {`(${(percent * 100).toFixed(2)}%)`}
+      </text>
+    </g>
+  );
+};
+
+const ProgressChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
+  const [data, setData] = useState(DUMMY_DATA);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const onPieEnter = useCallback(
+    (_: any, index: number) => {
+      setActiveIndex(index);
+    },
+    [setActiveIndex]
+  );
+
+  useEffect(() => {
+    const taskNumberHandler = () => {
+      const newData = produce(data, (draftState) => {
+        const curTime = new Date().getTime();
+        lists.forEach((list) => {
+          list.cards.forEach((card) => {
+            if (card.complete) {
+              draftState[0].value += 1;
+            } else if (
+              !card.complete &&
+              card.time?.deadline &&
+              card.time?.deadline > curTime
+            ) {
+              draftState[1].value += 1;
+            } else if (
+              !card.complete &&
+              card.time?.deadline &&
+              card.time?.deadline < curTime
+            ) {
+              draftState[2].value += 1;
+            } else {
+              draftState[3].value += 1;
+            }
+          });
+        });
+      });
+      setData(newData);
+    };
+
+    taskNumberHandler();
+  }, [lists]);
+
+  return (
+    <Container isShowSidebar={isShowSidebar}>
+      <Wrapper>
+        <PieChart width={600} height={600}>
+          <Pie
+            activeIndex={activeIndex}
+            activeShape={renderActiveShape}
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={100}
+            fill="#8884d8"
+            dataKey="value"
+            onMouseEnter={onPieEnter}
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+        </PieChart>
+      </Wrapper>
+    </Container>
+  );
 };
 
 export default ProgressChart;
