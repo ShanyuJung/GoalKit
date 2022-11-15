@@ -2,6 +2,7 @@ import produce from "immer";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as CloseIcon } from "../../../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   margin: 10px;
@@ -61,7 +62,10 @@ const TodoListWrapper = styled.div`
 const TodoWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  padding: 0px 10px;
+  &:hover {
+    background-color: #ddd;
+  }
 `;
 
 const TodoCheckbox = styled.input`
@@ -72,14 +76,31 @@ const TodoCheckbox = styled.input`
 const TodoLabel = styled.label`
   padding-left: 10px;
   font-size: 16px;
+  flex-grow: 1;
+`;
+
+const CloseButton = styled(CloseIcon)`
+  width: 20px;
+  height: 20px;
+
+  path {
+    fill: #ccc;
+  }
+
+  &:hover {
+    path {
+      fill: #333;
+    }
+  }
 `;
 
 interface Props {
   todo: { title: string; isDone: boolean; id: string }[];
   onCheck: (isChecked: boolean, id: string) => void;
+  onDelete: (todoID: string) => void;
 }
 
-const Todo: React.FC<Props> = ({ todo, onCheck }) => {
+const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
   const [progress, setProgress] = useState(0);
 
   const onCheckHandler = (
@@ -90,6 +111,13 @@ const Todo: React.FC<Props> = ({ todo, onCheck }) => {
       onCheck(true, id);
     } else {
       onCheck(false, id);
+    }
+  };
+
+  const onDeleteHandler = (todoID: string) => {
+    const r = window.confirm("Would you like to remove task from todo list?");
+    if (r === true) {
+      onDelete(todoID);
     }
   };
 
@@ -139,6 +167,11 @@ const Todo: React.FC<Props> = ({ todo, onCheck }) => {
                 }}
               />
               <TodoLabel htmlFor={`todo-${item.id}`}>{item.title}</TodoLabel>
+              <CloseButton
+                onClick={() => {
+                  onDeleteHandler(item.id);
+                }}
+              />
             </TodoWrapper>
           );
         })}

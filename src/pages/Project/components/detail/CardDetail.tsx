@@ -292,6 +292,18 @@ const CardDetail: React.FC<Props> = ({
     dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
   };
 
+  const deleteTodoHandler = (todoID: string) => {
+    if (state.todo && state.todo.length > 0) {
+      const todoIndex = state.todo.findIndex((item) => item.id === todoID);
+      const cutTodo = [...state.todo];
+      const newTodo = produce(cutTodo, (draftState) => {
+        draftState.splice(todoIndex, 1);
+      });
+
+      dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
+    }
+  };
+
   const completeTodoHandler = (isChecked: boolean, id: string) => {
     const newTodo =
       state.todo?.map((item) => {
@@ -363,7 +375,11 @@ const CardDetail: React.FC<Props> = ({
           onCheck={completeTaskHandler}
           todo={state.todo || []}
         />
-        <Todo todo={state.todo || []} onCheck={completeTodoHandler} />
+        <Todo
+          todo={state.todo || []}
+          onCheck={completeTodoHandler}
+          onDelete={deleteTodoHandler}
+        />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
           ownerInfo={ownerInfo}
