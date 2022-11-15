@@ -168,6 +168,11 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
   };
 
   useEffect(() => {
+    const progressHandler = (
+      isComplete: boolean,
+      todo: { title: string; isDone: boolean; id: string }[]
+    ) => {};
+
     const listTransformHandler = () => {
       if (lists.length === 0) return;
 
@@ -207,7 +212,12 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
           }
         });
       });
-      setTasks(newTasks);
+
+      const displayTasks = newTasks.sort((a, b) => {
+        return a.start.getTime() - b.start.getTime();
+      });
+
+      setTasks(displayTasks);
     };
     listTransformHandler();
   }, [lists]);
