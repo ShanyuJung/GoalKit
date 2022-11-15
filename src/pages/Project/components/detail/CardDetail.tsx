@@ -10,6 +10,7 @@ import Time from "./Time";
 import Tags from "./Tags";
 import Owners from "./Owners";
 import CardDetailSideBar from "./CardDetailSidebar";
+import Progress from "./Progress";
 
 const Container = styled.div`
   display: flex;
@@ -20,6 +21,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 410px;
+  padding-right: 10px;
 `;
 const TitleWrapper = styled.div`
   display: flex;
@@ -143,6 +145,7 @@ const CardDetail: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
+  const [isToDoList, setIsToDoList] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
@@ -317,6 +320,7 @@ const CardDetail: React.FC<Props> = ({
           onSubmit={updateTimeHandler}
           onCheck={completeTaskHandler}
         />
+        <Progress />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
           ownerInfo={ownerInfo}

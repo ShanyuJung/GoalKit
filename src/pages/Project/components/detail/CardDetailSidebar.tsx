@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import DropdownButton from "../../../../components/button/DropdownButton";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -45,6 +46,7 @@ const CardFeatureButton = styled.button`
   padding: 5px 10px;
   border: none;
   color: #666;
+  background-color: #ddd;
   cursor: pointer;
 
   &:hover {
@@ -61,6 +63,16 @@ const ToDoLogo = styled(ToDoIcon)`
   path {
     fill: #777;
   }
+`;
+
+const DropdownChildrenWrapper = styled.div`
+  margin-top: 5px;
+  width: 100%;
+  background-color: #fff;
+`;
+
+const NewToDoCard = styled.div`
+  height: 400px;
 `;
 
 interface Props {
@@ -85,12 +97,11 @@ const CardDetailSideBar: React.FC<Props> = ({ onDelete }) => {
     <Wrapper>
       <ListTitle>Edit Card</ListTitle>
       <ButtonList>
-        <ButtonListItem>
-          <CardFeatureButton onClick={addToDoListHandler}>
-            <ToDoLogo />
-            Add to do list
-          </CardFeatureButton>
-        </ButtonListItem>
+        <DropdownButton logo={<ToDoLogo />} text={"Add to do list"}>
+          <DropdownChildrenWrapper>
+            <NewToDoCard>123</NewToDoCard>
+          </DropdownChildrenWrapper>
+        </DropdownButton>
         <ButtonListItem>
           <CardFeatureButton onClick={checkDeleteCardHandler}>
             <TrashLogo />

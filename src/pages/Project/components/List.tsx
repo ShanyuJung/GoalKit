@@ -49,7 +49,7 @@ const Wrapper = styled.div`
 const TitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
 `;
 
 const Title = styled.div`
@@ -60,6 +60,8 @@ const Title = styled.div`
 
 const MoreLogo = styled(MoreIcon)`
   height: 18px;
+  width: 48px;
+  margin: 5px 0px;
   cursor: pointer;
 
   circle {
@@ -73,13 +75,17 @@ const MoreLogo = styled(MoreIcon)`
   }
 `;
 
+const ModalWrapper = styled.div`
+  height: 0px;
+`;
+
 const MoreModal = styled.div<{ isShow: boolean }>`
   display: ${(props) => (props.isShow ? "block" : "none")};
   background-color: #ddd;
   position: relative;
   width: 100px;
-  top: 25px;
-  right: -55px;
+  top: 0px;
+  right: -145px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
 `;
 
@@ -168,6 +174,13 @@ const List = ({
         >
           <TitleWrapper>
             <Title>{title}</Title>
+            <MoreLogo
+              onClick={() => {
+                setIsShowModal((prev) => !prev);
+              }}
+            />
+          </TitleWrapper>
+          <ModalWrapper>
             <MoreModal isShow={isShowModal}>
               <ModalList>
                 <ModalListItem onClick={checkDeleteListHandler}>
@@ -176,12 +189,7 @@ const List = ({
                 </ModalListItem>
               </ModalList>
             </MoreModal>
-            <MoreLogo
-              onClick={() => {
-                setIsShowModal((prev) => !prev);
-              }}
-            />
-          </TitleWrapper>
+          </ModalWrapper>
           <Wrapper>
             {cards.map((card, index) => {
               return (
