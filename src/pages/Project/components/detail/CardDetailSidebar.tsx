@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 import DropdownButton from "../../../../components/button/DropdownButton";
+import { FormEvent, useRef } from "react";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -14,7 +15,7 @@ const Wrapper = styled.div`
 const ListTitle = styled.div`
   font-size: 18px;
   font-weight: 600;
-  color: #666;
+  color: #444;
 `;
 
 const ButtonList = styled.div`
@@ -48,6 +49,7 @@ const CardFeatureButton = styled.button`
   color: #666;
   background-color: #ddd;
   cursor: pointer;
+  font-weight: 600;
 
   &:hover {
     color: #111;
@@ -66,24 +68,71 @@ const ToDoLogo = styled(ToDoIcon)`
 `;
 
 const DropdownChildrenWrapper = styled.div`
-  margin-top: 5px;
   width: 100%;
-  background-color: #fff;
 `;
 
 const NewToDoCard = styled.div`
-  height: 400px;
+  width: 100%;
+  padding: 5px 10px;
+  background-color: #fff;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CardLabel = styled.label`
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+`;
+
+const Input = styled.input`
+  height: 24px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 5px;
+`;
+
+const Button = styled.button`
+  color: #fff;
+  background-color: #0085d1;
+  border: none;
+  margin: 10px;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 5px;
+  margin: 10px 0px;
+  padding: 5px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #0079bf;
+  }
 `;
 
 interface Props {
   onDelete: (targetCardID: string) => void;
+  todoHandler: (titleText: string) => void;
 }
 
-const CardDetailSideBar: React.FC<Props> = ({ onDelete }) => {
+const CardDetailSideBar: React.FC<Props> = ({ onDelete, todoHandler }) => {
+  const todoRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
   const navigate = useNavigate();
 
-  const addToDoListHandler = () => {};
+  const addTodoListHandler = (event: FormEvent) => {
+    event.preventDefault();
+    if (todoRef.current?.value.trim()) {
+      todoHandler(todoRef.current.value.trim());
+      todoRef.current.value = "";
+    }
+  };
 
   const checkDeleteCardHandler = () => {
     const r = window.confirm("Check to delete selected card");
@@ -99,7 +148,13 @@ const CardDetailSideBar: React.FC<Props> = ({ onDelete }) => {
       <ButtonList>
         <DropdownButton logo={<ToDoLogo />} text={"Add to do list"}>
           <DropdownChildrenWrapper>
-            <NewToDoCard>123</NewToDoCard>
+            <NewToDoCard>
+              <Form onSubmit={addTodoListHandler}>
+                <CardLabel htmlFor="toDoInput">Add to do list</CardLabel>
+                <Input type="text" id="toDoInput" required ref={todoRef} />
+                <Button>Add to do</Button>
+              </Form>
+            </NewToDoCard>
           </DropdownChildrenWrapper>
         </DropdownButton>
         <ButtonListItem>
