@@ -76,10 +76,22 @@ const TodoLabel = styled.label`
 
 interface Props {
   todo: { title: string; isDone: boolean; id: string }[];
+  onCheck: (isChecked: boolean, id: string) => void;
 }
 
-const Todo: React.FC<Props> = ({ todo }) => {
+const Todo: React.FC<Props> = ({ todo, onCheck }) => {
   const [progress, setProgress] = useState(0);
+
+  const onCheckHandler = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    if (event.target.checked) {
+      onCheck(true, id);
+    } else {
+      onCheck(false, id);
+    }
+  };
 
   useEffect(() => {
     if (todo.length > 0) {
@@ -122,7 +134,9 @@ const Todo: React.FC<Props> = ({ todo }) => {
                 id={`todo-${item.id}`}
                 type="checkbox"
                 checked={item.isDone}
-                onChange={() => {}}
+                onChange={(e) => {
+                  onCheckHandler(e, item.id);
+                }}
               />
               <TodoLabel htmlFor={`todo-${item.id}`}>{item.title}</TodoLabel>
             </TodoWrapper>

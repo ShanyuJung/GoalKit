@@ -292,6 +292,19 @@ const CardDetail: React.FC<Props> = ({
     dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
   };
 
+  const completeTodoHandler = (isChecked: boolean, id: string) => {
+    const newTodo =
+      state.todo?.map((item) => {
+        if (item.id === id) {
+          return { ...item, isDone: isChecked };
+        } else {
+          return { ...item };
+        }
+      }) || [];
+
+    dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
+  };
+
   useEffect(() => {
     const curCardHandler = () => {
       if (!cardId || listsArray.length === 0) return;
@@ -350,7 +363,7 @@ const CardDetail: React.FC<Props> = ({
           onCheck={completeTaskHandler}
           todo={state.todo || []}
         />
-        <Todo todo={state.todo || []} />
+        <Todo todo={state.todo || []} onCheck={completeTodoHandler} />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
           ownerInfo={ownerInfo}
