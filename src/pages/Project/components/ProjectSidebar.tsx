@@ -174,6 +174,12 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
             <LinkText>Gantt Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
+        <LinkWrapper>
+          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
+            <ChartLogo />
+            <LinkText>Progress Chart</LinkText>
+          </StyledLink>
+        </LinkWrapper>
       </LinkList>
     </SidebarWrapper>
   );

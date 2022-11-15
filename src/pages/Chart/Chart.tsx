@@ -6,6 +6,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
+import ProgressChart from "./components/ProgressChart";
 
 const Container = styled.div`
   display: flex;
@@ -82,8 +83,12 @@ const Chart = () => {
   }, []);
 
   const chartHandler = () => {
-    if (chartType === "gantt")
+    if (chartType === "gantt") {
       return <GanttChart lists={lists} isShowSidebar={isShowSidebar} />;
+    }
+    if (chartType === "progress") {
+      return <ProgressChart isShowSidebar={isShowSidebar} />;
+    }
   };
 
   return (
