@@ -290,6 +290,12 @@ const CardDetail: React.FC<Props> = ({
     });
 
     dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
+
+    if (!state.time || !state.time.start || !state.time.deadline) {
+      const curTime = new Date().getTime();
+      const newTime = { start: curTime, deadline: curTime + 86400000 };
+      dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
+    }
   };
 
   const deleteTodoHandler = (todoID: string) => {
