@@ -348,6 +348,7 @@ const CardDetail: React.FC<Props> = ({
           isComplete={state.complete || false}
           onSubmit={updateTimeHandler}
           onCheck={completeTaskHandler}
+          todo={state.todo || []}
         />
         <Todo todo={state.todo || []} />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
