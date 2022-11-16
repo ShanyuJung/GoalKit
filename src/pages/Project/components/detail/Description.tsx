@@ -31,7 +31,7 @@ const DescriptionText = styled.div<{
   isEdit: boolean;
 }>`
   background-color: ${(props) => props.backgroundColor};
-  padding: 5px;
+  padding: 5px 10px;
   margin: 5px 0px;
   width: 100%;
   border-radius: 5px;

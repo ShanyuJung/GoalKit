@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
@@ -26,6 +19,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  min-height: 500px;
   display: flex;
   flex-direction: column;
   width: 410px;
@@ -285,6 +279,18 @@ const CardDetail: React.FC<Props> = ({
     dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
   };
 
+  const removeOwnerHandler = (ownerID: string) => {
+    const isOwnerExist = state.owner?.includes(ownerID);
+    if (!isOwnerExist) return;
+    const curOwners: string[] = state.owner || [];
+    const newOwners = produce(curOwners, (draftState) => {
+      const index = draftState.findIndex((id) => id === ownerID);
+      draftState.splice(index, 1);
+    });
+
+    dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
+  };
+
   const completeTaskHandler = (isChecked: boolean) => {
     dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
@@ -398,9 +404,8 @@ const CardDetail: React.FC<Props> = ({
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
-          ownerInfo={ownerInfo}
-          members={members}
-          addOwnerHandler={addOwnerHandler}
+          ownerInfo={ownerInfo || []}
+          removeOwnerHandler={removeOwnerHandler}
         />
       </Wrapper>
     );
@@ -422,6 +427,8 @@ const CardDetail: React.FC<Props> = ({
         onDelete={onDelete}
         todoHandler={addNewTodoHandler}
         setIsEditData={setIsEditDate}
+        members={members || []}
+        addOwnerHandler={addOwnerHandler}
       />
     </Container>
   );

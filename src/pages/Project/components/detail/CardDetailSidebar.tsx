@@ -128,16 +128,43 @@ const Button = styled.button`
   }
 `;
 
+const OwnerButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 5px;
+  background-color: #fff;
+`;
+
+const OwnerButton = styled.button`
+  width: 100%;
+  background-color: #c5cae9;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
   setIsEditData: (value: boolean) => void;
+  members: Member[];
+  addOwnerHandler(id: string): void;
 }
 
 const CardDetailSideBar: React.FC<Props> = ({
   onDelete,
   todoHandler,
   setIsEditData,
+  members,
+  addOwnerHandler,
 }) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
@@ -182,6 +209,24 @@ const CardDetailSideBar: React.FC<Props> = ({
                 <Button>Add to do</Button>
               </Form>
             </NewToDoCard>
+          </DropdownChildrenWrapper>
+        </DropdownButton>
+        <DropdownButton logo={<ToDoLogo />} text={"Add owners"}>
+          <DropdownChildrenWrapper>
+            <OwnerButtonWrapper>
+              {members?.map((member) => {
+                return (
+                  <OwnerButton
+                    key={`newOwner-${member.uid}`}
+                    onClick={() => {
+                      addOwnerHandler(member.uid);
+                    }}
+                  >
+                    {member.displayName}
+                  </OwnerButton>
+                );
+              })}
+            </OwnerButtonWrapper>
           </DropdownChildrenWrapper>
         </DropdownButton>
         <ButtonListItem>
