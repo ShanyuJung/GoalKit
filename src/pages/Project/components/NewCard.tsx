@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 250px;
+`;
 
 const TextArea = styled.textarea<{ isShow: boolean }>`
   width: 100%;
@@ -12,7 +14,6 @@ const TextArea = styled.textarea<{ isShow: boolean }>`
   font-family: "Poppins", sans-serif;
   padding: 5px 5px;
   font-size: 16px;
-  height: ${(props) => (props.isShow ? "" : "36px")};
   background-color: ${(props) => (props.isShow ? "#fff" : "transparent")};
   border-radius: 5px;
   border-color: ${(props) => (props.isShow ? "#000" : "transparent")};
@@ -96,6 +97,7 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
           placeholder="&#43; Add new card"
           ref={textRef}
           isShow={isFocus}
+          rows={isFocus ? 2 : 1}
           required
         />
         <ButtonWrapper isShow={isFocus}>
