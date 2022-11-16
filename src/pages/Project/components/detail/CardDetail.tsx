@@ -10,6 +10,8 @@ import Time from "./Time";
 import Tags from "./Tags";
 import Owners from "./Owners";
 import CardDetailSideBar from "./CardDetailSidebar";
+import Todo from "./Todo";
+import { v4 as uuidv4 } from "uuid";
 
 const Container = styled.div`
   display: flex;
@@ -19,7 +21,8 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  width: 410px;
+  padding-right: 10px;
 `;
 const TitleWrapper = styled.div`
   display: flex;
@@ -42,6 +45,11 @@ const TitleInput = styled.input`
   border: none;
   flex-grow: 1;
   box-sizing: border-box;
+  background-color: transparent;
+
+  &:focus {
+    background-color: #fff;
+  }
 `;
 
 interface CardInterface {
@@ -52,7 +60,7 @@ interface CardInterface {
   owner?: string[];
   tagsIDs?: string[];
   complete?: boolean;
-  progress?: number;
+  todo?: { title: string; isDone: boolean; id: string }[];
 }
 
 interface ListInterface {
@@ -126,6 +134,13 @@ interface CompletePayloadAction {
   };
 }
 
+interface TodoPayloadAction {
+  type: "UPDATE_TODO";
+  payload: {
+    todo: { title: string; isDone: boolean; id: string }[];
+  };
+}
+
 type Action =
   | TitlePayloadAction
   | TimePayloadAction
@@ -133,7 +148,8 @@ type Action =
   | DescriptionPayloadAction
   | TagPayloadAction
   | OwnerPayloadAction
-  | CompletePayloadAction;
+  | CompletePayloadAction
+  | TodoPayloadAction;
 
 const CardDetail: React.FC<Props> = ({
   listsArray,
@@ -211,6 +227,11 @@ const CardDetail: React.FC<Props> = ({
           ...state,
           complete: action.payload.complete,
         };
+      case "UPDATE_TODO":
+        return {
+          ...state,
+          todo: action.payload.todo,
+        };
       default:
         return state;
     }
@@ -258,6 +279,48 @@ const CardDetail: React.FC<Props> = ({
 
   const completeTaskHandler = (isChecked: boolean) => {
     dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
+  };
+
+  const addNewTodoHandler = (titleText: string) => {
+    const newId = uuidv4();
+    const curTodo: { title: string; isDone: boolean; id: string }[] =
+      state.todo || [];
+    const newTodo = produce(curTodo, (draftState) => {
+      draftState.push({ title: titleText, isDone: false, id: newId });
+    });
+
+    dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
+
+    if (!state.time || !state.time.start || !state.time.deadline) {
+      const curTime = new Date().getTime();
+      const newTime = { start: curTime, deadline: curTime + 86400000 };
+      dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
+    }
+  };
+
+  const deleteTodoHandler = (todoID: string) => {
+    if (state.todo && state.todo.length > 0) {
+      const todoIndex = state.todo.findIndex((item) => item.id === todoID);
+      const cutTodo = [...state.todo];
+      const newTodo = produce(cutTodo, (draftState) => {
+        draftState.splice(todoIndex, 1);
+      });
+
+      dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
+    }
+  };
+
+  const completeTodoHandler = (isChecked: boolean, id: string) => {
+    const newTodo =
+      state.todo?.map((item) => {
+        if (item.id === id) {
+          return { ...item, isDone: isChecked };
+        } else {
+          return { ...item };
+        }
+      }) || [];
+
+    dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
   };
 
   useEffect(() => {
@@ -316,6 +379,12 @@ const CardDetail: React.FC<Props> = ({
           isComplete={state.complete || false}
           onSubmit={updateTimeHandler}
           onCheck={completeTaskHandler}
+          todo={state.todo || []}
+        />
+        <Todo
+          todo={state.todo || []}
+          onCheck={completeTodoHandler}
+          onDelete={deleteTodoHandler}
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
@@ -339,7 +408,7 @@ const CardDetail: React.FC<Props> = ({
         />
       </TitleWrapper>
       <>{cardInfo()}</>
-      <CardDetailSideBar onDelete={onDelete} />
+      <CardDetailSideBar onDelete={onDelete} todoHandler={addNewTodoHandler} />
     </Container>
   );
 };

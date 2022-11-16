@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { db } from "../../../firebase";
 import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
 import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
+import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
 
 interface StylesProps {
   isShow: boolean;
@@ -114,6 +115,18 @@ const GanttLogo = styled(ganttIcon)`
   }
 `;
 
+const PieChartLogo = styled(pieChartIcon)`
+  width: 20px;
+  margin-right: 10px;
+  path {
+    fill: #fff;
+  }
+
+  rect {
+    fill: #fff;
+  }
+`;
+
 interface Workspace {
   id: string;
   owner: string;
@@ -172,6 +185,12 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
           <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
             <GanttLogo />
             <LinkText>Gantt Chart</LinkText>
+          </StyledLink>
+        </LinkWrapper>
+        <LinkWrapper>
+          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
+            <PieChartLogo />
+            <LinkText>Progress Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
       </LinkList>

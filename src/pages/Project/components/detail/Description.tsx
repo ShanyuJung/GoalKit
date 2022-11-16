@@ -17,6 +17,7 @@ const DescriptionText = styled.div<{
   background-color: ${(props) => props.backgroundColor};
   padding: 5px;
   margin: 5px 0px;
+  width: 100%;
   border-radius: 5px;
   display: ${(props) => (props.isEdit ? "none" : "block")};
 `;

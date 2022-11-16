@@ -103,6 +103,7 @@ interface Props {
   isComplete: boolean;
   onSubmit(start: number, deadline: number): void;
   onCheck(isChecked: boolean): void;
+  todo: { title: string; isDone: boolean; id: string }[];
 }
 
 const Time: React.FC<Props> = ({
@@ -111,6 +112,7 @@ const Time: React.FC<Props> = ({
   onSubmit,
   isComplete,
   onCheck,
+  todo,
 }) => {
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
@@ -142,9 +144,16 @@ const Time: React.FC<Props> = ({
     }
   };
 
+  const checkTodoHandler = () => {
+    return todo.find((item) => item.isDone === false);
+  };
+
   const onCheckHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
+    const isUnDoneTodo = checkTodoHandler();
+    if (event.target.checked && !isUnDoneTodo) {
       onCheck(true);
+    } else if (event.target.checked && isUnDoneTodo) {
+      alert("You have undone tasks in your to do list!");
     } else {
       onCheck(false);
     }
