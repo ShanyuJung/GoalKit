@@ -4,7 +4,8 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
 import { ReactComponent as MoreIcon } from "../../../assets/more-svgrepo-com.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/trash-svgrepo-com.svg";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useOnClickOutside } from "../../../utils/hooks";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -58,6 +59,13 @@ const Title = styled.div`
   font-size: 20px;
 `;
 
+const LogoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 30px;
+  width: 48px;
+`;
+
 const MoreLogo = styled(MoreIcon)`
   height: 18px;
   width: 48px;
@@ -83,9 +91,10 @@ const MoreModal = styled.div<{ isShow: boolean }>`
   display: ${(props) => (props.isShow ? "block" : "none")};
   background-color: #ddd;
   position: relative;
-  width: 100px;
-  top: 0px;
-  right: -145px;
+  width: 110px;
+  padding: 5px;
+  top: -5px;
+  right: 67px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
 `;
 
@@ -154,6 +163,7 @@ const List = ({
   deleteList,
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
+  const ref = useRef(null);
 
   const checkDeleteListHandler = () => {
     const r = window.confirm("Check to delete selected list");
@@ -163,6 +173,8 @@ const List = ({
       setIsShowModal(false);
     }
   };
+
+  useOnClickOutside(ref, () => setIsShowModal(false));
 
   return (
     <Droppable droppableId={id} type="LIST">
@@ -174,22 +186,24 @@ const List = ({
         >
           <TitleWrapper>
             <Title>{title}</Title>
-            <MoreLogo
-              onClick={() => {
-                setIsShowModal((prev) => !prev);
-              }}
-            />
+            <LogoWrapper ref={ref}>
+              <MoreLogo
+                onClick={() => {
+                  setIsShowModal((prev) => !prev);
+                }}
+              />
+              <ModalWrapper>
+                <MoreModal isShow={isShowModal}>
+                  <ModalList>
+                    <ModalListItem onClick={checkDeleteListHandler}>
+                      <TrashLogo />
+                      Delete list
+                    </ModalListItem>
+                  </ModalList>
+                </MoreModal>
+              </ModalWrapper>
+            </LogoWrapper>
           </TitleWrapper>
-          <ModalWrapper>
-            <MoreModal isShow={isShowModal}>
-              <ModalList>
-                <ModalListItem onClick={checkDeleteListHandler}>
-                  <TrashLogo />
-                  Delete list
-                </ModalListItem>
-              </ModalList>
-            </MoreModal>
-          </ModalWrapper>
           <Wrapper>
             {cards.map((card, index) => {
               return (

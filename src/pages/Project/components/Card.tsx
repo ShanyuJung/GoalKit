@@ -8,7 +8,7 @@ interface IsDraggingProps {
 }
 
 const Container = styled.div<IsDraggingProps>`
-  width: 240px;
+  width: 260px;
   min-height: 60px;
   margin: 10px 5px;
   background-color: #fff;
