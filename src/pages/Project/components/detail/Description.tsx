@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import styled from "styled-components";
+import { ReactComponent as DescriptionIcon } from "../../../../assets/text-description-svgrepo-com.svg";
 
 const TextAreaWrapper = styled.div`
   margin: 10px;
@@ -8,6 +9,21 @@ const TextAreaWrapper = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DescriptionLogo = styled(DescriptionIcon)`
+  height: 20px;
+  width: 20px;
+  margin-right: 6px;
+
+  path {
+    fill: #000;
+  }
 `;
 
 const DescriptionText = styled.div<{
@@ -92,7 +108,10 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
   return (
     <TextAreaWrapper>
       <Form onSubmit={submitHandler}>
-        <TextAreaLabel htmlFor="description">Description:</TextAreaLabel>
+        <TitleWrapper>
+          <DescriptionLogo />
+          <TextAreaLabel htmlFor="description">Description:</TextAreaLabel>
+        </TitleWrapper>
         {text ? (
           <DescriptionText
             backgroundColor="inherit"

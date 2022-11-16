@@ -13,9 +13,24 @@ const TimeWrapper = styled.div`
   margin: 10px;
 `;
 
+const TimeTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const TimeTitle = styled.div`
   font-size: 16px;
   font-weight: 900;
+`;
+
+const DateLogo = styled(dateIcon)`
+  height: 20px;
+  width: 20px;
+  margin-right: 6px;
+
+  path {
+    fill: #000;
+  }
 `;
 
 const TimeCheckboxWrapper = styled.div`
@@ -30,7 +45,7 @@ const TimeLogo = styled(dateIcon)`
   line-height: 20px;
 
   path {
-    fill: #f9a825;
+    fill: #f49d1a;
   }
 `;
 
@@ -173,12 +188,12 @@ const Time: React.FC<Props> = ({
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (isComplete) {
-        setTimeCheckboxColor("#74992e");
+        setTimeCheckboxColor("rgba(139, 195, 74, 0.9)");
       } else if (!isComplete && curDeadline) {
         const curTime = new Date().getTime();
         const newColorCode =
           curDeadline < curTime
-            ? "rgba(239, 83, 80, 0.9)"
+            ? "rgba(255, 0, 0, 0.9)"
             : "rgba(253, 216, 53, 0.9)";
         setTimeCheckboxColor(newColorCode);
       }
@@ -189,7 +204,10 @@ const Time: React.FC<Props> = ({
 
   return (
     <TimeWrapper>
-      <TimeTitle>Date:</TimeTitle>
+      <TimeTitleWrapper>
+        <DateLogo />
+        <TimeTitle>Date:</TimeTitle>
+      </TimeTitleWrapper>
       {curStart && curDeadline ? (
         <TimeCheckboxWrapper>
           <TimeCheckbox

@@ -16,7 +16,7 @@ const TitleWrapper = styled.div`
 const ToDoLogo = styled(ToDoIcon)`
   height: 16px;
   width: 16px;
-  margin-right: 10px;
+  margin: 0px 5px;
 
   path {
     fill: #000;
