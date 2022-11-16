@@ -1,6 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as projectIcon } from "../../../assets/board-svgrepo-com.svg";
+import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
+import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
 
 interface StylesProps {
   isShow: boolean;
@@ -59,8 +61,32 @@ const LinkText = styled.div`
   }
 `;
 
-const ChartLogo = styled(projectIcon)`
+const ProjectLogo = styled(projectIcon)`
   width: 24px;
+  margin-right: 10px;
+  path {
+    fill: #fff;
+  }
+
+  rect {
+    fill: #fff;
+  }
+`;
+
+const ChartLogo = styled(chartIcon)`
+  width: 20px;
+  margin-right: 10px;
+  path {
+    fill: #fff;
+  }
+
+  rect {
+    fill: #fff;
+  }
+`;
+
+const GanttLogo = styled(ganttIcon)`
+  width: 20px;
   margin-right: 10px;
   path {
     fill: #fff;
@@ -83,8 +109,20 @@ const ChartSidebar: React.FC<Props> = ({ isShow }) => {
       <LinkList isShow={isShow}>
         <LinkWrapper>
           <StyledLink to={`/project/${id}/`} relative="path">
-            <ChartLogo />
+            <ProjectLogo />
             <LinkText>Back to Board</LinkText>
+          </StyledLink>
+        </LinkWrapper>
+        <LinkWrapper>
+          <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
+            <GanttLogo />
+            <LinkText>Gantt Chart</LinkText>
+          </StyledLink>
+        </LinkWrapper>
+        <LinkWrapper>
+          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
+            <ChartLogo />
+            <LinkText>Progress Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
       </LinkList>
