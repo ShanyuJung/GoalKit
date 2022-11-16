@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
+import { useOnClickOutside } from "../../../../utils/hooks";
 
 const Form = styled.form`
   display: flex;
@@ -17,13 +18,11 @@ const TimeTitle = styled.div`
   font-weight: 900;
 `;
 
-const TimeCheckboxWrapper = styled.div<{ colorCode: string }>`
+const TimeCheckboxWrapper = styled.div`
   margin: 5px;
   display: flex;
   align-items: center;
-  background-color: ${(props) => props.colorCode};
   width: fit-content;
-  border-radius: 5px;
 `;
 
 const TimeLogo = styled(dateIcon)`
@@ -45,25 +44,26 @@ const TimeCheckboxLabel = styled.label`
   font-size: 14px;
 `;
 
-const TimeEditButton = styled.button<{ isEdit: boolean }>`
-  background-color: inherit;
-  border: 1px #999 solid;
-  border-radius: 5px;
-  margin: 0px 5px;
-  display: ${(props) => (props.isEdit ? "none" : "block")};
-
-  &:hover {
-    background-color: #999;
-  }
-`;
-
 const TimeEditAreaWrapper = styled.div<{ isEdit: boolean }>`
   padding: 5px 10px;
-  display: ${(props) => (props.isEdit ? "block" : "none !important")};
+  padding: ${(props) => (props.isEdit ? "5px 10px" : "0px 10px")};
+  max-height: ${(props) => (props.isEdit ? "500px" : "0px")};
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: scroll;
+  transition: max-height 0.3s;
 `;
 
 const TimeInputWrapper = styled.div`
   margin: 10px;
+`;
+
+const TimeLabelWrapper = styled.div<{ colorCode: string }>`
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding-left: 10px;
+  background-color: ${(props) => props.colorCode};
 `;
 
 const TimeInputLabel = styled.label`
@@ -73,7 +73,9 @@ const TimeInputLabel = styled.label`
   width: 80px;
 `;
 
-const TimeInput = styled.input``;
+const TimeInput = styled.input`
+  border-radius: 3px;
+`;
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -82,18 +84,20 @@ const ButtonWrapper = styled.div`
 `;
 
 const TimeButton = styled.button`
-  width: 70px;
-  font-size: 16px;
+  width: 80px;
   color: #fff;
-  background-color: #42a5f5;
-  height: 26px;
-  line-height: 16px;
+  background-color: #0085d1;
   border: none;
+  margin: 0px 10px;
+  font-size: 16px;
   border-radius: 5px;
+  margin: 10px 0px;
+  padding: 5px;
+  font-weight: 600;
   cursor: pointer;
 
   &:hover {
-    background-color: #1976d2;
+    background-color: #0079bf;
   }
 `;
 
@@ -104,6 +108,8 @@ interface Props {
   onSubmit(start: number, deadline: number): void;
   onCheck(isChecked: boolean): void;
   todo: { title: string; isDone: boolean; id: string }[];
+  isEdit: boolean;
+  setIsEdit: (value: boolean) => void;
 }
 
 const Time: React.FC<Props> = ({
@@ -113,15 +119,18 @@ const Time: React.FC<Props> = ({
   isComplete,
   onCheck,
   todo,
+  isEdit,
+  setIsEdit,
 }) => {
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
+  const ref = useRef(null);
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
-  const [isEdit, setIsEdit] = useState(false);
+  // const [isEdit, setIsEdit] = useState(false);
   const { cardId } = useParams();
-
+  console.log(isEdit);
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
     const startTime = startTimeRef.current?.value;
@@ -159,6 +168,8 @@ const Time: React.FC<Props> = ({
     }
   };
 
+  useOnClickOutside(ref, () => setIsEdit(false));
+
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (isComplete) {
@@ -180,39 +191,26 @@ const Time: React.FC<Props> = ({
     <TimeWrapper>
       <TimeTitle>Date:</TimeTitle>
       {curStart && curDeadline ? (
-        <TimeCheckboxWrapper colorCode={timeCheckboxColor}>
+        <TimeCheckboxWrapper>
           <TimeCheckbox
             type="checkbox"
             id={`time-checkbox-${cardId}`}
             checked={isComplete}
             onChange={onCheckHandler}
           />
-          <TimeLogo />
-          <TimeCheckboxLabel htmlFor={`time-checkbox-${cardId}`}>
-            {`${new Date(curStart).toLocaleDateString()} - ${new Date(
-              curDeadline
-            ).toLocaleDateString()}`}
-          </TimeCheckboxLabel>
-          <TimeEditButton
-            isEdit={isEdit}
-            onClick={() => {
-              setIsEdit(true);
-            }}
-          >
-            Edit
-          </TimeEditButton>
+          <TimeLabelWrapper colorCode={timeCheckboxColor}>
+            <TimeLogo />
+            <TimeCheckboxLabel htmlFor={`time-checkbox-${cardId}`}>
+              {`${new Date(curStart).toLocaleDateString()} - ${new Date(
+                curDeadline
+              ).toLocaleDateString()}`}
+            </TimeCheckboxLabel>
+          </TimeLabelWrapper>
         </TimeCheckboxWrapper>
       ) : (
-        <TimeEditButton
-          isEdit={isEdit}
-          onClick={() => {
-            setIsEdit(true);
-          }}
-        >
-          Edit
-        </TimeEditButton>
+        <></>
       )}
-      <TimeEditAreaWrapper isEdit={isEdit}>
+      <TimeEditAreaWrapper isEdit={isEdit} ref={ref}>
         <Form onSubmit={submitHandler}>
           <TimeInputWrapper>
             <TimeInputLabel>Start from:</TimeInputLabel>

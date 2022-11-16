@@ -1,4 +1,11 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
@@ -159,6 +166,7 @@ const CardDetail: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
+  const [isEditDate, setIsEditDate] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
@@ -380,6 +388,8 @@ const CardDetail: React.FC<Props> = ({
           onSubmit={updateTimeHandler}
           onCheck={completeTaskHandler}
           todo={state.todo || []}
+          isEdit={isEditDate}
+          setIsEdit={setIsEditDate}
         />
         <Todo
           todo={state.todo || []}
@@ -408,7 +418,11 @@ const CardDetail: React.FC<Props> = ({
         />
       </TitleWrapper>
       <>{cardInfo()}</>
-      <CardDetailSideBar onDelete={onDelete} todoHandler={addNewTodoHandler} />
+      <CardDetailSideBar
+        onDelete={onDelete}
+        todoHandler={addNewTodoHandler}
+        setIsEditData={setIsEditDate}
+      />
     </Container>
   );
 };

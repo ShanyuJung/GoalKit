@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as DateIcon } from "../../../../assets/clock-svgrepo-com.svg";
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 
@@ -22,6 +23,16 @@ const ButtonList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+`;
+
+const DateLogo = styled(DateIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  path {
+    fill: #444;
+  }
 `;
 
 const TrashLogo = styled(TrashIcon)`
@@ -120,9 +131,14 @@ const Button = styled.button`
 interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
+  setIsEditData: (value: boolean) => void;
 }
 
-const CardDetailSideBar: React.FC<Props> = ({ onDelete, todoHandler }) => {
+const CardDetailSideBar: React.FC<Props> = ({
+  onDelete,
+  todoHandler,
+  setIsEditData,
+}) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
   const navigate = useNavigate();
@@ -147,6 +163,16 @@ const CardDetailSideBar: React.FC<Props> = ({ onDelete, todoHandler }) => {
     <Wrapper>
       <ListTitle>Edit Card</ListTitle>
       <ButtonList>
+        <ButtonListItem>
+          <CardFeatureButton
+            onClick={() => {
+              setIsEditData(true);
+            }}
+          >
+            <DateLogo />
+            Edit Date
+          </CardFeatureButton>
+        </ButtonListItem>
         <DropdownButton logo={<ToDoLogo />} text={"Add to do list"}>
           <DropdownChildrenWrapper>
             <NewToDoCard>

@@ -35,28 +35,33 @@ const EditBlockWrapper = styled.div<{ isEdit: boolean }>`
 `;
 
 const TextArea = styled.textarea`
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  padding: 5px 10px;
   resize: none;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  gap: 5px;
   margin: 5px 0px;
+  padding: 0px 20px;
 `;
 
 const TextAreaButton = styled.button`
-  width: 70px;
-  font-size: 16px;
+  width: 80px;
+  width: 80px;
   color: #fff;
-  background-color: #42a5f5;
-  height: 26px;
-  line-height: 16px;
+  background-color: #0085d1;
   border: none;
+  font-size: 16px;
   border-radius: 5px;
+  margin: 5px 5px;
+  padding: 5px;
+  font-weight: 600;
   cursor: pointer;
 
   &:hover {
-    background-color: #1976d2;
+    background-color: #0079bf;
   }
 `;
 
@@ -115,6 +120,7 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
             name="description"
             defaultValue={text}
             placeholder="Type to add description"
+            rows={4}
             ref={descriptionRef}
           />
           <ButtonWrapper>
