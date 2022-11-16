@@ -215,7 +215,6 @@ const Project = () => {
       setLists(newLists);
       updateDataHandler(newLists);
     }
-    // isDroppedHandler(draggableId, result.type);
   };
 
   const newCardHandler = (newCardTitle: string, parentID: string) => {

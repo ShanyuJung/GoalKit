@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
 import { useParams } from "react-router-dom";
 
-interface StylesProps {
-  isShowSidebar: boolean;
-}
-
-const Container = styled.div<StylesProps>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: ${(props) => (props.isShowSidebar ? "280px" : "20px")};
-  transition: padding 0.3s;
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
+  padding: 20px;
+  padding-top: 60px;
+`;
+
+const ChartWrapper = styled.div`
   width: 100%;
   padding: 20px;
 `;
@@ -108,7 +108,7 @@ const TogglePillLabel = styled.label`
 
 const TogglePillText = styled.label`
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
 `;
 
 interface CardInterface {
@@ -130,10 +130,9 @@ interface ListInterface {
 
 interface Props {
   lists: ListInterface[];
-  isShowSidebar: boolean;
 }
 
-const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
+const GanttChart: React.FC<Props> = ({ lists }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [view, setView] = useState(ViewMode.Day);
   const [columnWidth, setColumnWidth] = useState(45);
@@ -244,7 +243,7 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
   };
 
   return (
-    <Container isShowSidebar={isShowSidebar}>
+    <Container>
       <Wrapper>
         <ChartDashboardWrapper>
           <ViewModeSelectWrapper>
@@ -279,7 +278,7 @@ const GanttChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
           </TogglePillWrapper>
         </ChartDashboardWrapper>
       </Wrapper>
-      <Wrapper>{displayChart()}</Wrapper>
+      <ChartWrapper>{displayChart()}</ChartWrapper>
     </Container>
   );
 };

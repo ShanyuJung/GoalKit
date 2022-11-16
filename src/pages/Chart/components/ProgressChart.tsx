@@ -1,26 +1,52 @@
 import styled from "styled-components";
-import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Sector,
+  Cell,
+  RadialBarChart,
+  PolarAngleAxis,
+  RadialBar,
+} from "recharts";
 import { useCallback, useEffect, useState } from "react";
 import produce from "immer";
 
-interface StylesProps {
-  isShowSidebar: boolean;
-}
-
-const Container = styled.div<StylesProps>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: ${(props) => (props.isShowSidebar ? "280px" : "20px")};
-  transition: padding 0.3s;
+  overflow: scroll;
+  height: calc(100vh - 50px);
 `;
 
 const Wrapper = styled.div`
   width: 100%;
   padding: 20px;
+  padding-top: 60px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
 `;
 
 const ChartWrapper = styled.div`
-  width: 100%;
+  border: 1px solid #ddd;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+`;
+
+const ErrorText = styled.div`
+  width: 480px;
+  padding: 20px;
+  font-size: 16px;
+`;
+
+const ChartTitle = styled.div`
+  padding: 10px 20px;
+  font-size: 24px;
+  text-align: center;
 `;
 
 interface CardInterface {
@@ -42,7 +68,6 @@ interface ListInterface {
 
 interface Props {
   lists: ListInterface[];
-  isShowSidebar: boolean;
 }
 
 interface PieChartProps {
@@ -60,10 +85,10 @@ interface PieChartProps {
 }
 
 const DUMMY_DATA = [
-  { name: "Complete", value: 0 },
-  { name: "In Progress", value: 0 },
-  { name: "Over Time", value: 0 },
-  { name: "Without Time", value: 0 },
+  { name: "Complete", value: 0, total: 0 },
+  { name: "In Progress", value: 0, total: 0 },
+  { name: "Over Time", value: 0, total: 0 },
+  { name: "Without Plan", value: 0, total: 0 },
 ];
 
 const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];
@@ -112,8 +137,8 @@ const renderActiveShape = (props: PieChartProps) => {
         cy={cy}
         startAngle={startAngle}
         endAngle={endAngle}
-        innerRadius={outerRadius + 6}
-        outerRadius={outerRadius + 10}
+        innerRadius={outerRadius + 5}
+        outerRadius={outerRadius + 8}
         fill={fill}
       />
       <path
@@ -127,7 +152,7 @@ const renderActiveShape = (props: PieChartProps) => {
         y={ey}
         textAnchor={textAnchor}
         fill="#333"
-      >{`${value} Task Card`}</text>
+      >{`${value} Card`}</text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
@@ -141,7 +166,7 @@ const renderActiveShape = (props: PieChartProps) => {
   );
 };
 
-const ProgressChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
+const ProgressChart: React.FC<Props> = ({ lists }) => {
   const [data, setData] = useState(DUMMY_DATA);
   const [activeIndex, setActiveIndex] = useState(0);
   const onPieEnter = useCallback(
@@ -153,7 +178,7 @@ const ProgressChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
 
   useEffect(() => {
     const taskNumberHandler = () => {
-      const newData = produce(data, (draftState) => {
+      const newData = produce(DUMMY_DATA, (draftState) => {
         const curTime = new Date().getTime();
         lists.forEach((list) => {
           list.cards.forEach((card) => {
@@ -174,6 +199,9 @@ const ProgressChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
             } else {
               draftState[3].value += 1;
             }
+            draftState.forEach((item) => {
+              item.total += 1;
+            });
           });
         });
       });
@@ -183,30 +211,109 @@ const ProgressChart: React.FC<Props> = ({ lists, isShowSidebar }) => {
     taskNumberHandler();
   }, [lists]);
 
+  const taskDistribution = () => {
+    if (data[0].total === 0) {
+      return (
+        <ErrorText>
+          There is no task card with planning time, add planning time to
+          generate chart.
+        </ErrorText>
+      );
+    }
+
+    return (
+      <PieChart width={480} height={300}>
+        <Pie
+          activeIndex={activeIndex}
+          activeShape={renderActiveShape}
+          data={data}
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={100}
+          fill="#8884d8"
+          dataKey="value"
+          onMouseEnter={onPieEnter}
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+      </PieChart>
+    );
+  };
+
+  const progressChart = () => {
+    if (data[0].total === 0) {
+      return (
+        <ErrorText>
+          There is no task card with planning time, add planning time to
+          generate chart.
+        </ErrorText>
+      );
+    }
+
+    return (
+      <RadialBarChart
+        width={480}
+        height={300}
+        data={[data[0]]}
+        cx={240}
+        cy={150}
+        innerRadius={110}
+        outerRadius={130}
+        startAngle={90}
+        endAngle={-270}
+      >
+        <PolarAngleAxis
+          type="number"
+          domain={[0, data[0].total]}
+          angleAxisId={0}
+          tick={false}
+        />
+        <RadialBar
+          background
+          dataKey="value"
+          cornerRadius={30 / 2}
+          fill="#82ca9d"
+        />
+        <text
+          x={240}
+          y={150}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="progress-label"
+          fontSize={50}
+          fill="#666"
+        >
+          {`${Math.round((data[0].value / data[0].total) * 100)}`}
+        </text>
+        <text
+          x={285}
+          y={155}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="progress-label"
+          fontSize={20}
+          fill="#666"
+        >
+          {`%`}
+        </text>
+      </RadialBarChart>
+    );
+  };
+
   return (
-    <Container isShowSidebar={isShowSidebar}>
+    <Container>
       <Wrapper>
-        <PieChart width={600} height={600}>
-          <Pie
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape}
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={100}
-            fill="#8884d8"
-            dataKey="value"
-            onMouseEnter={onPieEnter}
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-        </PieChart>
+        <ChartWrapper>
+          <ChartTitle>Current Progress</ChartTitle>
+          <>{progressChart()}</>
+        </ChartWrapper>
+        <ChartWrapper>
+          <ChartTitle>Task Distribution</ChartTitle>
+          <>{taskDistribution()}</>
+        </ChartWrapper>
       </Wrapper>
     </Container>
   );
