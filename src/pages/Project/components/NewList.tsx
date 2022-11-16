@@ -1,31 +1,86 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
+import { useOnClickOutside } from "../../../utils/hooks";
+import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
-const Wrapper = styled.div``;
-
-const TextArea = styled.textarea`
-  resize: none;
-  cursor: pointer;
+const Wrapper = styled.div`
+  width: 230px;
+  margin: 0px 10px;
+  height: fit-content;
 `;
 
-const Button = styled.button<{ isShow: boolean }>`
-  display: ${(props) => (props.isShow ? "block" : "none")};
+const TextArea = styled.textarea<{ isShow: boolean }>`
+  width: 100%;
+  resize: none;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  padding: 5px 5px;
+  font-size: 16px;
+  height: ${(props) => (props.isShow ? "" : "36px")};
+  background-color: ${(props) => (props.isShow ? "#fff" : "#ddd")};
+  border-radius: 5px;
+  border-color: ${(props) => (props.isShow ? "#000" : "transparent")};
+
+  &:hover {
+    background-color: ${(props) => (props.isShow ? "#fff" : "#ccc")};
+  }
+`;
+
+const ButtonWrapper = styled.div<{ isShow: boolean }>`
+  display: ${(props) => (props.isShow ? "flex" : "none")};
+  gap: 10px;
+  justify-content: space-between;
+`;
+
+const Button = styled.button`
+  cursor: pointer;
+  color: #fff;
+  background-color: #0085d1;
+  border: none;
+  font-size: 16px;
+  border-radius: 5px;
+  margin: 0px;
+  padding: 5px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #0079bf;
+  }
+`;
+
+const CloseButton = styled(closeIcon)`
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  path {
+    fill: #999;
+  }
+
+  &:hover {
+    path {
+      fill: #555;
+    }
+  }
 `;
 
 interface Props {
   onSubmit: (newListTitle: string) => void;
 }
 
+export type Ref = HTMLTextAreaElement;
+
 const NewList = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement | null>(null);
-  const [isFocus, setIsFocus] = useState(true);
+  const ref = useRef(null);
+  const [isFocus, setIsFocus] = useState(false);
 
   const focusHandler = () => {
-    // setIsFocus(true);
+    setIsFocus(true);
   };
 
-  const blurHandler = () => {
-    // setIsFocus(false);
+  const clickOutsideHandler = () => {
+    setIsFocus(false);
+    textRef.current?.blur();
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {
@@ -35,11 +90,21 @@ const NewList = ({ onSubmit }: Props) => {
     textRef.current!.value = "";
   };
 
+  useOnClickOutside(ref, clickOutsideHandler);
+
   return (
-    <Wrapper onFocus={focusHandler} onBlur={blurHandler}>
+    <Wrapper onFocus={focusHandler} ref={ref}>
       <form onSubmit={onSubmitHandler}>
-        <TextArea placeholder="&#43; Add new list" ref={textRef} />
-        <Button isShow={isFocus}>Add new list</Button>
+        <TextArea
+          placeholder="&#43; Add new list"
+          ref={textRef}
+          isShow={isFocus}
+          required
+        />
+        <ButtonWrapper isShow={isFocus}>
+          <Button>Add new list</Button>
+          <CloseButton onClick={clickOutsideHandler} />
+        </ButtonWrapper>
       </form>
     </Wrapper>
   );

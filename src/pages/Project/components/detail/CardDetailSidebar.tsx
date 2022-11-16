@@ -110,6 +110,7 @@ const Button = styled.button`
   margin: 10px 0px;
   padding: 5px;
   font-weight: 600;
+  cursor: pointer;
 
   &:hover {
     background-color: #0079bf;
