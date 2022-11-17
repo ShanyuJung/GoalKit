@@ -143,9 +143,8 @@ const Time: React.FC<Props> = ({
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
-  // const [isEdit, setIsEdit] = useState(false);
   const { cardId } = useParams();
-  console.log(isEdit);
+
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
     const startTime = startTimeRef.current?.value;
