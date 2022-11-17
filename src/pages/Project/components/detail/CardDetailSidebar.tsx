@@ -3,8 +3,11 @@ import styled from "styled-components";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 import { ReactComponent as DateIcon } from "../../../../assets/clock-svgrepo-com.svg";
+import { ReactComponent as OwnerIcon } from "../../../../assets/user-svgrepo-com.svg";
+import { ReactComponent as TagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
+import TagsEditor from "./TagsEditor";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -32,6 +35,20 @@ const DateLogo = styled(DateIcon)`
 
   path {
     fill: #444;
+  }
+`;
+
+const OwnerLogo = styled(OwnerIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  circle {
+    fill: #777;
+  }
+
+  path {
+    fill: #777;
   }
 `;
 
@@ -145,6 +162,16 @@ const OwnerButton = styled.button`
   cursor: pointer;
 `;
 
+const TagsLogo = styled(TagsIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  path {
+    fill: #777;
+  }
+`;
+
 interface Member {
   uid: string;
   email: string;
@@ -157,6 +184,9 @@ interface Props {
   setIsEditData: (value: boolean) => void;
   members: Member[];
   addOwnerHandler(id: string): void;
+  tagsIDs: string[] | undefined;
+  tags: { id: string; colorCode: string; title: string }[] | undefined;
+  onChange(newTags: string[]): void;
 }
 
 const CardDetailSideBar: React.FC<Props> = ({
@@ -165,8 +195,12 @@ const CardDetailSideBar: React.FC<Props> = ({
   setIsEditData,
   members,
   addOwnerHandler,
+  tagsIDs,
+  tags,
+  onChange,
 }) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
+
   const { id, cardId } = useParams();
   const navigate = useNavigate();
 
@@ -200,18 +234,23 @@ const CardDetailSideBar: React.FC<Props> = ({
             Edit Date
           </CardFeatureButton>
         </ButtonListItem>
-        <DropdownButton logo={<ToDoLogo />} text={"Add to do list"}>
+        <DropdownButton logo={<ToDoLogo />} text={"Add Todo List"}>
           <DropdownChildrenWrapper>
             <NewToDoCard>
               <Form onSubmit={addTodoListHandler}>
-                <CardLabel htmlFor="toDoInput">Add to do list</CardLabel>
+                <CardLabel htmlFor="toDoInput">Add Todo List</CardLabel>
                 <Input type="text" id="toDoInput" required ref={todoRef} />
                 <Button>Add to do</Button>
               </Form>
             </NewToDoCard>
           </DropdownChildrenWrapper>
         </DropdownButton>
-        <DropdownButton logo={<ToDoLogo />} text={"Add owners"}>
+        <DropdownButton logo={<TagsLogo />} text={"Edit Tags"}>
+          <DropdownChildrenWrapper>
+            <TagsEditor tags={tags} tagsIDs={tagsIDs} onChange={onChange} />
+          </DropdownChildrenWrapper>
+        </DropdownButton>
+        <DropdownButton logo={<OwnerLogo />} text={"Add Owners"}>
           <DropdownChildrenWrapper>
             <OwnerButtonWrapper>
               {members?.map((member) => {

@@ -34,7 +34,7 @@ const TitleWrapper = styled.div`
 `;
 
 const DescriptionIcon = styled(DescriptionLogo)`
-  margin: 4px 0px;
+  margin: 5px 0px;
   path {
     fill: #828282;
   }
@@ -49,6 +49,7 @@ const TimeWrapper = styled.div<{ colorCode: string }>`
   font-weight: 700;
   line-height: 20px;
   border-radius: 5px;
+  margin-bottom: 5px;
 `;
 
 const TagsContainer = styled.div`
@@ -96,6 +97,7 @@ const OwnerContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 0px 5px;
+  margin-bottom: 5px;
 `;
 
 const OwnerWrapper = styled.div`

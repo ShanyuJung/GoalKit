@@ -52,6 +52,8 @@ const ProgressbarContent = styled.div<{ progress: string }>`
   height: 6px;
   width: ${(props) => props.progress};
   background-color: #61bd4f;
+  border-radius: 3px;
+  transition: width 0.3s;
 `;
 
 const TodoListWrapper = styled.div`

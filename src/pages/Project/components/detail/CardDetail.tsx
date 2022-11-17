@@ -429,6 +429,9 @@ const CardDetail: React.FC<Props> = ({
         setIsEditData={setIsEditDate}
         members={members || []}
         addOwnerHandler={addOwnerHandler}
+        tagsIDs={state.tagsIDs}
+        tags={tags}
+        onChange={selectTagHandler}
       />
     </Container>
   );
