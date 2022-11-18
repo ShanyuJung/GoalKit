@@ -17,12 +17,13 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  width: 1540px;
+  max-width: 1540px;
   padding: 20px;
   padding-top: 60px;
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const ChartWrapper = styled.div`
@@ -34,12 +35,6 @@ const ChartWrapper = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   background-color: #fff;
-`;
-
-const ErrorText = styled.div`
-  width: 480px;
-  padding: 20px;
-  font-size: 16px;
 `;
 
 const ChartTitle = styled.div`
@@ -96,12 +91,12 @@ const ProgressChart: React.FC<Props> = ({ lists, tags, members }) => {
           <TaskDistribution lists={lists} />
         </ChartWrapper>
         <ChartWrapper>
-          <ChartTitle>Tags Distribution</ChartTitle>
-          <TagsDistribution lists={lists} tags={tags} />
-        </ChartWrapper>
-        <ChartWrapper>
           <ChartTitle>Task Owner Distribution</ChartTitle>
           <OwnerDistribution lists={lists} members={members} />
+        </ChartWrapper>
+        <ChartWrapper>
+          <ChartTitle>Tags Distribution</ChartTitle>
+          <TagsDistribution lists={lists} tags={tags} />
         </ChartWrapper>
       </Wrapper>
     </Container>

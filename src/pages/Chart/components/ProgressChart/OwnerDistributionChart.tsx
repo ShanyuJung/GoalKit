@@ -111,7 +111,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
-      <Bar dataKey="total" fill="#82ca9d" barSize={20} />
+      <Bar dataKey="total" fill="#8884d8" barSize={20} />
     </BarChart>
   );
 };
