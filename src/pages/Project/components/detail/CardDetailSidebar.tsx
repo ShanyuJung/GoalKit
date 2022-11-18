@@ -1,9 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
-import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as trashIcon } from "../../../../assets/trash-svgrepo-com.svg";
+import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
+import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
+import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
+import TagsEditor from "./TagsEditor";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -24,7 +28,31 @@ const ButtonList = styled.div`
   gap: 5px;
 `;
 
-const TrashLogo = styled(TrashIcon)`
+const DateIcon = styled(dateIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  path {
+    fill: #444;
+  }
+`;
+
+const OwnerIcon = styled(ownerIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  circle {
+    fill: #777;
+  }
+
+  path {
+    fill: #777;
+  }
+`;
+
+const TrashIcon = styled(trashIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -57,7 +85,7 @@ const CardFeatureButton = styled.button`
   }
 `;
 
-const ToDoLogo = styled(ToDoIcon)`
+const ToDoIcon = styled(toDoIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -110,19 +138,88 @@ const Button = styled.button`
   margin: 10px 0px;
   padding: 5px;
   font-weight: 600;
+  cursor: pointer;
 
   &:hover {
     background-color: #0079bf;
   }
 `;
 
+const OwnerButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 5px;
+  background-color: #fff;
+`;
+
+const OwnerButton = styled.button`
+  width: 100%;
+  background-color: #c5cae9;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+const TagsIcon = styled(tagsIcon)`
+  height: 16px;
+  width: 16px;
+  margin-right: 10px;
+
+  path {
+    fill: #777;
+  }
+`;
+
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline?: number };
+  description?: string;
+  owner?: string[];
+  tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
+}
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}
+
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+}
+
 interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
+  setIsEditData: (value: boolean) => void;
+  members: Member[];
+  addOwnerHandler(id: string): void;
+  tagsIDs: string[] | undefined;
+  tags: { id: string; colorCode: string; title: string }[] | undefined;
+  onChange(newTags: string[]): void;
+  listsArray: ListInterface[];
 }
 
-const CardDetailSideBar: React.FC<Props> = ({ onDelete, todoHandler }) => {
+const CardDetailSideBar: React.FC<Props> = ({
+  onDelete,
+  todoHandler,
+  setIsEditData,
+  members,
+  addOwnerHandler,
+  tagsIDs,
+  tags,
+  onChange,
+  listsArray,
+}) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
+
   const { id, cardId } = useParams();
   const navigate = useNavigate();
 
@@ -146,20 +243,58 @@ const CardDetailSideBar: React.FC<Props> = ({ onDelete, todoHandler }) => {
     <Wrapper>
       <ListTitle>Edit Card</ListTitle>
       <ButtonList>
-        <DropdownButton logo={<ToDoLogo />} text={"Add to do list"}>
+        <ButtonListItem>
+          <CardFeatureButton
+            onClick={() => {
+              setIsEditData(true);
+            }}
+          >
+            <DateIcon />
+            Edit Date
+          </CardFeatureButton>
+        </ButtonListItem>
+        <DropdownButton logo={<ToDoIcon />} text={"Add Todo List"}>
           <DropdownChildrenWrapper>
             <NewToDoCard>
               <Form onSubmit={addTodoListHandler}>
-                <CardLabel htmlFor="toDoInput">Add to do list</CardLabel>
+                <CardLabel htmlFor="toDoInput">Add Todo List</CardLabel>
                 <Input type="text" id="toDoInput" required ref={todoRef} />
                 <Button>Add to do</Button>
               </Form>
             </NewToDoCard>
           </DropdownChildrenWrapper>
         </DropdownButton>
+        <DropdownButton logo={<TagsIcon />} text={"Edit Tags"}>
+          <DropdownChildrenWrapper>
+            <TagsEditor
+              tags={tags}
+              tagsIDs={tagsIDs}
+              onChange={onChange}
+              listsArray={listsArray}
+            />
+          </DropdownChildrenWrapper>
+        </DropdownButton>
+        <DropdownButton logo={<OwnerIcon />} text={"Add Owners"}>
+          <DropdownChildrenWrapper>
+            <OwnerButtonWrapper>
+              {members?.map((member) => {
+                return (
+                  <OwnerButton
+                    key={`newOwner-${member.uid}`}
+                    onClick={() => {
+                      addOwnerHandler(member.uid);
+                    }}
+                  >
+                    {member.displayName}
+                  </OwnerButton>
+                );
+              })}
+            </OwnerButtonWrapper>
+          </DropdownChildrenWrapper>
+        </DropdownButton>
         <ButtonListItem>
           <CardFeatureButton onClick={checkDeleteCardHandler}>
-            <TrashLogo />
+            <TrashIcon />
             Delete Card
           </CardFeatureButton>
         </ButtonListItem>

@@ -1,9 +1,29 @@
-import { useState } from "react";
 import styled from "styled-components";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
+import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
 
 const OwnerContainer = styled.div`
   margin: 10px;
   width: 300px;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const OwnerIcon = styled(ownerIcon)`
+  height: 20px;
+  width: 20px;
+  margin-right: 6px;
+
+  path {
+    fill: #444;
+  }
+
+  circle {
+    fill: #444;
+  }
 `;
 
 const OwnerTitle = styled.div`
@@ -21,12 +41,13 @@ const OwnerList = styled.div`
 const OwnerWrapper = styled.div`
   width: fit-content;
   min-width: 100px;
-  padding: 2px 15px;
+  padding: 2px 0px 2px 15px;
   border-radius: 5px;
   background-color: #c5cae9;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
+  cursor: default;
 `;
 
 const OwnerPoint = styled.div`
@@ -41,39 +62,23 @@ const OwnerPoint = styled.div`
 const Owner = styled.div`
   display: flex;
   align-items: center;
+  flex-grow: 1;
 `;
 
-const OwnerToggleButton = styled.button`
-  width: 100px;
-  margin-top: 10px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #42a5f5;
-  height: 26px;
-  line-height: 16px;
-  border: none;
-  border-radius: 5px;
+const RemoveOwnerButton = styled(closeIcon)`
+  width: 30px;
+  height: 30px;
   cursor: pointer;
+
+  path {
+    fill: transparent;
+  }
 
   &:hover {
-    background-color: #1976d2;
+    path {
+      fill: #555;
+    }
   }
-`;
-
-const OwnerButtonWrapper = styled.div<{ isToggle: boolean }>`
-  display: ${(props) => (props.isToggle ? "flex" : "none")};
-  flex-direction: column;
-  padding: 5px;
-  gap: 5px;
-`;
-
-const OwnerButton = styled.button`
-  width: 100px;
-  background-color: #c5cae9;
-  border: none;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
 `;
 
 interface Member {
@@ -83,17 +88,21 @@ interface Member {
 }
 
 interface Props {
-  ownerInfo: Member[] | undefined;
-  members: Member[] | undefined;
-  addOwnerHandler(id: string): void;
+  ownerInfo: Member[];
+  removeOwnerHandler(id: string): void;
 }
 
-const Owners: React.FC<Props> = ({ ownerInfo, members, addOwnerHandler }) => {
-  const [isToggle, setIsToggle] = useState(false);
+const Owners: React.FC<Props> = ({ ownerInfo, removeOwnerHandler }) => {
+  if (ownerInfo?.length === 0) {
+    return <></>;
+  }
 
   return (
     <OwnerContainer>
-      <OwnerTitle>Owner:</OwnerTitle>
+      <TitleWrapper>
+        <OwnerIcon />
+        <OwnerTitle>Owner:</OwnerTitle>
+      </TitleWrapper>
       <OwnerList>
         {ownerInfo && ownerInfo.length > 0 ? (
           ownerInfo?.map((owner) => {
@@ -101,34 +110,18 @@ const Owners: React.FC<Props> = ({ ownerInfo, members, addOwnerHandler }) => {
               <OwnerWrapper key={owner.uid}>
                 <OwnerPoint />
                 <Owner>{owner.displayName}</Owner>
+                <RemoveOwnerButton
+                  onClick={() => {
+                    removeOwnerHandler(owner.uid);
+                  }}
+                />
               </OwnerWrapper>
             );
           })
         ) : (
           <></>
         )}
-        <OwnerToggleButton
-          onClick={() => {
-            setIsToggle((prev) => !prev);
-          }}
-        >
-          Add Owner
-        </OwnerToggleButton>
       </OwnerList>
-      <OwnerButtonWrapper isToggle={isToggle}>
-        {members?.map((member) => {
-          return (
-            <OwnerButton
-              key={`newOwner-${member.uid}`}
-              onClick={() => {
-                addOwnerHandler(member.uid);
-              }}
-            >
-              {member.displayName}
-            </OwnerButton>
-          );
-        })}
-      </OwnerButtonWrapper>
     </OwnerContainer>
   );
 };

@@ -19,6 +19,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  min-height: 65vh;
   display: flex;
   flex-direction: column;
   width: 410px;
@@ -159,6 +160,7 @@ const CardDetail: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
+  const [isEditDate, setIsEditDate] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
@@ -277,6 +279,18 @@ const CardDetail: React.FC<Props> = ({
     dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
   };
 
+  const removeOwnerHandler = (ownerID: string) => {
+    const isOwnerExist = state.owner?.includes(ownerID);
+    if (!isOwnerExist) return;
+    const curOwners: string[] = state.owner || [];
+    const newOwners = produce(curOwners, (draftState) => {
+      const index = draftState.findIndex((id) => id === ownerID);
+      draftState.splice(index, 1);
+    });
+
+    dispatch({ type: "UPDATE_OWNER", payload: { owner: newOwners } });
+  };
+
   const completeTaskHandler = (isChecked: boolean) => {
     dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
@@ -380,6 +394,8 @@ const CardDetail: React.FC<Props> = ({
           onSubmit={updateTimeHandler}
           onCheck={completeTaskHandler}
           todo={state.todo || []}
+          isEdit={isEditDate}
+          setIsEdit={setIsEditDate}
         />
         <Todo
           todo={state.todo || []}
@@ -388,9 +404,8 @@ const CardDetail: React.FC<Props> = ({
         />
         <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
         <Owners
-          ownerInfo={ownerInfo}
-          members={members}
-          addOwnerHandler={addOwnerHandler}
+          ownerInfo={ownerInfo || []}
+          removeOwnerHandler={removeOwnerHandler}
         />
       </Wrapper>
     );
@@ -408,7 +423,17 @@ const CardDetail: React.FC<Props> = ({
         />
       </TitleWrapper>
       <>{cardInfo()}</>
-      <CardDetailSideBar onDelete={onDelete} todoHandler={addNewTodoHandler} />
+      <CardDetailSideBar
+        onDelete={onDelete}
+        todoHandler={addNewTodoHandler}
+        setIsEditData={setIsEditDate}
+        members={members || []}
+        addOwnerHandler={addOwnerHandler}
+        tagsIDs={state.tagsIDs}
+        tags={tags}
+        onChange={selectTagHandler}
+        listsArray={listsArray}
+      />
     </Container>
   );
 };

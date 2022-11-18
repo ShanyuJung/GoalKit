@@ -2,9 +2,10 @@ import styled from "styled-components";
 import Card from "./Card";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
-import { ReactComponent as MoreIcon } from "../../../assets/more-svgrepo-com.svg";
-import { ReactComponent as TrashIcon } from "../../../assets/trash-svgrepo-com.svg";
-import { useState } from "react";
+import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg";
+import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
+import { useRef, useState } from "react";
+import { useOnClickOutside } from "../../../utils/hooks";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -58,7 +59,14 @@ const Title = styled.div`
   font-size: 20px;
 `;
 
-const MoreLogo = styled(MoreIcon)`
+const LogoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 30px;
+  width: 48px;
+`;
+
+const MoreLogo = styled(moreIcon)`
   height: 18px;
   width: 48px;
   margin: 5px 0px;
@@ -83,10 +91,12 @@ const MoreModal = styled.div<{ isShow: boolean }>`
   display: ${(props) => (props.isShow ? "block" : "none")};
   background-color: #ddd;
   position: relative;
-  width: 100px;
-  top: 0px;
-  right: -145px;
+  width: 110px;
+  padding: 5px;
+  top: -5px;
+  right: 67px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+  z-index: 5;
 `;
 
 const ModalList = styled.div`
@@ -110,7 +120,7 @@ const ModalListItem = styled.div`
   }
 `;
 
-const TrashLogo = styled(TrashIcon)`
+const TrashLogo = styled(trashIcon)`
   height: 16px;
   margin-right: 5px;
 
@@ -154,6 +164,7 @@ const List = ({
   deleteList,
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
+  const ref = useRef(null);
 
   const checkDeleteListHandler = () => {
     const r = window.confirm("Check to delete selected list");
@@ -163,6 +174,8 @@ const List = ({
       setIsShowModal(false);
     }
   };
+
+  useOnClickOutside(ref, () => setIsShowModal(false));
 
   return (
     <Droppable droppableId={id} type="LIST">
@@ -174,22 +187,24 @@ const List = ({
         >
           <TitleWrapper>
             <Title>{title}</Title>
-            <MoreLogo
-              onClick={() => {
-                setIsShowModal((prev) => !prev);
-              }}
-            />
+            <LogoWrapper ref={ref}>
+              <MoreLogo
+                onClick={() => {
+                  setIsShowModal((prev) => !prev);
+                }}
+              />
+              <ModalWrapper>
+                <MoreModal isShow={isShowModal}>
+                  <ModalList>
+                    <ModalListItem onClick={checkDeleteListHandler}>
+                      <TrashLogo />
+                      Delete list
+                    </ModalListItem>
+                  </ModalList>
+                </MoreModal>
+              </ModalWrapper>
+            </LogoWrapper>
           </TitleWrapper>
-          <ModalWrapper>
-            <MoreModal isShow={isShowModal}>
-              <ModalList>
-                <ModalListItem onClick={checkDeleteListHandler}>
-                  <TrashLogo />
-                  Delete list
-                </ModalListItem>
-              </ModalList>
-            </MoreModal>
-          </ModalWrapper>
           <Wrapper>
             {cards.map((card, index) => {
               return (
