@@ -143,6 +143,64 @@ const ColorBlock = styled.div<{ colorCode: string; selectColor: string }>`
   }
 `;
 
+const TagEditBoardWrapper = styled.div`
+  width: 100%;
+  background-color: #fff;
+`;
+
+const TagButtonWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+  width: 100%;
+`;
+
+const DeleteTagButton = styled.button`
+  width: 100%;
+  color: #fff;
+  background-color: #b04632;
+  border: none;
+  margin: 10px 0px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin: 5px 0px;
+  padding: 5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #933b27;
+  }
+`;
+
+const EditBoardTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0px 10px;
+`;
+
+const EditBoardCancelButton = styled.button`
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  border: none;
+  width: 10px;
+  font-size: 18px;
+  background-color: transparent;
+  color: #666;
+
+  &:hover {
+    color: #333;
+  }
+`;
+
+const EditBoardTitle = styled.div`
+  font-size: 18px;
+  font-weight: 600;
+  flex-grow: 1;
+  text-align: center;
+`;
+
 const TAG_COLOR_LIST = [
   "#7BC86C",
   "#5AAC44",
@@ -186,6 +244,7 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
   const newTagRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [curTag, setCurTag] = useState();
   const [selectColor, setSelectColor] = useState("#7BC86C");
   const { id } = useParams();
 
@@ -247,6 +306,25 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
     setIsEdit(true);
   };
 
+  const colorGroup = () => {
+    return (
+      <ColorSelectorWrapper>
+        {TAG_COLOR_LIST.map((item) => {
+          return (
+            <ColorBlock
+              colorCode={item}
+              selectColor={selectColor}
+              key={`color-block-${item}`}
+              onClick={() => {
+                setSelectColor(item);
+              }}
+            />
+          );
+        })}
+      </ColorSelectorWrapper>
+    );
+  };
+
   const tagSelector = () => {
     return (
       <TagSelectorList>
@@ -275,19 +353,7 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
           <NewTagFormLabel>Tag name:</NewTagFormLabel>
           <NewTagInput type="text" required ref={newTagRef} />
           <NewTagFormLabel>Select color:</NewTagFormLabel>
-          <ColorSelectorWrapper>
-            {TAG_COLOR_LIST.map((item) => {
-              return (
-                <ColorBlock
-                  colorCode={item}
-                  selectColor={selectColor}
-                  onClick={() => {
-                    setSelectColor(item);
-                  }}
-                />
-              );
-            })}
-          </ColorSelectorWrapper>
+          {colorGroup()}
           <NewTagButton>add tag</NewTagButton>
         </NewTagInputForm>
       </TagSelectorList>
@@ -295,7 +361,34 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
   };
 
   const tagEditBoard = () => {
-    return <div>EDITING</div>;
+    return (
+      <TagEditBoardWrapper>
+        <EditBoardTitleWrapper>
+          <EditBoardCancelButton
+            onClick={() => {
+              setIsEdit(false);
+            }}
+          >{`<`}</EditBoardCancelButton>
+          <EditBoardTitle>Edit </EditBoardTitle>
+        </EditBoardTitleWrapper>
+        <NewTagInputForm
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <NewTagFormLabel>Tag name:</NewTagFormLabel>
+          <NewTagInput type="text" ref={newTagRef} required />
+          <NewTagFormLabel>Select color:</NewTagFormLabel>
+          {colorGroup()}
+          <TagButtonWrapper>
+            <NewTagButton>Save</NewTagButton>
+            <DeleteTagButton type="button" onClick={() => {}}>
+              Delete Tag
+            </DeleteTagButton>
+          </TagButtonWrapper>
+        </NewTagInputForm>
+      </TagEditBoardWrapper>
+    );
   };
 
   return <>{isEdit ? tagEditBoard() : tagSelector()}</>;
