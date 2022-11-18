@@ -147,18 +147,18 @@ const TodoWrapper = styled.div`
   gap: 2px;
 `;
 
-const TodoIcon = styled(todoIcon)<{ isAllDone: boolean }>`
+const TodoIcon = styled(todoIcon)<{ $isAllDone: boolean }>`
   width: 12px;
   height: 12px;
   margin: 5px 0px;
   path {
-    fill: ${(props) => (props.isAllDone ? "#008000" : "#828282")};
+    fill: ${(props) => (props.$isAllDone ? "#008000" : "#828282")};
   }
 `;
 
-const TodoText = styled.div<{ isAllDone: boolean }>`
+const TodoText = styled.div<{ $isAllDone: boolean }>`
   font-size: 12px;
-  color: ${(props) => (props.isAllDone ? "#008000" : "#828282")};
+  color: ${(props) => (props.$isAllDone ? "#008000" : "#828282")};
 `;
 
 interface CardInterface {
@@ -264,8 +264,8 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
 
     return (
       <TodoWrapper>
-        <TodoIcon isAllDone={total === done} />
-        <TodoText isAllDone={total === done}>{`${done}/${total}`}</TodoText>
+        <TodoIcon $isAllDone={total === done} />
+        <TodoText $isAllDone={total === done}>{`${done}/${total}`}</TodoText>
       </TodoWrapper>
     );
   };
