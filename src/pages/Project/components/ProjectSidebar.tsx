@@ -20,6 +20,7 @@ const SidebarWrapper = styled.div<StylesProps>`
   height: calc(100vh - 50px);
   transition: width 0.3s;
   position: fixed;
+  z-index: 10;
 `;
 
 const WorkspaceTitleWrapper = styled.div<StylesProps>`
