@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as TrashIcon } from "../../../../assets/trash-svgrepo-com.svg";
-import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
-import { ReactComponent as DateIcon } from "../../../../assets/clock-svgrepo-com.svg";
-import { ReactComponent as OwnerIcon } from "../../../../assets/user-svgrepo-com.svg";
-import { ReactComponent as TagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
+import { ReactComponent as trashIcon } from "../../../../assets/trash-svgrepo-com.svg";
+import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
+import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
+import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
@@ -28,7 +28,7 @@ const ButtonList = styled.div`
   gap: 5px;
 `;
 
-const DateLogo = styled(DateIcon)`
+const DateIcon = styled(dateIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -38,7 +38,7 @@ const DateLogo = styled(DateIcon)`
   }
 `;
 
-const OwnerLogo = styled(OwnerIcon)`
+const OwnerIcon = styled(ownerIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -52,7 +52,7 @@ const OwnerLogo = styled(OwnerIcon)`
   }
 `;
 
-const TrashLogo = styled(TrashIcon)`
+const TrashIcon = styled(trashIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -85,7 +85,7 @@ const CardFeatureButton = styled.button`
   }
 `;
 
-const ToDoLogo = styled(ToDoIcon)`
+const ToDoIcon = styled(toDoIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -162,7 +162,7 @@ const OwnerButton = styled.button`
   cursor: pointer;
 `;
 
-const TagsLogo = styled(TagsIcon)`
+const TagsIcon = styled(tagsIcon)`
   height: 16px;
   width: 16px;
   margin-right: 10px;
@@ -249,11 +249,11 @@ const CardDetailSideBar: React.FC<Props> = ({
               setIsEditData(true);
             }}
           >
-            <DateLogo />
+            <DateIcon />
             Edit Date
           </CardFeatureButton>
         </ButtonListItem>
-        <DropdownButton logo={<ToDoLogo />} text={"Add Todo List"}>
+        <DropdownButton logo={<ToDoIcon />} text={"Add Todo List"}>
           <DropdownChildrenWrapper>
             <NewToDoCard>
               <Form onSubmit={addTodoListHandler}>
@@ -264,7 +264,7 @@ const CardDetailSideBar: React.FC<Props> = ({
             </NewToDoCard>
           </DropdownChildrenWrapper>
         </DropdownButton>
-        <DropdownButton logo={<TagsLogo />} text={"Edit Tags"}>
+        <DropdownButton logo={<TagsIcon />} text={"Edit Tags"}>
           <DropdownChildrenWrapper>
             <TagsEditor
               tags={tags}
@@ -274,7 +274,7 @@ const CardDetailSideBar: React.FC<Props> = ({
             />
           </DropdownChildrenWrapper>
         </DropdownButton>
-        <DropdownButton logo={<OwnerLogo />} text={"Add Owners"}>
+        <DropdownButton logo={<OwnerIcon />} text={"Add Owners"}>
           <DropdownChildrenWrapper>
             <OwnerButtonWrapper>
               {members?.map((member) => {
@@ -294,7 +294,7 @@ const CardDetailSideBar: React.FC<Props> = ({
         </DropdownButton>
         <ButtonListItem>
           <CardFeatureButton onClick={checkDeleteCardHandler}>
-            <TrashLogo />
+            <TrashIcon />
             Delete Card
           </CardFeatureButton>
         </ButtonListItem>

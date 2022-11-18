@@ -2,8 +2,8 @@ import styled from "styled-components";
 import Card from "./Card";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
-import { ReactComponent as MoreIcon } from "../../../assets/more-svgrepo-com.svg";
-import { ReactComponent as TrashIcon } from "../../../assets/trash-svgrepo-com.svg";
+import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg";
+import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 
@@ -66,7 +66,7 @@ const LogoWrapper = styled.div`
   width: 48px;
 `;
 
-const MoreLogo = styled(MoreIcon)`
+const MoreLogo = styled(moreIcon)`
   height: 18px;
   width: 48px;
   margin: 5px 0px;
@@ -96,6 +96,7 @@ const MoreModal = styled.div<{ isShow: boolean }>`
   top: -5px;
   right: 67px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+  z-index: 5;
 `;
 
 const ModalList = styled.div`
@@ -119,7 +120,7 @@ const ModalListItem = styled.div`
   }
 `;
 
-const TrashLogo = styled(TrashIcon)`
+const TrashLogo = styled(trashIcon)`
   height: 16px;
   margin-right: 5px;
 

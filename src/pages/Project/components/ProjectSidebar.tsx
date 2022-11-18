@@ -91,7 +91,7 @@ const LinkText = styled.div`
   }
 `;
 
-const ChartLogo = styled(chartIcon)`
+const ChartIcon = styled(chartIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -103,7 +103,7 @@ const ChartLogo = styled(chartIcon)`
   }
 `;
 
-const GanttLogo = styled(ganttIcon)`
+const GanttIcon = styled(ganttIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -115,7 +115,7 @@ const GanttLogo = styled(ganttIcon)`
   }
 `;
 
-const PieChartLogo = styled(pieChartIcon)`
+const PieChartIcon = styled(pieChartIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -183,13 +183,13 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
       <LinkList isShow={isShow}>
         <LinkWrapper>
           <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
-            <GanttLogo />
+            <GanttIcon />
             <LinkText>Gantt Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
         <LinkWrapper>
           <StyledLink to={`/project/${id}/chart/progress`} relative="path">
-            <PieChartLogo />
+            <PieChartIcon />
             <LinkText>Progress Chart</LinkText>
           </StyledLink>
         </LinkWrapper>

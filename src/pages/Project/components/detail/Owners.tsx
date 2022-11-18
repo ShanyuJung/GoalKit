@@ -12,7 +12,7 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const OwnerLogo = styled(ownerIcon)`
+const OwnerIcon = styled(ownerIcon)`
   height: 20px;
   width: 20px;
   margin-right: 6px;
@@ -100,7 +100,7 @@ const Owners: React.FC<Props> = ({ ownerInfo, removeOwnerHandler }) => {
   return (
     <OwnerContainer>
       <TitleWrapper>
-        <OwnerLogo />
+        <OwnerIcon />
         <OwnerTitle>Owner:</OwnerTitle>
       </TitleWrapper>
       <OwnerList>

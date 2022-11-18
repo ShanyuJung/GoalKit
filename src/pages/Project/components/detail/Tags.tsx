@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import styled from "styled-components";
-import { ReactComponent as TagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
+import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
 
 const TagsContainer = styled.div`
   margin: 0px 10px;
@@ -74,7 +74,7 @@ const Tag = styled.div`
   font-size: 14px;
 `;
 
-const TagsLogo = styled(TagsIcon)`
+const TagsIcon = styled(tagsIcon)`
   height: 20px;
   width: 20px;
   margin: 0px 3px;
@@ -96,7 +96,7 @@ const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
   return (
     <TagsContainer>
       <TagTitleWrapper>
-        <TagsLogo />
+        <TagsIcon />
         <TagTitle>Tags:</TagTitle>
       </TagTitleWrapper>
       <TagList>

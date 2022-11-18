@@ -23,7 +23,7 @@ const TimeTitle = styled.div`
   font-weight: 900;
 `;
 
-const DateLogo = styled(dateIcon)`
+const DateIcon = styled(dateIcon)`
   height: 20px;
   width: 20px;
   margin-right: 6px;
@@ -204,7 +204,7 @@ const Time: React.FC<Props> = ({
   return (
     <TimeWrapper>
       <TimeTitleWrapper>
-        <DateLogo />
+        <DateIcon />
         <TimeTitle>Date:</TimeTitle>
       </TimeTitleWrapper>
       {curStart && curDeadline ? (

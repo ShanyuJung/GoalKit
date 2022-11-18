@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as DescriptionLogo } from "../../../assets/text-description-svgrepo-com.svg";
+import { ReactComponent as descriptionIcon } from "../../../assets/text-description-svgrepo-com.svg";
+import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com.svg";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -33,7 +34,9 @@ const TitleWrapper = styled.div`
   font-weight: 600;
 `;
 
-const DescriptionIcon = styled(DescriptionLogo)`
+const DescriptionIcon = styled(descriptionIcon)`
+  width: 16px;
+  height: 16px;
   margin: 5px 0px;
   path {
     fill: #828282;
@@ -49,7 +52,7 @@ const TimeWrapper = styled.div<{ colorCode: string }>`
   font-weight: 700;
   line-height: 20px;
   border-radius: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0px;
 `;
 
 const TagsContainer = styled.div`
@@ -59,7 +62,9 @@ const TagsContainer = styled.div`
   margin: 5px 0px;
 `;
 
-const TagWrapper = styled.div`
+const TagWrapper = styled.div<{ colorCode: string }>`
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -69,19 +74,32 @@ const TagWrapper = styled.div`
   height: 16px;
   padding: 2px 5px;
   border-radius: 5px;
-  background-color: #faf3c0;
   cursor: pointer;
 
+  &::before {
+    position: absolute;
+    content: "";
+    left: 0px;
+    width: 100%;
+    border-radius: 5px;
+    height: 16px;
+    background-color: ${(props) => props.colorCode};
+    z-index: -1;
+    opacity: 0.4;
+  }
+
   &:hover {
-    background-color: #e6c60d80;
+    &::before {
+      opacity: 0.7;
+    }
   }
 `;
 
-const TagPoint = styled.div`
+const TagPoint = styled.div<{ colorCode: string }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #e6c60d;
+  background-color: ${(props) => props.colorCode};
   margin-right: 10px;
   flex-shrink: 0;
 `;
@@ -103,12 +121,44 @@ const OwnerContainer = styled.div`
 const OwnerWrapper = styled.div`
   background-color: #c5cae9;
   padding: 5px;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const ConditionWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
+
+const ConditionGroupWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 8px;
+`;
+
+const TodoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+`;
+
+const TodoIcon = styled(todoIcon)<{ isAllDone: boolean }>`
+  width: 12px;
+  height: 12px;
+  margin: 5px 0px;
+  path {
+    fill: ${(props) => (props.isAllDone ? "#008000" : "#828282")};
+  }
+`;
+
+const TodoText = styled.div<{ isAllDone: boolean }>`
+  font-size: 12px;
+  color: ${(props) => (props.isAllDone ? "#008000" : "#828282")};
 `;
 
 interface CardInterface {
@@ -119,7 +169,7 @@ interface CardInterface {
   owner?: string[];
   tagsIDs?: string[];
   complete?: boolean;
-  progress?: number;
+  todo?: { title: string; isDone: boolean; id: string }[];
 }
 
 interface Member {
@@ -171,8 +221,8 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
           tags.map((tag) => {
             if (cardInfo.tagsIDs?.includes(tag.id)) {
               return (
-                <TagWrapper key={tag.id}>
-                  <TagPoint />
+                <TagWrapper key={tag.id} colorCode={tag.colorCode}>
+                  <TagPoint colorCode={tag.colorCode} />
                   <Tag>{tag.title}</Tag>
                 </TagWrapper>
               );
@@ -197,6 +247,26 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
             }
           })}
       </OwnerContainer>
+    );
+  };
+
+  const todoList = () => {
+    if (!cardInfo.todo || cardInfo.todo?.length === 0) {
+      return <></>;
+    }
+    const total = cardInfo.todo.length;
+    let done = 0;
+    cardInfo.todo.forEach((task) => {
+      if (task.isDone) {
+        done += 1;
+      }
+    });
+
+    return (
+      <TodoWrapper>
+        <TodoIcon isAllDone={total === done} />
+        <TodoText isAllDone={total === done}>{`${done}/${total}`}</TodoText>
+      </TodoWrapper>
     );
   };
 
@@ -227,9 +297,14 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       <Wrapper>
         {cardInfo.tagsIDs && tags && tagsCollection()}
         <TitleWrapper>{cardInfo.title}</TitleWrapper>
-        {cardInfo.description && <DescriptionIcon />}
-        {cardInfo.time?.start && cardInfo.time?.deadline && time()}
-        {cardInfo.owner && ownerList()}
+        <ConditionWrapper>
+          <ConditionGroupWrapper>
+            {cardInfo.time?.start && cardInfo.time?.deadline && time()}
+            {cardInfo.description && <DescriptionIcon />}
+            {cardInfo.todo && todoList()}
+          </ConditionGroupWrapper>
+          {cardInfo.owner && ownerList()}
+        </ConditionWrapper>
       </Wrapper>
     </Container>
   );

@@ -1,8 +1,8 @@
 import produce from "immer";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ReactComponent as ToDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
-import { ReactComponent as CloseIcon } from "../../../../assets/close-svgrepo-com.svg";
+import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   margin: 10px;
@@ -13,7 +13,7 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const ToDoLogo = styled(ToDoIcon)`
+const ToDoIcon = styled(toDoIcon)`
   height: 16px;
   width: 16px;
   margin: 0px 5px;
@@ -81,7 +81,7 @@ const TodoLabel = styled.label`
   flex-grow: 1;
 `;
 
-const CloseButton = styled(CloseIcon)`
+const CloseButton = styled(closeIcon)`
   width: 20px;
   height: 20px;
 
@@ -147,7 +147,7 @@ const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
   return (
     <Wrapper>
       <TitleWrapper>
-        <ToDoLogo />
+        <ToDoIcon />
         <Title>To Do List: </Title>
       </TitleWrapper>
       <ProgressbarWrapper>
