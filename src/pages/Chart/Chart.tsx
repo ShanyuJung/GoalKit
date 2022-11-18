@@ -14,7 +14,7 @@ import {
 import { db } from "../../firebase";
 import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
-import ProgressChart from "./components/ProgressChart";
+import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 
 const Container = styled.div`
