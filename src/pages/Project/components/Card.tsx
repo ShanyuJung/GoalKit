@@ -160,6 +160,10 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   };
 
   const tagsCollection = () => {
+    if (!cardInfo.tagsIDs || cardInfo.tagsIDs.length === 0) {
+      return <></>;
+    }
+
     return (
       <TagsContainer>
         {cardInfo.tagsIDs &&

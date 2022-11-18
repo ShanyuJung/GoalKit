@@ -2,7 +2,7 @@ import produce from "immer";
 import { FormEvent, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
 import { uuidv4 } from "@firebase/util";
 import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
@@ -234,6 +234,23 @@ const TAG_COLOR_LIST = [
   "#777777",
 ];
 
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline?: number };
+  description?: string;
+  owner?: string[];
+  tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
+}
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}
+
 interface Tag {
   id: string;
   colorCode: string;
@@ -244,13 +261,19 @@ interface Props {
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
   onChange(newTags: string[]): void;
+  listsArray: ListInterface[];
 }
 
-const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
+const TagsEditor: React.FC<Props> = ({
+  tagsIDs,
+  tags,
+  onChange,
+  listsArray,
+}) => {
   const newTagRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [curTag, setCurTag] = useState();
+  const [selectTag, setSelectTag] = useState<Tag | undefined>(undefined);
   const [selectColor, setSelectColor] = useState("#7BC86C");
   const { id } = useParams();
 
@@ -304,8 +327,47 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
     }
   };
 
-  const startEditHandler = () => {
+  const startEditHandler = (tag: Tag) => {
+    setSelectColor(tag.colorCode);
+    setSelectTag(tag);
     setIsEdit(true);
+  };
+
+  const deleteTagHandler = async () => {
+    if (!id || isLoading || !selectTag) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { tags: arrayRemove(selectTag) });
+      const newLists = produce(listsArray, (draftState) => {
+        draftState.forEach((list) =>
+          list.cards.forEach((card) => {
+            if (card.tagsIDs?.includes(selectTag?.id)) {
+              const index = card.tagsIDs.findIndex((id) => id === selectTag.id);
+              card.tagsIDs.splice(index, 1);
+            }
+          })
+        );
+      });
+      await updateDoc(projectRef, { lists: newLists });
+    } catch (e) {
+      alert(e);
+    }
+    setIsEdit(false);
+    setIsLoading(false);
+  };
+
+  const updateTagHandler = async () => {
+    if (!id || isLoading) return;
+    try {
+      setIsLoading(true);
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, { tags: arrayRemove(selectTag) });
+    } catch (e) {
+      alert(e);
+    }
+    setIsEdit(false);
+    setIsLoading(false);
   };
 
   const colorGroup = () => {
@@ -347,7 +409,11 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
                     {tag.title}
                   </TagCheckboxLabel>
                 </TagLabelWrapper>
-                <EditIcon onClick={startEditHandler} />
+                <EditIcon
+                  onClick={() => {
+                    startEditHandler(tag);
+                  }}
+                />
               </TagSelectorWrapper>
             );
           })}
@@ -379,12 +445,17 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
           }}
         >
           <NewTagFormLabel>Tag name:</NewTagFormLabel>
-          <NewTagInput type="text" ref={newTagRef} required />
+          <NewTagInput
+            type="text"
+            ref={newTagRef}
+            required
+            defaultValue={selectTag?.title}
+          />
           <NewTagFormLabel>Select color:</NewTagFormLabel>
           {colorGroup()}
           <TagButtonWrapper>
             <NewTagButton>Save</NewTagButton>
-            <DeleteTagButton type="button" onClick={() => {}}>
+            <DeleteTagButton type="button" onClick={deleteTagHandler}>
               Delete Tag
             </DeleteTagButton>
           </TagButtonWrapper>

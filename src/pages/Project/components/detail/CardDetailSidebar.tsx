@@ -172,6 +172,23 @@ const TagsLogo = styled(TagsIcon)`
   }
 `;
 
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline?: number };
+  description?: string;
+  owner?: string[];
+  tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
+}
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}
+
 interface Member {
   uid: string;
   email: string;
@@ -187,6 +204,7 @@ interface Props {
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
   onChange(newTags: string[]): void;
+  listsArray: ListInterface[];
 }
 
 const CardDetailSideBar: React.FC<Props> = ({
@@ -198,6 +216,7 @@ const CardDetailSideBar: React.FC<Props> = ({
   tagsIDs,
   tags,
   onChange,
+  listsArray,
 }) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
 
@@ -247,7 +266,12 @@ const CardDetailSideBar: React.FC<Props> = ({
         </DropdownButton>
         <DropdownButton logo={<TagsLogo />} text={"Edit Tags"}>
           <DropdownChildrenWrapper>
-            <TagsEditor tags={tags} tagsIDs={tagsIDs} onChange={onChange} />
+            <TagsEditor
+              tags={tags}
+              tagsIDs={tagsIDs}
+              onChange={onChange}
+              listsArray={listsArray}
+            />
           </DropdownChildrenWrapper>
         </DropdownButton>
         <DropdownButton logo={<OwnerLogo />} text={"Add Owners"}>

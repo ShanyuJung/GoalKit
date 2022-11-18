@@ -432,6 +432,7 @@ const CardDetail: React.FC<Props> = ({
         tagsIDs={state.tagsIDs}
         tags={tags}
         onChange={selectTagHandler}
+        listsArray={listsArray}
       />
     </Container>
   );
