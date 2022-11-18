@@ -7,6 +7,13 @@ import {
   RadialBarChart,
   PolarAngleAxis,
   RadialBar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Bar,
 } from "recharts";
 import { useCallback, useEffect, useState } from "react";
 import produce from "immer";
@@ -15,16 +22,18 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: scroll;
+  width: 100%;
+  flex-wrap: wrap;
   height: calc(100vh - 50px);
 `;
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 1540px;
   padding: 20px;
   padding-top: 60px;
   display: flex;
   gap: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 `;
 
 const ChartWrapper = styled.div`
@@ -68,6 +77,7 @@ interface ListInterface {
 
 interface Props {
   lists: ListInterface[];
+  tags: { id: string; colorCode: string; title: string }[];
 }
 
 interface PieChartProps {
@@ -166,8 +176,11 @@ const renderActiveShape = (props: PieChartProps) => {
   );
 };
 
-const ProgressChart: React.FC<Props> = ({ lists }) => {
+const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
   const [data, setData] = useState(DUMMY_DATA);
+  const [tagsData, setTagsData] = useState<
+    { name: string; total: number; id: string }[]
+  >([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const onPieEnter = useCallback(
     (_: any, index: number) => {
@@ -208,8 +221,27 @@ const ProgressChart: React.FC<Props> = ({ lists }) => {
       setData(newData);
     };
 
+    const tagsDataHandler = () => {
+      const newTagsData = tags.map((tag) => {
+        return { name: tag.title, total: 0, id: tag.id };
+      });
+      const displayTagsData = produce(newTagsData, (draftState) => {
+        draftState.forEach((tag) => {
+          lists.forEach((list) => {
+            list.cards.forEach((card) => {
+              if (card.tagsIDs?.includes(tag.id)) {
+                tag.total += 1;
+              }
+            });
+          });
+        });
+      });
+      setTagsData(displayTagsData);
+    };
+
     taskNumberHandler();
-  }, [lists]);
+    tagsDataHandler();
+  }, [lists, tags]);
 
   const taskDistribution = () => {
     if (data[0].total === 0) {
@@ -303,6 +335,49 @@ const ProgressChart: React.FC<Props> = ({ lists }) => {
     );
   };
 
+  const tagDistribution = () => {
+    if (tagsData.length == 0) {
+      return (
+        <ErrorText>
+          There is no task card with planning time, add planning time to
+          generate chart.
+        </ErrorText>
+      );
+    }
+
+    const tickFormatter = (value: string, index: number) => {
+      const limit = 8; // put your maximum character
+      if (value.length < limit) return value;
+      return `${value.substring(0, limit)}...`;
+    };
+
+    let barChartWidth = 480;
+    if (tagsData.length > 5) {
+      barChartWidth = tagsData.length * 96;
+    }
+
+    return (
+      <BarChart
+        width={barChartWidth}
+        height={300}
+        data={tagsData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="total" fill="#82ca9d" barSize={20} />
+      </BarChart>
+    );
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -313,6 +388,10 @@ const ProgressChart: React.FC<Props> = ({ lists }) => {
         <ChartWrapper>
           <ChartTitle>Task Distribution</ChartTitle>
           <>{taskDistribution()}</>
+        </ChartWrapper>
+        <ChartWrapper>
+          <ChartTitle>Tags Distribution</ChartTitle>
+          <>{tagDistribution()}</>
         </ChartWrapper>
       </Wrapper>
     </Container>

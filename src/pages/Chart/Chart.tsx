@@ -88,6 +88,9 @@ const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [lists, setLists] = useState<ListInterface[]>([]);
+  const [tags, setTags] = useState<
+    { id: string; colorCode: string; title: string }[]
+  >([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 
@@ -99,6 +102,7 @@ const Chart = () => {
         setIsExist(true);
         const newProject = snapshot.data() as ProjectInterface;
         setTitle(newProject.title);
+        setTags(newProject.tags || []);
         setLists(newProject.lists);
       } else setIsExist(false);
     });
@@ -113,7 +117,7 @@ const Chart = () => {
       return <GanttChart lists={lists} />;
     }
     if (chartType === "progress") {
-      return <ProgressChart lists={lists} />;
+      return <ProgressChart lists={lists} tags={tags} />;
     }
   };
 
