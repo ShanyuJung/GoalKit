@@ -2,11 +2,20 @@ import styled from "styled-components";
 import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart";
+import produce from "immer";
 
 const Container = styled.div`
   display: flex;
@@ -14,6 +23,7 @@ const Container = styled.div`
 
 const ChartArea = styled.div<{ isShowSidebar: boolean }>`
   overflow: scroll;
+  width: 100%;
   display: flex;
   flex-direction: column;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
@@ -84,13 +94,29 @@ interface ProjectInterface {
   draggingCards?: string[];
 }
 
+interface Workspace {
+  id: string;
+  owner: string;
+  title: string;
+  projects: { id: string; title: string }[];
+  members: string[];
+}
+
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+}
+
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [title, setTitle] = useState("");
-  const [lists, setLists] = useState<ListInterface[]>([]);
-  const [tags, setTags] = useState<
-    { id: string; colorCode: string; title: string }[]
-  >([]);
+  const [project, setProject] = useState<ProjectInterface | undefined>(
+    undefined
+  );
+  const [members, setMembers] = useState<Member[]>([]);
+  // const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 
@@ -101,9 +127,7 @@ const Chart = () => {
       if (snapshot.data()) {
         setIsExist(true);
         const newProject = snapshot.data() as ProjectInterface;
-        setTitle(newProject.title);
-        setTags(newProject.tags || []);
-        setLists(newProject.lists);
+        setProject(newProject);
       } else setIsExist(false);
     });
 
@@ -112,12 +136,57 @@ const Chart = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const getMembersHandler = async () => {
+      if (!project) return;
+      const workspaceRef = collection(db, "workspaces");
+      const q = query(
+        workspaceRef,
+        where("projects", "array-contains-any", [
+          { id: id, title: project?.title },
+        ])
+      );
+      const querySnapshot = await getDocs(q);
+      const emptyWorkspaceArr: Workspace[] = [];
+      const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data() as Workspace;
+          draftState.push(docData);
+        });
+      });
+      const usersRef = collection(db, "users");
+      const userQ = query(
+        usersRef,
+        where("uid", "in", curWorkspaces[0].members)
+      );
+      const userQuerySnapshot = await getDocs(userQ);
+      const emptyMemberArr: Member[] = [];
+      const curMembers = produce(emptyMemberArr, (draftState) => {
+        userQuerySnapshot.forEach((doc) => {
+          const docData = doc.data() as Member;
+          draftState.push(docData);
+        });
+      });
+      // setMemberIDs(curWorkspaces[0].members);
+      setMembers(curMembers);
+    };
+
+    getMembersHandler();
+  }, [project]);
+
   const chartHandler = () => {
+    if (!project) return;
     if (chartType === "gantt") {
-      return <GanttChart lists={lists} />;
+      return <GanttChart lists={project.lists} />;
     }
     if (chartType === "progress") {
-      return <ProgressChart lists={lists} tags={tags} />;
+      return (
+        <ProgressChart
+          lists={project.lists}
+          tags={project.tags || []}
+          members={members}
+        />
+      );
     }
   };
 
@@ -134,7 +203,9 @@ const Chart = () => {
       </ShowSidebarButton>
       <ChartArea isShowSidebar={isShowSidebar}>
         <SubNavbar isShowSidebar={isShowSidebar}>
-          <ProjectTitle>{title}</ProjectTitle>
+          <ProjectTitle>
+            {isExist ? project?.title : "Project is not exist"}
+          </ProjectTitle>
         </SubNavbar>
         {isExist && chartHandler()}
       </ChartArea>

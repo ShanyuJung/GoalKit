@@ -17,12 +17,14 @@ import {
 } from "recharts";
 import { useCallback, useEffect, useState } from "react";
 import produce from "immer";
+import { Timestamp } from "firebase/firestore";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: scroll;
   width: 100%;
+  align-items: center;
   flex-wrap: wrap;
   height: calc(100vh - 50px);
 `;
@@ -44,6 +46,7 @@ const ChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  background-color: #fff;
 `;
 
 const ErrorText = styled.div`
@@ -75,11 +78,6 @@ interface ListInterface {
   cards: CardInterface[];
 }
 
-interface Props {
-  lists: ListInterface[];
-  tags: { id: string; colorCode: string; title: string }[];
-}
-
 interface PieChartProps {
   cx: number;
   cy: number;
@@ -92,6 +90,20 @@ interface PieChartProps {
   payload: { name: string; value: number };
   percent: number;
   value: number;
+}
+
+interface Member {
+  uid: string;
+  email: string;
+  displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+}
+
+interface Props {
+  lists: ListInterface[];
+  tags: { id: string; colorCode: string; title: string }[];
+  members: Member[];
 }
 
 const DUMMY_DATA = [
@@ -176,8 +188,15 @@ const renderActiveShape = (props: PieChartProps) => {
   );
 };
 
-const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
+const ProgressChart: React.FC<Props> = ({ lists, tags, members }) => {
   const [data, setData] = useState(DUMMY_DATA);
+  const [ownerData, setOwnerData] = useState<
+    {
+      name: string;
+      total: number;
+      id: string;
+    }[]
+  >([]);
   const [tagsData, setTagsData] = useState<
     { name: string; total: number; id: string }[]
   >([]);
@@ -221,6 +240,24 @@ const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
       setData(newData);
     };
 
+    const ownerDataHandler = () => {
+      const newOwnerData = members.map((member) => {
+        return { name: member.displayName, total: 0, id: member.uid };
+      });
+      const displayOwnerData = produce(newOwnerData, (draftState) => {
+        draftState.forEach((owner) => {
+          lists.forEach((list) => {
+            list.cards.forEach((card) => {
+              if (card.owner?.includes(owner.id)) {
+                owner.total += 1;
+              }
+            });
+          });
+        });
+      });
+      setOwnerData(displayOwnerData);
+    };
+
     const tagsDataHandler = () => {
       const newTagsData = tags.map((tag) => {
         return { name: tag.title, total: 0, id: tag.id };
@@ -240,6 +277,7 @@ const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
     };
 
     taskNumberHandler();
+    ownerDataHandler();
     tagsDataHandler();
   }, [lists, tags]);
 
@@ -378,6 +416,49 @@ const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
     );
   };
 
+  const ownerDistribution = () => {
+    if (ownerData.length == 0) {
+      return (
+        <ErrorText>
+          There is no task card with planning time, add planning time to
+          generate chart.
+        </ErrorText>
+      );
+    }
+
+    const tickFormatter = (value: string, index: number) => {
+      const limit = 8; // put your maximum character
+      if (value.length < limit) return value;
+      return `${value.substring(0, limit)}...`;
+    };
+
+    let barChartWidth = 480;
+    if (ownerData.length > 5) {
+      barChartWidth = ownerData.length * 96;
+    }
+
+    return (
+      <BarChart
+        width={barChartWidth}
+        height={300}
+        data={ownerData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="total" fill="#82ca9d" barSize={20} />
+      </BarChart>
+    );
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -388,6 +469,10 @@ const ProgressChart: React.FC<Props> = ({ lists, tags }) => {
         <ChartWrapper>
           <ChartTitle>Task Distribution</ChartTitle>
           <>{taskDistribution()}</>
+        </ChartWrapper>
+        <ChartWrapper>
+          <ChartTitle>Task Owner Distribution</ChartTitle>
+          <>{ownerDistribution()}</>
         </ChartWrapper>
         <ChartWrapper>
           <ChartTitle>Tags Distribution</ChartTitle>
