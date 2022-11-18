@@ -16,6 +16,8 @@ const DUMMY_DATA = [
   { name: "Without Plan", value: 0, total: 0 },
 ];
 
+const DUMMY_TIME_DATA = { start: 0, end: 1, passed: 0 };
+
 interface CardInterface {
   title: string;
   id: string;
@@ -37,45 +39,37 @@ interface Props {
   lists: ListInterface[];
 }
 
-const ProgressPieChart: React.FC<Props> = ({ lists }) => {
-  const [data, setData] = useState(DUMMY_DATA);
+const DurationChart: React.FC<Props> = ({ lists }) => {
+  const [timeData, setTimeData] = useState(DUMMY_TIME_DATA);
 
   useEffect(() => {
-    const taskNumberHandler = () => {
-      const newData = produce(DUMMY_DATA, (draftState) => {
-        const curTime = new Date().getTime();
+    const timeDataHandler = () => {
+      const newTimeData = produce(DUMMY_TIME_DATA, (draftState) => {
         lists.forEach((list) => {
           list.cards.forEach((card) => {
-            if (card.complete) {
-              draftState[0].value += 1;
-            } else if (
-              !card.complete &&
-              card.time?.deadline &&
-              card.time?.deadline > curTime
-            ) {
-              draftState[1].value += 1;
-            } else if (
-              !card.complete &&
-              card.time?.deadline &&
-              card.time?.deadline < curTime
-            ) {
-              draftState[2].value += 1;
-            } else {
-              draftState[3].value += 1;
+            if (card.time?.start && draftState.start === 0) {
+              draftState.start = card.time.start;
             }
-            draftState.forEach((item) => {
-              item.total += 1;
-            });
+            if (card.time?.deadline && draftState.end === 1) {
+              draftState.end = card.time.deadline;
+            }
+            if (card.time?.start && card.time?.start < draftState.start) {
+              draftState.start = card.time.start;
+            }
+            if (card.time?.deadline && card.time?.deadline > draftState.end) {
+              draftState.end = card.time.deadline;
+            }
           });
         });
+        const curTime = new Date().getTime();
+        draftState.passed = curTime - draftState.start;
       });
-      setData(newData);
+      setTimeData({ ...newTimeData });
     };
-
-    taskNumberHandler();
+    timeDataHandler();
   }, [lists]);
 
-  if (data[0].total === 0) {
+  if (timeData.start === 0) {
     return (
       <ErrorText>
         There is no task card with planning time, add planning time to generate
@@ -88,7 +82,7 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
     <RadialBarChart
       width={480}
       height={300}
-      data={[data[0]]}
+      data={[timeData]}
       cx={240}
       cy={150}
       innerRadius={110}
@@ -98,15 +92,21 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
     >
       <PolarAngleAxis
         type="number"
-        domain={[0, data[0].total]}
+        domain={[0, timeData.end - timeData.start]}
         angleAxisId={0}
         tick={false}
       />
       <RadialBar
         background
-        dataKey="value"
+        dataKey="passed"
         cornerRadius={30 / 2}
-        fill="#82ca9d"
+        fill={
+          Math.round(
+            (timeData.passed / (timeData.end - timeData.start)) * 100
+          ) > 50
+            ? "#FFBB28"
+            : "#82ca9d"
+        }
       />
       <text
         x={240}
@@ -117,7 +117,15 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         fontSize={50}
         fill="#666"
       >
-        {`${Math.round((data[0].value / data[0].total) * 100)}`}
+        {`${
+          Math.round(
+            (timeData.passed / (timeData.end - timeData.start)) * 100
+          ) >= 100
+            ? "100"
+            : `${Math.round(
+                (timeData.passed / (timeData.end - timeData.start)) * 100
+              )}`
+        }`}
       </text>
       <text
         x={285}
@@ -139,10 +147,12 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         fontSize={14}
         fill="#666"
       >
-        {`${data[0].value} / ${data[0].total} Card Complete.`}
+        {`Duration: ${
+          Math.round((timeData.end - timeData.start) / 8640000) / 10
+        } Days.`}
       </text>
     </RadialBarChart>
   );
 };
 
-export default ProgressPieChart;
+export default DurationChart;

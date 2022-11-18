@@ -10,7 +10,6 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { Timestamp } from "firebase/firestore";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -68,7 +67,11 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   }, [lists, tags]);
 
   if (tagsData.length == 0) {
-    return <ErrorText>Members are not found.</ErrorText>;
+    return (
+      <ErrorText>
+        There is no tag in this project, add new tag to generate chart.
+      </ErrorText>
+    );
   }
 
   const tickFormatter = (value: string, index: number) => {
@@ -96,7 +99,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
-      <YAxis />
+      <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
       <Bar dataKey="total" fill="#82ca9d" barSize={20} />

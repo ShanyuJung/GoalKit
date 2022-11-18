@@ -108,7 +108,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
-      <YAxis />
+      <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
       <Bar dataKey="total" fill="#82ca9d" barSize={20} />

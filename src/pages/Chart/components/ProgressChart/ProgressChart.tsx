@@ -1,20 +1,10 @@
 import styled from "styled-components";
-import {
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  Bar,
-} from "recharts";
-import { useEffect, useState } from "react";
-import produce from "immer";
 import { Timestamp } from "firebase/firestore";
 import ProgressPieChart from "./ProgressPieChart";
 import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
+import DurationChart from "./DurationChart";
 
 const Container = styled.div`
   display: flex;
@@ -98,16 +88,20 @@ const ProgressChart: React.FC<Props> = ({ lists, tags, members }) => {
           <ProgressPieChart lists={lists} />
         </ChartWrapper>
         <ChartWrapper>
+          <ChartTitle>Project Duration</ChartTitle>
+          <DurationChart lists={lists} />
+        </ChartWrapper>
+        <ChartWrapper>
           <ChartTitle>Task Distribution</ChartTitle>
           <TaskDistribution lists={lists} />
         </ChartWrapper>
         <ChartWrapper>
-          <ChartTitle>Task Owner Distribution</ChartTitle>
-          <OwnerDistribution lists={lists} members={members} />
-        </ChartWrapper>
-        <ChartWrapper>
           <ChartTitle>Tags Distribution</ChartTitle>
           <TagsDistribution lists={lists} tags={tags} />
+        </ChartWrapper>
+        <ChartWrapper>
+          <ChartTitle>Task Owner Distribution</ChartTitle>
+          <OwnerDistribution lists={lists} members={members} />
         </ChartWrapper>
       </Wrapper>
     </Container>
