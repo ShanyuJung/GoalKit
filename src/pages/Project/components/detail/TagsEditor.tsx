@@ -24,7 +24,7 @@ const TagSelectorWrapper = styled.div`
 
 const TagCheckbox = styled.input``;
 
-const TagLabelWrapper = styled.div`
+const TagLabelWrapper = styled.div<{ colorCode: string }>`
   position: relative;
   z-index: 1;
   display: flex;
@@ -33,24 +33,33 @@ const TagLabelWrapper = styled.div`
   margin: 0px 5px;
   width: 170px;
   border-radius: 5px;
-  padding-right: 10px;
+  padding: 0px 10px;
 
   &::before {
     position: absolute;
     content: "";
     width: 170px;
     border-radius: 5px;
+    left: 0;
     height: 25px;
-    background-color: #faf3c0;
+    background-color: ${(props) => props.colorCode};
     z-index: -1;
     opacity: 0.4;
   }
 
   &:hover {
     &::before {
-      opacity: 1;
+      opacity: 0.7;
     }
   }
+`;
+
+const TagPoint = styled.div<{ colorCode: string }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${(props) => props.colorCode};
+  flex-shrink: 0;
 `;
 
 const TagCheckboxLabel = styled.label`
@@ -222,7 +231,7 @@ const TAG_COLOR_LIST = [
   "#49AA54",
   "#EF7564",
   "#CF513D",
-  "#933B27",
+  "#DC3535",
   "#FF8ED4",
   "#E568AF",
   "#AE4270",
@@ -271,6 +280,7 @@ const TagsEditor: React.FC<Props> = ({
   listsArray,
 }) => {
   const newTagRef = useRef<HTMLInputElement | null>(null);
+  const editTagRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [selectTag, setSelectTag] = useState<Tag | undefined>(undefined);
@@ -333,6 +343,12 @@ const TagsEditor: React.FC<Props> = ({
     setIsEdit(true);
   };
 
+  const stopEditHandler = () => {
+    setIsEdit(false);
+    setSelectColor("#7BC86C");
+    setSelectTag(undefined);
+  };
+
   const deleteTagHandler = async () => {
     if (!id || isLoading || !selectTag) return;
     try {
@@ -350,23 +366,47 @@ const TagsEditor: React.FC<Props> = ({
         );
       });
       await updateDoc(projectRef, { lists: newLists });
+      stopEditHandler();
     } catch (e) {
       alert(e);
     }
-    setIsEdit(false);
     setIsLoading(false);
   };
 
   const updateTagHandler = async () => {
-    if (!id || isLoading) return;
+    if (
+      !id ||
+      isLoading ||
+      !selectTag ||
+      !tags ||
+      !editTagRef.current?.value.trim()
+    )
+      return;
+
+    if (
+      editTagRef.current?.value.trim() === selectTag.title &&
+      selectColor === selectTag.colorCode
+    ) {
+      stopEditHandler();
+      return;
+    }
+
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, { tags: arrayRemove(selectTag) });
+      const newTags = produce(tags, (draftState) => {
+        draftState.forEach((tag) => {
+          if (tag.id === selectTag.id) {
+            tag.colorCode = selectColor;
+            tag.title = editTagRef.current?.value.trim()!;
+          }
+        });
+      });
+      await updateDoc(projectRef, { tags: newTags });
+      stopEditHandler();
     } catch (e) {
       alert(e);
     }
-    setIsEdit(false);
     setIsLoading(false);
   };
 
@@ -404,7 +444,8 @@ const TagsEditor: React.FC<Props> = ({
                   onChange={onChangeHandler}
                   checked={tagsIDs?.includes(tag.id) || false}
                 />
-                <TagLabelWrapper>
+                <TagLabelWrapper colorCode={tag.colorCode}>
+                  <TagPoint colorCode={tag.colorCode} />
                   <TagCheckboxLabel htmlFor={tag.id}>
                     {tag.title}
                   </TagCheckboxLabel>
@@ -433,21 +474,20 @@ const TagsEditor: React.FC<Props> = ({
       <TagEditBoardWrapper>
         <EditBoardTitleWrapper>
           <EditBoardCancelButton
-            onClick={() => {
-              setIsEdit(false);
-            }}
+            onClick={stopEditHandler}
           >{`<`}</EditBoardCancelButton>
           <EditBoardTitle>Edit </EditBoardTitle>
         </EditBoardTitleWrapper>
         <NewTagInputForm
           onSubmit={(e) => {
             e.preventDefault();
+            updateTagHandler();
           }}
         >
           <NewTagFormLabel>Tag name:</NewTagFormLabel>
           <NewTagInput
             type="text"
-            ref={newTagRef}
+            ref={editTagRef}
             required
             defaultValue={selectTag?.title}
           />
