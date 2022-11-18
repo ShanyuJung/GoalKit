@@ -19,7 +19,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  min-height: 600px;
+  min-height: 65vh;
   display: flex;
   flex-direction: column;
   width: 410px;

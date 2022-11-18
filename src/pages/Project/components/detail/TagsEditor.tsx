@@ -31,14 +31,14 @@ const TagLabelWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   margin: 0px 5px;
-  width: 190px;
+  width: 170px;
   border-radius: 5px;
   padding-right: 10px;
 
   &::before {
     position: absolute;
     content: "";
-    width: 190px;
+    width: 170px;
     border-radius: 5px;
     height: 25px;
     background-color: #faf3c0;
@@ -69,7 +69,7 @@ const EditIcon = styled(editIcon)`
   cursor: pointer;
 
   path {
-    fill: transparent;
+    fill: #ccc;
   }
 
   &:hover {
@@ -234,6 +234,12 @@ const TAG_COLOR_LIST = [
   "#777777",
 ];
 
+interface Tag {
+  id: string;
+  colorCode: string;
+  title: string;
+}
+
 interface Props {
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
@@ -248,11 +254,7 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
   const [selectColor, setSelectColor] = useState("#7BC86C");
   const { id } = useParams();
 
-  const createTagHandler = async (newTag: {
-    id: string;
-    colorCode: string;
-    title: string;
-  }) => {
+  const createTagHandler = async (newTag: Tag) => {
     if (!id || isLoading) return;
     try {
       setIsLoading(true);
@@ -344,8 +346,8 @@ const TagsEditor: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
                   <TagCheckboxLabel htmlFor={tag.id}>
                     {tag.title}
                   </TagCheckboxLabel>
-                  <EditIcon onClick={startEditHandler} />
                 </TagLabelWrapper>
+                <EditIcon onClick={startEditHandler} />
               </TagSelectorWrapper>
             );
           })}
