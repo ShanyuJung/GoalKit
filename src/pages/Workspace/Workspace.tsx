@@ -22,39 +22,107 @@ import NewProject from "./components/NewProject";
 import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "../../contexts/AuthContext";
+import WorkspaceSidebar from "./components/WorkspaceSidebar";
 
 const Wrapper = styled.div`
   display: flex;
 `;
 
-const SidebarWrapper = styled.div`
-  background-color: #ccc;
+const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1976d2;
+  top: 60px;
+  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
+  height: 30px;
+  width: 30px;
+  background-color: aliceblue;
+  border-color: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12;
+  transition: left 0.3s;
+`;
+
+const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 50px);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 40px;
+  padding-left: ${(props) => (props.isShowSidebar ? "300px" : "55px")};
+  transition: padding 0.3s;
 `;
 
-const MemberWrapper = styled.div`
-  margin: 10px;
+const WorkspaceBanner = styled.div`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  border-bottom: 1px solid #ccc;
 `;
 
-const MemberForm = styled.form``;
-
-const MemberInput = styled.input``;
-
-const MemberButton = styled.button``;
-
-const ChatRoomButton = styled.button`
-  margin: 10px;
-`;
-
-const ProjectsWrapper = styled.div`
-  margin: 10px;
+const ProjectCardWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  padding: 35px 20px;
 `;
 
 const ProjectCard = styled.div`
-  border: 1px #000 solid;
-  width: 100px;
+  position: relative;
+  z-index: 1;
+  width: 240px;
   height: 100px;
-  margin: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    background-color: #ddd;
+    position: absolute;
+    z-index: -1;
+    width: 240px;
+    height: 100px;
+    border-radius: 5px;
+  }
+
+  &:hover {
+    &::before {
+      background-color: #ccc;
+    }
+  }
+`;
+
+const ProjectCardTitle = styled.div`
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+const ErrorText = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-size: 24px;
+  padding-top: 20px;
 `;
 
 const ChatRoomWrapper = styled.div`
@@ -88,6 +156,8 @@ interface MessageInterface {
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [title, setTitle] = useState("");
+  const [isShowSidebar, setIsShowSidebar] = useState(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
   const memberRef = useRef<HTMLInputElement | null>(null);
@@ -106,6 +176,7 @@ const Workspace = () => {
       if (docSnap.exists()) {
         setIsExist(true);
         setProjects(docSnap.data().projects);
+        setTitle(docSnap.data().title);
       } else {
         setIsExist(false);
       }
@@ -228,7 +299,9 @@ const Workspace = () => {
     return (
       <>
         {isExist && (
-          <>
+          <ProjectCardWrapper>
+            <NewProject onSubmit={newProjectHandler} />
+
             {projects.map((project) => {
               return (
                 <ProjectCard
@@ -237,14 +310,13 @@ const Workspace = () => {
                     navigate(`/project/${project.id}`);
                   }}
                 >
-                  {project.title}
+                  <ProjectCardTitle>{project.title}</ProjectCardTitle>
                 </ProjectCard>
               );
             })}
-            <NewProject onSubmit={newProjectHandler} />
-          </>
+          </ProjectCardWrapper>
         )}
-        {isExist === false && <div>workspace not exist.</div>}
+        {isExist === false && <ErrorText>workspace not exist.</ErrorText>}
       </>
     );
   };
@@ -272,7 +344,16 @@ const Workspace = () => {
   return (
     <PrivateRoute>
       <Wrapper>
-        <SidebarWrapper>
+        <WorkspaceSidebar isShow={isShowSidebar} />
+        <ShowSidebarButton
+          isShowSidebar={isShowSidebar}
+          onClick={() => {
+            setIsShowSidebar((prev) => !prev);
+          }}
+        >
+          {isShowSidebar ? "<" : ">"}
+        </ShowSidebarButton>
+        {/* <SidebarWrapper>
           <MemberWrapper>
             <MemberForm onSubmit={addMemberHandler}>
               <MemberInput
@@ -291,8 +372,11 @@ const Workspace = () => {
           >
             chat room
           </ChatRoomButton>
-        </SidebarWrapper>
-        <ProjectsWrapper>{projectList()}</ProjectsWrapper>
+        </SidebarWrapper> */}
+        <ProjectsWrapper isShowSidebar={isShowSidebar}>
+          <WorkspaceBanner>{title}</WorkspaceBanner>
+          {projectList()}
+        </ProjectsWrapper>
         <>{isShowChatRoom && chatRoom()}</>
       </Wrapper>
     </PrivateRoute>
