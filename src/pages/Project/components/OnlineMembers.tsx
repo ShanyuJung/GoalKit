@@ -23,10 +23,12 @@ const Member = styled.div<{ colorCode: string }>`
   font-size: 20px;
   line-height: 30px;
   border-radius: 50%;
-  background-color: ${(props) => `#${props.colorCode}`};
+  background-color: ${(props) => `${props.colorCode}`};
   text-align: center;
   margin: 0px 1px;
 `;
+
+const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];
 
 interface Props {
   memberIDs: string[];
@@ -69,18 +71,15 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
       <MemberList>
         {membersInfo.length > 0 &&
           membersInfo.map((member, index) => {
-            const randomColor = Math.floor(Math.random() * 16777215).toString(
-              16
-            );
             if (member.state === "online" && index < 3) {
               return (
-                <Member key={member.uid} colorCode={randomColor}>
+                <Member key={member.uid} colorCode={COLORS[index]}>
                   {member.displayName.charAt(0)}
                 </Member>
               );
             } else if (member.state === "online" && index === 3) {
               return (
-                <Member key={member.uid} colorCode={randomColor}>
+                <Member key={member.uid} colorCode={COLORS[index]}>
                   {`${membersInfo.length - index}+`}
                 </Member>
               );
