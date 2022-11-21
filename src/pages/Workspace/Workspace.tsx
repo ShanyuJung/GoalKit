@@ -170,11 +170,11 @@ const MessageWrapper = styled.div<{ isCurrentUser: boolean }>`
 `;
 
 const MessageUserIcon = styled.div<{ isCurrentUser: boolean }>`
-  height: 25px;
-  width: 25px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   text-align: center;
-  line-height: 25px;
+  line-height: 30px;
   flex-shrink: 0;
   background-color: ${(props) => (props.isCurrentUser ? "#2196f3" : "#81c784")};
 `;
@@ -184,7 +184,7 @@ const Message = styled.div<{ isCurrentUser: boolean }>`
   position: relative;
   z-index: 1;
   padding: 2px 10px;
-  font-size: 14px;
+  font-size: 16px;
   word-break: break-all;
   word-wrap: break-word;
   border-radius: 5px;
@@ -256,6 +256,71 @@ const CloseButton = styled(closeIcon)`
   }
 `;
 
+const MemberContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px 50px;
+  align-items: center;
+`;
+
+const MemberForm = styled.form`
+  display: flex;
+  gap: 10px;
+`;
+
+const MemberInput = styled.input`
+  font-size: 18px;
+  width: 250px;
+`;
+
+const MemberButton = styled.button`
+  color: #fff;
+  background-color: #0085d1;
+  border: none;
+  margin: 10px;
+  font-size: 16px;
+  width: 120px;
+  border-radius: 5px;
+  margin: 0;
+  padding: 5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0079bf;
+  }
+`;
+
+const MemberWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  width: 60%;
+  gap: 10px;
+  padding: 20px;
+  border-bottom: 1px #ccc solid;
+
+  &:hover {
+    background-color: #eee;
+  }
+`;
+
+const MemberName = styled.div`
+  font-size: 22px;
+  width: 150px;
+`;
+
+const MemberEmail = styled.div`
+  flex-grow: 1;
+  font-size: 16px;
+  color: #555;
+`;
+
+const MemberType = styled.div`
+  font-size: 20px;
+`;
+
 interface Member {
   uid: string;
   email: string;
@@ -277,6 +342,7 @@ const Workspace = () => {
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [membersInfo, setMembersInfo] = useState<Member[]>([]);
   const [contentType, setContentType] = useState("project");
+  const [ownerID, setOwnerID] = useState("");
   const [title, setTitle] = useState("");
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
@@ -299,6 +365,7 @@ const Workspace = () => {
         setProjects(docSnap.data().projects);
         setTitle(docSnap.data().title);
         setMemberIDs(docSnap.data().members);
+        setOwnerID(docSnap.data().owner);
       } else {
         setIsExist(false);
       }
@@ -467,9 +534,28 @@ const Workspace = () => {
       <>
         {isExist && (
           <>
-            {membersInfo.map((member) => {
-              return <div>{member.displayName}</div>;
-            })}
+            <MemberContainer>
+              <MemberForm onSubmit={addMemberHandler}>
+                <MemberInput
+                  placeholder="Enter email to add member"
+                  type="text"
+                  required
+                  ref={memberRef}
+                />
+                <MemberButton>Add member</MemberButton>
+              </MemberForm>
+              {membersInfo.map((member) => {
+                return (
+                  <MemberWrapper key={member.uid}>
+                    <MemberName>{member.displayName}</MemberName>
+                    <MemberEmail>{member.email}</MemberEmail>
+                    <MemberType>
+                      {member.uid === ownerID ? "Owner" : "Member"}
+                    </MemberType>
+                  </MemberWrapper>
+                );
+              })}
+            </MemberContainer>
           </>
         )}
         {isExist === false && <ErrorText>workspace not exist.</ErrorText>}
