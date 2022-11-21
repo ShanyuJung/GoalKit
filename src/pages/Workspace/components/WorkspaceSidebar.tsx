@@ -127,9 +127,15 @@ const ChatIcon = styled(chatIcon)`
 
 interface Props {
   isShow: boolean;
+  setContentType: (value: string) => void;
+  setIsShowChatRoom: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
 
-const WorkspaceSidebar: React.FC<Props> = ({ isShow }) => {
+const WorkspaceSidebar: React.FC<Props> = ({
+  isShow,
+  setContentType,
+  setIsShowChatRoom,
+}) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -146,19 +152,27 @@ const WorkspaceSidebar: React.FC<Props> = ({ isShow }) => {
         </WorkspaceTitle>
       </WorkspaceTitleWrapper>
       <LinkList isShow={isShow}>
-        <LinkWrapper>
-          <StyledLink to={`/workspace/${id}/`} relative="path">
-            <ProjectIcon />
-            <LinkText>Project Boards</LinkText>
-          </StyledLink>
+        <LinkWrapper
+          onClick={() => {
+            setContentType("project");
+          }}
+        >
+          <ProjectIcon />
+          <LinkText>Project Boards</LinkText>
         </LinkWrapper>
-        <LinkWrapper>
-          <StyledLink to={`/workspace/${id}/`} relative="path">
-            <MemberIcon />
-            <LinkText>Members</LinkText>
-          </StyledLink>
+        <LinkWrapper
+          onClick={() => {
+            setContentType("member");
+          }}
+        >
+          <MemberIcon />
+          <LinkText>Members</LinkText>
         </LinkWrapper>
-        <LinkWrapper>
+        <LinkWrapper
+          onClick={() => {
+            setIsShowChatRoom((prev) => !prev);
+          }}
+        >
           <ChatIcon />
           <LinkText>Chart Room</LinkText>
         </LinkWrapper>

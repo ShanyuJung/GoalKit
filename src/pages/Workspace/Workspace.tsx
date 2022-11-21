@@ -23,6 +23,9 @@ import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "../../contexts/AuthContext";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
+import MemberList from "./components/MemberList";
+import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
+import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   display: flex;
@@ -69,6 +72,8 @@ const WorkspaceBanner = styled.div`
   color: #000;
   border-bottom: 1px solid #ccc;
 `;
+
+const SubBanner = styled.div;
 
 const ProjectCardWrapper = styled.div`
   display: flex;
@@ -127,23 +132,136 @@ const ErrorText = styled.div`
 
 const ChatRoomWrapper = styled.div`
   position: absolute;
-  right: 0;
+  z-index: 20;
+  right: 10px;
   bottom: 0;
-  min-width: 200px;
-  height: 500px;
-  border: 1px #000 solid;
+  width: 340px;
+  height: 450px;
+  border: 1px #ddd solid;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
-const MessageInputForm = styled.form``;
+const ChatRoomHeader = styled.div`
+  height: 40px;
+  background-color: #ddd;
+  font-size: 20px;
+  line-height: 40px;
+  padding: 0px 5px;
+`;
 
-const MessageInput = styled.input``;
+const MessageArea = styled.div`
+  overflow-y: scroll;
+  flex-grow: 1;
 
-const MessageButton = styled.button``;
+  padding: 5px 10px;
+`;
 
-interface UserInterface {
+const MessageWrapper = styled.div<{ isCurrentUser: boolean }>`
+  display: flex;
+  flex-direction: ${(props) => (props.isCurrentUser ? " row-reverse" : "row")};
+  width: 100%;
+  align-items: flex-end;
+  margin: 10px 0px;
+  gap: 10px;
+`;
+
+const MessageUserIcon = styled.div<{ isCurrentUser: boolean }>`
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 25px;
+  flex-shrink: 0;
+  background-color: ${(props) => (props.isCurrentUser ? "#2196f3" : "#81c784")};
+`;
+
+const Message = styled.div<{ isCurrentUser: boolean }>`
+  max-width: 230px;
+  position: relative;
+  z-index: 1;
+  padding: 2px 10px;
+  font-size: 14px;
+  word-break: break-all;
+  word-wrap: break-word;
+  border-radius: 5px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    opacity: 0.6;
+    border-radius: 5px;
+    background-color: ${(props) => (props.isCurrentUser ? "#2196f3" : "#ccc")};
+  }
+`;
+
+const MessageInputForm = styled.form`
+  width: 100%;
+  position: relative;
+  top: 0px;
+  background-color: #ddd;
+`;
+
+const MessageInputWrapper = styled.div`
+  height: 30px;
+  display: flex;
+  height: 40px;
+`;
+
+const MessageInput = styled.input`
+  outline: none;
+  padding: 0px 10px;
+  flex-grow: 1;
+  border: none;
+  background-color: transparent;
+`;
+
+const MessageButton = styled.button`
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`;
+
+const SendIcon = styled(sendIcon)`
+  width: 25px;
+  height: 25px;
+`;
+
+const CloseButton = styled(closeIcon)`
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+
+  path {
+    fill: #999;
+  }
+
+  &:hover {
+    path {
+      fill: #555;
+    }
+  }
+`;
+
+interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
 }
 
 interface MessageInterface {
@@ -156,6 +274,9 @@ interface MessageInterface {
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [memberIDs, setMemberIDs] = useState<string[]>([]);
+  const [membersInfo, setMembersInfo] = useState<Member[]>([]);
+  const [contentType, setContentType] = useState("project");
   const [title, setTitle] = useState("");
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
@@ -177,6 +298,7 @@ const Workspace = () => {
         setIsExist(true);
         setProjects(docSnap.data().projects);
         setTitle(docSnap.data().title);
+        setMemberIDs(docSnap.data().members);
       } else {
         setIsExist(false);
       }
@@ -214,10 +336,10 @@ const Workspace = () => {
     const userRef = collection(db, "users");
     const q = query(userRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
-    const usersFormat: UserInterface[] = [];
+    const usersFormat: Member[] = [];
     const userList = produce(usersFormat, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const user = doc.data() as UserInterface;
+        const user = doc.data() as Member;
         draftState.push(user);
       });
     });
@@ -273,6 +395,25 @@ const Workspace = () => {
   }, []);
 
   useEffect(() => {
+    const getMemberInfo = async () => {
+      if (memberIDs.length === 0) return;
+      const usersRef = collection(db, "users");
+      const userQ = query(usersRef, where("uid", "in", memberIDs));
+      const userQuerySnapshot = await getDocs(userQ);
+      const emptyMemberArr: Member[] = [];
+      const curMembers = produce(emptyMemberArr, (draftState) => {
+        userQuerySnapshot.forEach((doc) => {
+          const docData = doc.data() as Member;
+          draftState.push(docData);
+        });
+      });
+      setMembersInfo(curMembers);
+    };
+
+    getMemberInfo();
+  }, [memberIDs]);
+
+  useEffect(() => {
     if (!id) return;
     const chatRoomRef = query(
       collection(db, "chatRooms", id, "messages"),
@@ -321,21 +462,64 @@ const Workspace = () => {
     );
   };
 
+  const memberList = () => {
+    return (
+      <>
+        {isExist && (
+          <>
+            {membersInfo.map((member) => {
+              return <div>{member.displayName}</div>;
+            })}
+          </>
+        )}
+        {isExist === false && <ErrorText>workspace not exist.</ErrorText>}
+      </>
+    );
+  };
+
   const chatRoom = () => {
     return (
       <ChatRoomWrapper>
-        <div>chatroom</div>
-        {messages.length > 0 &&
-          messages.map((message) => {
-            return (
-              <div
-                key={message.id}
-              >{`${message.userID}:${message.message}`}</div>
-            );
-          })}
+        <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
+        <CloseButton
+          onClick={() => {
+            setIsShowChatRoom(false);
+          }}
+        />
+        <MessageArea>
+          {messages.length > 0 &&
+            messages.map((message) => {
+              const index = membersInfo.findIndex(
+                (member) => member.uid === message.userID
+              );
+              return (
+                <MessageWrapper
+                  key={message.id}
+                  isCurrentUser={currentUser.uid === message.userID}
+                >
+                  <MessageUserIcon
+                    isCurrentUser={currentUser.uid === message.userID}
+                  >{`${membersInfo[index].displayName.charAt(
+                    0
+                  )}`}</MessageUserIcon>
+                  <Message
+                    isCurrentUser={currentUser.uid === message.userID}
+                  >{`${message.message}`}</Message>
+                </MessageWrapper>
+              );
+            })}
+        </MessageArea>
         <MessageInputForm onSubmit={sendMessageHandler}>
-          <MessageInput type="text" ref={messageRef} />
-          <MessageButton>send message</MessageButton>
+          <MessageInputWrapper>
+            <MessageInput
+              type="text"
+              ref={messageRef}
+              placeholder="Type a message..."
+            />
+            <MessageButton>
+              <SendIcon />
+            </MessageButton>
+          </MessageInputWrapper>
         </MessageInputForm>
       </ChatRoomWrapper>
     );
@@ -344,7 +528,11 @@ const Workspace = () => {
   return (
     <PrivateRoute>
       <Wrapper>
-        <WorkspaceSidebar isShow={isShowSidebar} />
+        <WorkspaceSidebar
+          isShow={isShowSidebar}
+          setContentType={setContentType}
+          setIsShowChatRoom={setIsShowChatRoom}
+        />
         <ShowSidebarButton
           isShowSidebar={isShowSidebar}
           onClick={() => {
@@ -375,7 +563,8 @@ const Workspace = () => {
         </SidebarWrapper> */}
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
           <WorkspaceBanner>{title}</WorkspaceBanner>
-          {projectList()}
+          {contentType === "project" ? projectList() : <></>}
+          {contentType === "member" ? memberList() : <></>}
         </ProjectsWrapper>
         <>{isShowChatRoom && chatRoom()}</>
       </Wrapper>
