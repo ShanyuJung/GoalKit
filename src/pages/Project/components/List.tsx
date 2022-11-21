@@ -18,6 +18,7 @@ const Container = styled.div<IsDraggingProps>`
   padding: 10px 3px 10px 10px;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
   outline: ${(props) => (props.isDragging ? "2px solid blue" : "none")};
+  min-width: 283px;
 `;
 
 const Wrapper = styled.div`
