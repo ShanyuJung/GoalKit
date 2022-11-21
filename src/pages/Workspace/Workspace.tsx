@@ -23,7 +23,6 @@ import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "../../contexts/AuthContext";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
-import MemberList from "./components/MemberList";
 import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 
@@ -73,14 +72,14 @@ const WorkspaceBanner = styled.div`
   border-bottom: 1px solid #ccc;
 `;
 
-const SubBanner = styled.div;
-
 const ProjectCardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   width: 100%;
-  padding: 35px 20px;
+  max-width: 1160px;
+  margin: 0px auto;
+  padding: 35px 50px;
 `;
 
 const ProjectCard = styled.div`
@@ -627,26 +626,6 @@ const Workspace = () => {
         >
           {isShowSidebar ? "<" : ">"}
         </ShowSidebarButton>
-        {/* <SidebarWrapper>
-          <MemberWrapper>
-            <MemberForm onSubmit={addMemberHandler}>
-              <MemberInput
-                placeholder="Enter email to add member"
-                type="text"
-                required
-                ref={memberRef}
-              />
-              <MemberButton>Add member</MemberButton>
-            </MemberForm>
-          </MemberWrapper>
-          <ChatRoomButton
-            onClick={() => {
-              setIsShowChatRoom((prev) => !prev);
-            }}
-          >
-            chat room
-          </ChatRoomButton>
-        </SidebarWrapper> */}
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
           <WorkspaceBanner>{title}</WorkspaceBanner>
           {contentType === "project" ? projectList() : <></>}
