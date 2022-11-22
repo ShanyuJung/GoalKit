@@ -16,8 +16,8 @@ const InputWrapper = styled.div`
 `;
 
 const InputLabel = styled.label`
-  font-size: 28px;
-  margin-bottom: 10px;
+  font-size: 24px;
+  margin-bottom: 5px;
 `;
 
 const StyledInput = styled.input`
