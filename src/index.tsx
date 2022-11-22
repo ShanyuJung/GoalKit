@@ -11,6 +11,7 @@ import Dashboard from "./pages/User/Dashboard";
 import Workspace from "./pages/Workspace/Workspace";
 import Project from "./pages/Project/Project";
 import Chart from "./pages/Chart/Chart";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -22,6 +23,7 @@ root.render(
         <Route index element={<Home />} />
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="workspace/:id" element={<Workspace />} />
         <Route path="project/:id" element={<Project />} />

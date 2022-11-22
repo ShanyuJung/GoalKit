@@ -5,6 +5,7 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db, firebaseConfig } from "../firebase";
@@ -23,6 +24,7 @@ interface AuthContextInterface {
   signup(email: string, password: string, displayName: string): void;
   login(email: string, password: string): void;
   logout(): void;
+  resetPassword(email: string): void;
 }
 
 const AuthContext = React.createContext<AuthContextInterface>(
@@ -83,11 +85,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return signOut(auth);
   };
 
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
+    resetPassword,
   };
 
   useEffect(() => {

@@ -65,8 +65,8 @@ const ErrorMessageWrapper = styled.div`
   color: #e74c3c;
   width: 80%;
   text-align: center;
-  font-size: 20px;
-  height: 40px;
+  font-size: 16px;
+  min-height: 40px;
   line-height: 40px;
   background-color: #fadbd8;
 `;
@@ -109,7 +109,7 @@ const Login = () => {
             <AuthInput labelText="Password" type="password" ref={passwordRef} />
             <SubmitButton disabled={isLoading}>Login</SubmitButton>
           </Form>
-          <StyledLink to="/forget-password">Forget Password ?</StyledLink>
+          <StyledLink to="/forgot-password">Forgot your Password ?</StyledLink>
         </Card>
         <Text>
           Don't have an account? <StyledLink to="/signup"> Signup</StyledLink>
