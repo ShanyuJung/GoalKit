@@ -1,8 +1,9 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as projectIcon } from "../../../assets/board-svgrepo-com.svg";
-import { ReactComponent as memberIcon } from "../../../assets/user-svgrepo-com.svg";
-import { ReactComponent as chatIcon } from "../../../assets/chat-svgrepo-com.svg";
+import { ReactComponent as userIcon } from "../../../assets/user-svgrepo-com.svg";
+import { ReactComponent as logoutIcon } from "../../../assets/logout-svgrepo-com.svg";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface StylesProps {
   isShow: boolean;
@@ -19,33 +20,6 @@ const SidebarWrapper = styled.div<StylesProps>`
   z-index: 10;
 `;
 
-const WorkspaceTitleWrapper = styled.div<StylesProps>`
-  height: 55px;
-  display: flex;
-  align-items: center;
-  padding: 0px 20px;
-  justify-content: space-between;
-  border-bottom: ${(props) => (props.isShow ? "1px #ddd solid" : "none")};
-`;
-
-const WorkspaceTitle = styled.div<StylesProps>`
-  font-size: 22px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #fff;
-  font-weight: bold;
-  display: ${(props) => (props.isShow ? "block" : "none")};
-  cursor: pointer;
-  border-bottom: solid 2px transparent;
-  transition: border-bottom-color 0.3s ease-out;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
-`;
-
 const LinkList = styled.div<StylesProps>`
   display: ${(props) => (props.isShow ? "flex" : "none")};
   flex-direction: column;
@@ -60,6 +34,16 @@ const LinkWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 0px 20px;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 const LinkText = styled.div`
@@ -91,7 +75,7 @@ const ProjectIcon = styled(projectIcon)`
   }
 `;
 
-const MemberIcon = styled(memberIcon)`
+const UserIcon = styled(userIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -103,7 +87,7 @@ const MemberIcon = styled(memberIcon)`
   }
 `;
 
-const ChatIcon = styled(chatIcon)`
+const LogoutIcon = styled(logoutIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -118,57 +102,37 @@ const ChatIcon = styled(chatIcon)`
 interface Props {
   isShow: boolean;
   setContentType: (value: string) => void;
-  setIsShowChatRoom: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
 
-const WorkspaceSidebar: React.FC<Props> = ({
-  isShow,
-  setContentType,
-  setIsShowChatRoom,
-}) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const DashboardSidebar: React.FC<Props> = ({ isShow, setContentType }) => {
+  const { logout } = useAuth();
 
   return (
     <SidebarWrapper isShow={isShow}>
-      <WorkspaceTitleWrapper isShow={isShow}>
-        <WorkspaceTitle
-          isShow={isShow}
-          onClick={() => {
-            navigate(`/dashboard`);
-          }}
-        >
-          Back to DashBoard
-        </WorkspaceTitle>
-      </WorkspaceTitleWrapper>
       <LinkList isShow={isShow}>
         <LinkWrapper
           onClick={() => {
-            setContentType("project");
+            setContentType("workspace");
           }}
         >
           <ProjectIcon />
-          <LinkText>Project Boards</LinkText>
+          <LinkText>Workspace</LinkText>
         </LinkWrapper>
         <LinkWrapper
           onClick={() => {
-            setContentType("member");
+            setContentType("profile");
           }}
         >
-          <MemberIcon />
-          <LinkText>Members</LinkText>
+          <UserIcon />
+          <LinkText>Update Profile</LinkText>
         </LinkWrapper>
-        <LinkWrapper
-          onClick={() => {
-            setIsShowChatRoom((prev) => !prev);
-          }}
-        >
-          <ChatIcon />
-          <LinkText>Chart Room</LinkText>
+        <LinkWrapper>
+          <LogoutIcon />
+          <LinkText onClick={logout}>Logout</LinkText>
         </LinkWrapper>
       </LinkList>
     </SidebarWrapper>
   );
 };
 
-export default WorkspaceSidebar;
+export default DashboardSidebar;

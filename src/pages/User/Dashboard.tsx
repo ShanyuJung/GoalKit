@@ -14,6 +14,7 @@ import {
 import { db } from "../../firebase";
 import produce from "immer";
 import NewWorkspace from "./components/NewWorkspace";
+import DashboardSidebar from "./components/DashboardSidebar";
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,10 +25,12 @@ const Sidebar = styled.div`
   height: calc(100vh - 50px);
 `;
 
-const WorkspaceWrapper = styled.div`
+const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   background-color: aliceblue;
   flex-grow: 1;
   height: calc(100vh - 50px);
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  transition: padding 0.3s;
 `;
 
 const Workspace = styled.div`
@@ -35,6 +38,26 @@ const Workspace = styled.div`
   height: 100px;
   background-color: aqua;
   margin: 10px;
+`;
+
+const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1976d2;
+  top: 60px;
+  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
+  height: 30px;
+  width: 30px;
+  background-color: aliceblue;
+  border-color: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12;
+  transition: left 0.3s;
 `;
 
 interface Workspace {
@@ -50,7 +73,9 @@ const Dashboard = () => {
   const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[] | never>(
     []
   );
+  const [contentType, setContentType] = useState("project");
   const [isLoading, setIsLoading] = useState(false);
+  const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
 
@@ -131,11 +156,19 @@ const Dashboard = () => {
   return (
     <PrivateRoute>
       <Wrapper>
-        <Sidebar>
-          Sidebar
-          <button onClick={logout}>logout</button>
-        </Sidebar>
-        <WorkspaceWrapper>
+        <DashboardSidebar
+          isShow={isShowSidebar}
+          setContentType={setContentType}
+        />
+        <ShowSidebarButton
+          isShowSidebar={isShowSidebar}
+          onClick={() => {
+            setIsShowSidebar((prev) => !prev);
+          }}
+        >
+          {isShowSidebar ? "<" : ">"}
+        </ShowSidebarButton>
+        <WorkspaceWrapper isShowSidebar={isShowSidebar}>
           <div>My workspace</div>
           {workspaces.length > 0 &&
             workspaces.map((workspace) => {
