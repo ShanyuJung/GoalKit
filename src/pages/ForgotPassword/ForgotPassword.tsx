@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AuthInput from "../../components/input/AuthInput";
 import LoginRoute from "../../components/route/LoginRoute";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
   padding: 100px 10px;
@@ -71,34 +71,40 @@ const ErrorMessageWrapper = styled.div`
   background-color: #fadbd8;
 `;
 
-const Signup = () => {
-  const nameRef = useRef<HTMLInputElement | null>(null);
+const MessageWrapper = styled.div`
+  border: 1px solid #196f3d;
+  border-radius: 5px;
+  color: #196f3d;
+  width: 80%;
+  text-align: center;
+  font-size: 16px;
+  min-height: 40px;
+  line-height: 40px;
+  background-color: #d5f5e3;
+`;
+
+const ForgotPassword = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-  const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
-  const { signup } = useAuth();
+
+  const { resetPassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   const submitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (isLoading) return;
 
-    const name = nameRef.current?.value || "";
     const email = emailRef.current?.value || "";
-    const password = passwordRef.current?.value || "";
-    const passwordConfirm = passwordConfirmRef.current?.value || "";
-
-    if (password === "" || password !== passwordConfirm) {
-      return setErrorMessage("Passwords didn't match.");
-    }
 
     try {
       setErrorMessage("");
+      setMessage("");
       setIsLoading(true);
-      await signup(email, password, name);
+      await resetPassword(email);
+      setMessage("Please, check your inbox for password reset letter.");
     } catch {
-      setErrorMessage("Fail to create an account.");
+      setErrorMessage("Failed to reset password.");
     }
     setIsLoading(false);
   };
@@ -107,29 +113,24 @@ const Signup = () => {
     <LoginRoute>
       <Wrapper>
         <Card>
+          {message === "" ? <></> : <MessageWrapper>{message}</MessageWrapper>}
           {errorMessage === "" ? (
             <></>
           ) : (
             <ErrorMessageWrapper>{errorMessage}</ErrorMessageWrapper>
           )}
           <Form onSubmit={submitHandler}>
-            <AuthInput labelText="Name" type="text" ref={nameRef} />
             <AuthInput labelText="Email" type="email" ref={emailRef} />
-            <AuthInput labelText="Password" type="password" ref={passwordRef} />
-            <AuthInput
-              labelText="Password Confirm"
-              type="password"
-              ref={passwordConfirmRef}
-            />
-            <SubmitButton disabled={isLoading}>SignUp</SubmitButton>
+            <SubmitButton disabled={isLoading}>Send Reset email</SubmitButton>
           </Form>
+          <StyledLink to="/login">Login</StyledLink>
         </Card>
         <Text>
-          Already have an account? <StyledLink to="/login">Login</StyledLink>
+          Don't have an account? <StyledLink to="/signup"> Signup</StyledLink>
         </Text>
       </Wrapper>
     </LoginRoute>
   );
 };
 
-export default Signup;
+export default ForgotPassword;
