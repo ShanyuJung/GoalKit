@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, RefObject, useState } from "react";
 
 type Event = MouseEvent | TouchEvent;
 
@@ -25,4 +25,16 @@ export const useOnClickOutside = <T extends HTMLElement = HTMLElement>(
       document.removeEventListener("touchstart", listener);
     };
   }, [ref, handler]);
+};
+
+export const useProgressiveImage = (src: string) => {
+  const [sourceLoaded, setSourceLoaded] = useState<string | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => setSourceLoaded(src);
+  }, [src]);
+
+  return sourceLoaded;
 };

@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
+import { useProgressiveImage } from "../../utils/hooks";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $url: string | null }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,7 +30,10 @@ const Wrapper = styled.div`
     top: 50px;
     left: 0;
     z-index: -2;
-    background-image: url(https://source.unsplash.com/Lks7vei-eAg);
+    background-image: ${(props) =>
+      props.$url
+        ? `url(${props.$url})`
+        : "url(https://source.unsplash.com/Lks7vei-eAg/640x426);"};
     background-repeat: no-repeat;
     background-size: cover;
     width: 100%;
@@ -82,8 +86,12 @@ const Home = () => {
     }
     navigate("/dashboard");
   };
+
+  const loaded = useProgressiveImage(
+    "https://source.unsplash.com/Lks7vei-eAg/"
+  );
   return (
-    <Wrapper>
+    <Wrapper $url={loaded}>
       <LandingText>
         GoalKit let you work more collaboratively and get more done.
       </LandingText>
