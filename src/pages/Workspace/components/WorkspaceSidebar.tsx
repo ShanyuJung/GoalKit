@@ -126,7 +126,6 @@ const WorkspaceSidebar: React.FC<Props> = ({
   setContentType,
   setIsShowChatRoom,
 }) => {
-  const { id } = useParams();
   const navigate = useNavigate();
 
   return (

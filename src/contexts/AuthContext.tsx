@@ -18,6 +18,7 @@ import {
   ref,
   onValue,
 } from "firebase/database";
+import { current } from "immer";
 
 interface AuthContextInterface {
   currentUser: any;
@@ -25,6 +26,7 @@ interface AuthContextInterface {
   login(email: string, password: string): void;
   logout(): void;
   resetPassword(email: string): void;
+  updatePhotoURL(url: string): void;
 }
 
 const AuthContext = React.createContext<AuthContextInterface>(
@@ -89,13 +91,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const updatePhotoURL = async (url: string) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, {
+      photoURL: url,
+    });
+  };
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
     resetPassword,
+    updatePhotoURL,
   };
+
+  console.log(currentUser);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {

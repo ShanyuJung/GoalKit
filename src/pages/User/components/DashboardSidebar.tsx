@@ -124,7 +124,7 @@ const DashboardSidebar: React.FC<Props> = ({ isShow, setContentType }) => {
           }}
         >
           <UserIcon />
-          <LinkText>Update Profile</LinkText>
+          <LinkText>Profile</LinkText>
         </LinkWrapper>
         <LinkWrapper>
           <LogoutIcon />

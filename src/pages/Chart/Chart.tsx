@@ -16,6 +16,7 @@ import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
+import PrivateRoute from "../../components/route/PrivateRoute";
 
 const Container = styled.div`
   display: flex;
@@ -191,25 +192,27 @@ const Chart = () => {
   };
 
   return (
-    <Container>
-      <ChartSidebar isShow={isShowSidebar} />
-      <ShowSidebarButton
-        isShowSidebar={isShowSidebar}
-        onClick={() => {
-          setIsShowSidebar((prev) => !prev);
-        }}
-      >
-        {isShowSidebar ? "<" : ">"}
-      </ShowSidebarButton>
-      <ChartArea isShowSidebar={isShowSidebar}>
-        <SubNavbar isShowSidebar={isShowSidebar}>
-          <ProjectTitle>
-            {isExist ? project?.title : "Project is not exist"}
-          </ProjectTitle>
-        </SubNavbar>
-        {isExist && chartHandler()}
-      </ChartArea>
-    </Container>
+    <PrivateRoute>
+      <Container>
+        <ChartSidebar isShow={isShowSidebar} />
+        <ShowSidebarButton
+          isShowSidebar={isShowSidebar}
+          onClick={() => {
+            setIsShowSidebar((prev) => !prev);
+          }}
+        >
+          {isShowSidebar ? "<" : ">"}
+        </ShowSidebarButton>
+        <ChartArea isShowSidebar={isShowSidebar}>
+          <SubNavbar isShowSidebar={isShowSidebar}>
+            <ProjectTitle>
+              {isExist ? project?.title : "Project is not exist"}
+            </ProjectTitle>
+          </SubNavbar>
+          {isExist && chartHandler()}
+        </ChartArea>
+      </Container>
+    </PrivateRoute>
   );
 };
 

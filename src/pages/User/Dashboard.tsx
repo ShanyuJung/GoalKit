@@ -15,6 +15,7 @@ import { db } from "../../firebase";
 import produce from "immer";
 import NewWorkspace from "./components/NewWorkspace";
 import DashboardSidebar from "./components/DashboardSidebar";
+import Profile from "./components/Profile";
 
 const Wrapper = styled.div`
   display: flex;
@@ -263,6 +264,7 @@ const Dashboard = () => {
           <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
 
           {contentType === "workspace" ? workspaceList() : <></>}
+          {contentType === "profile" ? <Profile /> : <></>}
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>
