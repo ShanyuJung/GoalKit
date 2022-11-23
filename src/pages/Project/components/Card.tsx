@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as descriptionIcon } from "../../../assets/text-description-svgrepo-com.svg";
 import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com.svg";
+import { Timestamp } from "firebase/firestore";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -118,8 +119,8 @@ const OwnerContainer = styled.div`
   margin-bottom: 5px;
 `;
 
-const OwnerWrapper = styled.div`
-  background-color: #c5cae9;
+const OwnerWrapper = styled.div<{ $background?: string }>`
+  background-color: ${(props) => (props.$background ? "#fff" : "#c5cae9")};
   padding: 5px;
   width: 26px;
   height: 26px;
@@ -127,6 +128,8 @@ const OwnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: ${(props) => `url(${props.$background})`};
+  background-size: cover;
 `;
 
 const ConditionWrapper = styled.div`
@@ -176,6 +179,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {
@@ -238,7 +244,11 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
         {cardInfo.owner &&
           members &&
           members.map((owner) => {
-            if (cardInfo.owner?.includes(owner.uid)) {
+            if (cardInfo.owner?.includes(owner.uid) && owner.photoURL) {
+              return (
+                <OwnerWrapper key={owner.uid} $background={owner.photoURL} />
+              );
+            } else if (cardInfo.owner?.includes(owner.uid)) {
               return (
                 <OwnerWrapper key={owner.uid}>
                   {owner.displayName.charAt(0)}

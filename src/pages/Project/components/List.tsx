@@ -6,6 +6,7 @@ import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg
 import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
+import { Timestamp } from "firebase/firestore";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -139,6 +140,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {

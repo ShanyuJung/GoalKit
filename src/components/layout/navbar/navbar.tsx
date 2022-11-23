@@ -81,7 +81,7 @@ const UserIcon = styled(userIcon)`
   }
 `;
 
-const LoginUserIcon = styled.div`
+const LoginUserIcon = styled.div<{ $background?: string }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -89,12 +89,38 @@ const LoginUserIcon = styled.div`
   justify-content: center;
   font-size: 28px;
   background-color: aliceblue;
+  background-image: ${(props) => `url(${props.$background})`};
+  background-size: cover;
   cursor: pointer;
 `;
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  console.log(currentUser.photoURL);
+
+  const displayUserIcon = () => {
+    if (currentUser.photoURL) {
+      return (
+        <LoginUserIcon
+          $background={currentUser.photoURL}
+          onClick={() => {
+            navigate("/dashboard");
+          }}
+        ></LoginUserIcon>
+      );
+    }
+
+    return (
+      <LoginUserIcon
+        onClick={() => {
+          navigate("/dashboard");
+        }}
+      >
+        {currentUser.displayName.charAt()}
+      </LoginUserIcon>
+    );
+  };
 
   return (
     <Wrapper>
@@ -110,13 +136,7 @@ const Navbar = () => {
       </NavGroup>
       <UserIconWrapper>
         {currentUser ? (
-          <LoginUserIcon
-            onClick={() => {
-              navigate("/dashboard");
-            }}
-          >
-            {currentUser.displayName.charAt()}
-          </LoginUserIcon>
+          displayUserIcon()
         ) : (
           <UserIcon
             onClick={() => {

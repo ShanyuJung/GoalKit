@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
@@ -74,6 +74,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {

@@ -7,7 +7,7 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, firebaseConfig } from "../firebase";
 import { initializeApp } from "firebase/app";
 import {
@@ -96,6 +96,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateProfile(auth.currentUser, {
       photoURL: url,
     });
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      photoURL: url,
+    });
+    setCurrentUser((prev) => ({
+      ...prev,
+      photoURL: url,
+    }));
   };
 
   const updateUserDisplayName = async (newName: string) => {
@@ -103,6 +111,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateProfile(auth.currentUser, {
       displayName: newName,
     });
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      displayName: newName,
+    });
+    setCurrentUser((prev) => ({
+      ...prev,
+      displayName: newName,
+    }));
   };
 
   const value = {

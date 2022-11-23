@@ -66,6 +66,7 @@ interface Member {
   displayName: string;
   last_changed?: Timestamp;
   state?: string;
+  photoURL?: string;
 }
 
 interface Props {
