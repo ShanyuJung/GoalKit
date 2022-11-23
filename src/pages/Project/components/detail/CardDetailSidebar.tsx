@@ -8,6 +8,7 @@ import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
+import { Timestamp } from "firebase/firestore";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -193,6 +194,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {

@@ -64,6 +64,11 @@ const LinkWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 0px 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #156cc2;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -85,23 +90,6 @@ const LinkText = styled.div`
   font-weight: 600;
   border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
-`;
-
-const ChartIcon = styled(chartIcon)`
-  width: 20px;
-  margin-right: 10px;
-  path {
-    fill: #fff;
-  }
-
-  rect {
-    fill: #fff;
-  }
 `;
 
 const GanttIcon = styled(ganttIcon)`

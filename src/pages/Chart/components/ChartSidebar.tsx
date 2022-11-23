@@ -26,7 +26,7 @@ const LinkList = styled.div<StylesProps>`
   width: 100%;
 `;
 
-const LinkWrapper = styled.div`
+const LinkWrapper = styled.div<{ $selected?: boolean }>`
   width: 100%;
   height: 50px;
   display: flex;
@@ -34,6 +34,13 @@ const LinkWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 0px 20px;
+  cursor: pointer;
+  background-color: ${(props) => (props.$selected ? "#165fa8" : "")};
+  border-right: ${(props) => (props.$selected ? "5px solid #ccc" : "")};
+
+  &:hover {
+    background-color: #156cc2;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -55,11 +62,6 @@ const LinkText = styled.div`
   font-weight: 600;
   border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
 `;
 
 const ProjectLogo = styled(projectIcon)`
@@ -115,7 +117,7 @@ interface Props {
 }
 
 const ChartSidebar: React.FC<Props> = ({ isShow }) => {
-  const { id } = useParams();
+  const { id, chartType } = useParams();
 
   return (
     <SidebarWrapper isShow={isShow}>
@@ -126,13 +128,13 @@ const ChartSidebar: React.FC<Props> = ({ isShow }) => {
             <LinkText>Back to Board</LinkText>
           </StyledLink>
         </LinkWrapper>
-        <LinkWrapper>
+        <LinkWrapper $selected={chartType === "gantt"}>
           <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
             <GanttLogo />
             <LinkText>Gantt Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
-        <LinkWrapper>
+        <LinkWrapper $selected={chartType === "progress"}>
           <StyledLink to={`/project/${id}/chart/progress`} relative="path">
             <PieChartLogo />
             <LinkText>Progress Chart</LinkText>

@@ -250,6 +250,7 @@ const Dashboard = () => {
       <Wrapper>
         <DashboardSidebar
           isShow={isShowSidebar}
+          contentType={contentType}
           setContentType={setContentType}
         />
         <ShowSidebarButton

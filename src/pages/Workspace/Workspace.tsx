@@ -616,6 +616,7 @@ const Workspace = () => {
       <Wrapper>
         <WorkspaceSidebar
           isShow={isShowSidebar}
+          contentType={contentType}
           setContentType={setContentType}
           setIsShowChatRoom={setIsShowChatRoom}
         />

@@ -118,7 +118,6 @@ const Chart = () => {
     undefined
   );
   const [members, setMembers] = useState<Member[]>([]);
-  // const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 

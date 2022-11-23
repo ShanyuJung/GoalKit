@@ -26,7 +26,7 @@ const LinkList = styled.div<StylesProps>`
   width: 100%;
 `;
 
-const LinkWrapper = styled.div`
+const LinkWrapper = styled.div<{ $selected?: boolean }>`
   width: 100%;
   height: 50px;
   display: flex;
@@ -34,16 +34,13 @@ const LinkWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   padding: 0px 20px;
-`;
+  cursor: pointer;
+  background-color: ${(props) => (props.$selected ? "#165fa8" : "")};
+  border-right: ${(props) => (props.$selected ? "5px solid #ccc" : "")};
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  height: 50px;
-  width: 100%;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: flex-start;
+  &:hover {
+    background-color: #156cc2;
+  }
 `;
 
 const LinkText = styled.div`
@@ -55,12 +52,6 @@ const LinkText = styled.div`
   font-weight: 600;
   border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-  cursor: pointer;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
 `;
 
 const ProjectIcon = styled(projectIcon)`
@@ -101,16 +92,22 @@ const LogoutIcon = styled(logoutIcon)`
 
 interface Props {
   isShow: boolean;
+  contentType: string;
   setContentType: (value: string) => void;
 }
 
-const DashboardSidebar: React.FC<Props> = ({ isShow, setContentType }) => {
+const DashboardSidebar: React.FC<Props> = ({
+  isShow,
+  contentType,
+  setContentType,
+}) => {
   const { logout } = useAuth();
 
   return (
     <SidebarWrapper isShow={isShow}>
       <LinkList isShow={isShow}>
         <LinkWrapper
+          $selected={contentType === "workspace"}
           onClick={() => {
             setContentType("workspace");
           }}
@@ -119,6 +116,7 @@ const DashboardSidebar: React.FC<Props> = ({ isShow, setContentType }) => {
           <LinkText>Workspace</LinkText>
         </LinkWrapper>
         <LinkWrapper
+          $selected={contentType === "profile"}
           onClick={() => {
             setContentType("profile");
           }}
