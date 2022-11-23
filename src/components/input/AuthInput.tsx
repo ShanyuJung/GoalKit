@@ -4,6 +4,7 @@ import styled from "styled-components";
 interface Props {
   labelText: string;
   type: string;
+  defaultValue?: string;
 }
 
 export type Ref = HTMLInputElement;
@@ -25,11 +26,17 @@ const StyledInput = styled.input`
 `;
 
 const AuthInput = forwardRef<Ref, Props>((props, ref) => {
-  const { labelText, type } = props;
+  const { labelText, type, defaultValue } = props;
   return (
     <InputWrapper>
       <InputLabel>{labelText}</InputLabel>
-      <StyledInput ref={ref} type={type} required autoComplete="off" />
+      <StyledInput
+        ref={ref}
+        type={type}
+        required
+        autoComplete="off"
+        defaultValue={defaultValue}
+      />
     </InputWrapper>
   );
 });

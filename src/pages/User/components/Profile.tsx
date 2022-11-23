@@ -7,7 +7,7 @@ import {
   ref,
   list,
 } from "firebase/storage";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { ReactComponent as editIcon } from "../../../assets/edit-svgrepo-com.svg";
 import AuthInput from "../../../components/input/AuthInput";
 
@@ -172,36 +172,67 @@ const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File | null>(null);
+  const nameRef = useRef<HTMLInputElement | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
-  const { currentUser, updatePhotoURL } = useAuth();
+  const { currentUser, updatePhotoURL, updateUserDisplayName } = useAuth();
 
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!nameRef.current?.value.trim()) {
+      setErrorMessage("Can not enter empty name.");
+      return;
+    }
 
-  useEffect(() => {
-    const uploadUserPhoto = async (userPhoto: File) => {
-      if (!userPhoto || !currentUser) return;
-      const authUID = currentUser.uid;
-      const storage = getStorage();
-      const imageRef = ref(storage, `users/${authUID}/userPhoto`);
-      await uploadBytes(imageRef, userPhoto);
-      const pathRef = ref(storage, `users/${authUID}`);
-      const hasPhoto = await list(pathRef, { maxResults: 1 });
-      if (hasPhoto.items.length === 0) return;
-      const result = await getDownloadURL(imageRef);
-      await updatePhotoURL(result);
-      setImageUpload(null);
-    };
+    if (nameRef.current.value.trim() === currentUser.displayName) {
+      setErrorMessage("New name is same to previous one.");
+      return;
+    }
 
-    if (imageUpload === null) return;
+    const newName = nameRef.current.value.trim();
+    setMessage("");
+    setErrorMessage("");
     setIsLoading(true);
     try {
-      uploadUserPhoto(imageUpload);
-      setMessage("Update user photo succeed.");
+      await updateUserDisplayName(newName);
+      setMessage("Update user name succeed.");
     } catch {
-      setErrorMessage("Fail to upload image.");
+      setErrorMessage("Fail to update user name.");
     }
     setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const uploadUserPhotoHandler = async () => {
+      if (imageUpload === null) return;
+
+      const uploadUserPhoto = async (userPhoto: File) => {
+        if (!userPhoto || !currentUser) return;
+        const authUID = currentUser.uid;
+        const storage = getStorage();
+        const imageRef = ref(storage, `users/${authUID}/userPhoto`);
+        await uploadBytes(imageRef, userPhoto);
+        const pathRef = ref(storage, `users/${authUID}`);
+        const hasPhoto = await list(pathRef, { maxResults: 1 });
+        if (hasPhoto.items.length === 0) return;
+        const result = await getDownloadURL(imageRef);
+        await updatePhotoURL(result);
+        setImageUpload(null);
+      };
+
+      setIsLoading(true);
+      setMessage("");
+      setErrorMessage("");
+      try {
+        await uploadUserPhoto(imageUpload);
+        setMessage("Update user photo succeed.");
+      } catch {
+        setErrorMessage("Fail to upload image.");
+      }
+      setIsLoading(false);
+    };
+
+    uploadUserPhotoHandler();
   }, [imageUpload]);
 
   const profileCard = () => {
@@ -237,7 +268,10 @@ const Profile = () => {
           <ProfileText>{currentUser.email}</ProfileText>
         </ProfileTextWrapper>
         <SubmitButton
+          disabled={isLoading}
           onClick={() => {
+            setMessage("");
+            setErrorMessage("");
             setIsEdit(true);
           }}
         >
@@ -250,7 +284,12 @@ const Profile = () => {
   const editBoard = () => {
     return (
       <Form onSubmit={onSubmitHandler}>
-        <AuthInput labelText="Name" type="text" />
+        <AuthInput
+          labelText="Name"
+          type="text"
+          defaultValue={currentUser.displayName}
+          ref={nameRef}
+        />
         <SubmitButton>Update Profile</SubmitButton>
       </Form>
     );
@@ -270,6 +309,9 @@ const Profile = () => {
       {isEdit ? (
         <EndEdit
           onClick={() => {
+            if (isLoading) return;
+            setMessage("");
+            setErrorMessage("");
             setIsEdit(false);
           }}
         >
