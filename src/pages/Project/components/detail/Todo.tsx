@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   margin: 10px;
@@ -117,10 +118,23 @@ const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
   };
 
   const onDeleteHandler = (todoID: string) => {
-    const r = window.confirm("Would you like to remove task from todo list?");
-    if (r === true) {
-      onDelete(todoID);
-    }
+    // const r = window.confirm("Would you like to remove task from todo list?");
+    // if (r === true) {
+    //   onDelete(todoID);
+    // }
+    Swal.fire({
+      title: "Confirm to remove selected task from todo list.",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove it!",
+    }).then((result) => {
+      if (result.value === true) {
+        onDelete(todoID);
+        Swal.fire("Removed!", "Selected task has been removed.", "success");
+      }
+    });
   };
 
   useEffect(() => {

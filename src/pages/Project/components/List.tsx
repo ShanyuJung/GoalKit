@@ -7,6 +7,7 @@ import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.s
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { Timestamp } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 interface IsDraggingProps {
   isDragging: boolean;
@@ -172,12 +173,19 @@ const List = ({
   const ref = useRef(null);
 
   const checkDeleteListHandler = () => {
-    const r = window.confirm("Check to delete selected list");
-    if (r === true) {
-      deleteList(id);
-    } else {
-      setIsShowModal(false);
-    }
+    Swal.fire({
+      title: "Confirm to delete selected list",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.value === true) {
+        deleteList(id);
+        Swal.fire("Deleted!", "Selected list has been deleted.", "success");
+      }
+    });
   };
 
   useOnClickOutside(ref, () => setIsShowModal(false));

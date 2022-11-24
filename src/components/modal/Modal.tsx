@@ -47,20 +47,20 @@ const ModalOverlay = styled.div`
 const portalElement: HTMLElement | null = document.getElementById("overlays");
 
 interface Props {
-  onClose: any;
+  onClose: () => void;
   children: React.ReactNode;
 }
 
-const Modal = (props: Props) => {
+const Modal: React.FC<Props> = ({ onClose, children }) => {
   if (!portalElement) return <></>;
-  const { onClose } = props;
+
   return (
     <>
       {ReactDOM.createPortal(<Backdrop onClick={onClose} />, portalElement)}
-      {props.children &&
+      {children &&
         ReactDOM.createPortal(
           <ModalOverlay>
-            <div>{props.children}</div>
+            <div>{children}</div>
           </ModalOverlay>,
           portalElement
         )}

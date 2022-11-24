@@ -16,6 +16,7 @@ import produce from "immer";
 import NewWorkspace from "./components/NewWorkspace";
 import DashboardSidebar from "./components/DashboardSidebar";
 import Profile from "./components/Profile";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   display: flex;
@@ -197,7 +198,7 @@ const Dashboard = () => {
         await getWorkspaceHandler();
         await getGuestWorkspaceHandler();
       } catch (e) {
-        alert(e);
+        Swal.fire("Something went wrong!", `${e}`, "warning");
       }
       setIsLoading(false);
     };

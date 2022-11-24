@@ -25,6 +25,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
 import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   display: flex;
@@ -370,7 +371,7 @@ const Workspace = () => {
         setIsExist(false);
       }
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
@@ -394,7 +395,7 @@ const Workspace = () => {
       await updateDoc(docRef, { projects: arrayUnion(newObj) });
       await getProjectHandler();
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
@@ -429,16 +430,17 @@ const Workspace = () => {
       const emailString = memberRef.current?.value.trim();
       const userList = await searchUserHandler(emailString);
       if (!userList || userList.length === 0) {
-        alert("User not found");
+        Swal.fire("User not found!", "Try another email", "warning");
         return;
       }
       const searchedUser = [...userList][0];
       await updateMemberHandler(searchedUser.uid);
+      memberRef.current.value = "";
+      Swal.fire("Succeed!", "Add User to workspace.", "success");
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
-    memberRef.current.value = "";
-    alert("Add User to workspace.");
+
     setIsLoading(false);
   };
 
