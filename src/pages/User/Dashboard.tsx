@@ -263,7 +263,9 @@ const Dashboard = () => {
           {isShowSidebar ? "<" : ">"}
         </ShowSidebarButton>
         <WorkspaceWrapper isShowSidebar={isShowSidebar}>
-          <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
+          {currentUser && (
+            <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
+          )}
 
           {contentType === "workspace" ? workspaceList() : <></>}
           {contentType === "profile" ? <Profile /> : <></>}

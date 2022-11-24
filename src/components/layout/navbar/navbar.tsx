@@ -96,10 +96,9 @@ const LoginUserIcon = styled.div<{ $background?: string }>`
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  console.log(currentUser.photoURL);
 
   const displayUserIcon = () => {
-    if (currentUser.photoURL) {
+    if (currentUser && currentUser.photoURL) {
       return (
         <LoginUserIcon
           $background={currentUser.photoURL}
