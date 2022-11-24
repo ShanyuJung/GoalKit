@@ -350,6 +350,7 @@ const Workspace = () => {
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
   const memberRef = useRef<HTMLInputElement | null>(null);
   const messageRef = useRef<HTMLInputElement | null>(null);
+  const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -505,6 +506,25 @@ const Workspace = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const scrollToBottomHandler = () => {
+      if (!chatRoomRef.current) return;
+      chatRoomRef.current?.scrollIntoView();
+    };
+
+    scrollToBottomHandler();
+  }, [isShowChatRoom]);
+
+  useEffect(() => {
+    const scrollToBottomHandler = () => {
+      if (!chatRoomRef.current) return;
+
+      chatRoomRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    scrollToBottomHandler();
+  }, [messages]);
+
   const projectList = () => {
     return (
       <>
@@ -596,6 +616,7 @@ const Workspace = () => {
                 </MessageWrapper>
               );
             })}
+          <div ref={chatRoomRef} />
         </MessageArea>
         <MessageInputForm onSubmit={sendMessageHandler}>
           <MessageInputWrapper>
