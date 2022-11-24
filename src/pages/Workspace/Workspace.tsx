@@ -26,6 +26,7 @@ import WorkspaceSidebar from "./components/WorkspaceSidebar";
 import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import Swal from "sweetalert2";
+import Message from "./components/Message";
 
 const Wrapper = styled.div`
   display: flex;
@@ -158,49 +159,6 @@ const MessageArea = styled.div`
   flex-grow: 1;
 
   padding: 5px 10px;
-`;
-
-const MessageWrapper = styled.div<{ isCurrentUser: boolean }>`
-  display: flex;
-  flex-direction: ${(props) => (props.isCurrentUser ? " row-reverse" : "row")};
-  width: 100%;
-  align-items: flex-end;
-  margin: 10px 0px;
-  gap: 10px;
-`;
-
-const MessageUserIcon = styled.div<{ isCurrentUser: boolean }>`
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 30px;
-  flex-shrink: 0;
-  background-color: ${(props) => (props.isCurrentUser ? "#2196f3" : "#81c784")};
-`;
-
-const Message = styled.div<{ isCurrentUser: boolean }>`
-  max-width: 230px;
-  position: relative;
-  z-index: 1;
-  padding: 2px 10px;
-  font-size: 16px;
-  word-break: break-all;
-  word-wrap: break-word;
-  border-radius: 5px;
-
-  &::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100%;
-    opacity: 0.6;
-    border-radius: 5px;
-    background-color: ${(props) => (props.isCurrentUser ? "#2196f3" : "#ccc")};
-  }
 `;
 
 const MessageInputForm = styled.form`
@@ -350,6 +308,7 @@ const Workspace = () => {
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
   const memberRef = useRef<HTMLInputElement | null>(null);
   const messageRef = useRef<HTMLInputElement | null>(null);
+  const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -505,6 +464,25 @@ const Workspace = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const scrollToBottomHandler = () => {
+      if (!chatRoomRef.current) return;
+      chatRoomRef.current?.scrollIntoView();
+    };
+
+    scrollToBottomHandler();
+  }, [isShowChatRoom]);
+
+  useEffect(() => {
+    const scrollToBottomHandler = () => {
+      if (!chatRoomRef.current) return;
+
+      chatRoomRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    scrollToBottomHandler();
+  }, [messages]);
+
   const projectList = () => {
     return (
       <>
@@ -581,21 +559,17 @@ const Workspace = () => {
                 (member) => member.uid === message.userID
               );
               return (
-                <MessageWrapper
+                <Message
                   key={message.id}
-                  isCurrentUser={currentUser.uid === message.userID}
-                >
-                  <MessageUserIcon
-                    isCurrentUser={currentUser.uid === message.userID}
-                  >{`${membersInfo[index].displayName.charAt(
-                    0
-                  )}`}</MessageUserIcon>
-                  <Message
-                    isCurrentUser={currentUser.uid === message.userID}
-                  >{`${message.message}`}</Message>
-                </MessageWrapper>
+                  messageUserID={message.userID}
+                  userFirstChar={membersInfo[index].displayName.charAt(0)}
+                  messageText={message.message}
+                  messageTime={message.time}
+                  messagePhoto={membersInfo[index].photoURL || ""}
+                />
               );
             })}
+          <div ref={chatRoomRef} />
         </MessageArea>
         <MessageInputForm onSubmit={sendMessageHandler}>
           <MessageInputWrapper>
