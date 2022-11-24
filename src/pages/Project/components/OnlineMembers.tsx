@@ -17,13 +17,15 @@ const MemberList = styled.div`
   display: flex;
 `;
 
-const Member = styled.div<{ colorCode: string }>`
+const Member = styled.div<{ colorCode: string; $background?: string }>`
   width: 30px;
   height: 30px;
   font-size: 20px;
   line-height: 30px;
   border-radius: 50%;
   background-color: ${(props) => `${props.colorCode}`};
+  background-image: ${(props) => `url(${props.$background})`};
+  background-size: cover;
   text-align: center;
   margin: 0px 1px;
 `;
@@ -40,6 +42,7 @@ interface Member {
   displayName: string;
   last_changed?: Timestamp;
   state?: string;
+  photoURL?: string;
 }
 
 const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
@@ -71,7 +74,15 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
       <MemberList>
         {membersInfo.length > 0 &&
           membersInfo.map((member, index) => {
-            if (member.state === "online" && index < 3) {
+            if (member.state === "online" && index < 3 && member.photoURL) {
+              return (
+                <Member
+                  key={member.uid}
+                  colorCode={"transparent"}
+                  $background={member.photoURL}
+                />
+              );
+            } else if (member.state === "online" && index < 3) {
               return (
                 <Member key={member.uid} colorCode={COLORS[index]}>
                   {member.displayName.charAt(0)}

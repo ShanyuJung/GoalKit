@@ -1,9 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as projectIcon } from "../../../assets/board-svgrepo-com.svg";
-import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
-import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
-import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
+import { ReactComponent as userIcon } from "../../../assets/user-svgrepo-com.svg";
+import { ReactComponent as logoutIcon } from "../../../assets/logout-svgrepo-com.svg";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface StylesProps {
   isShow: boolean;
@@ -43,16 +43,6 @@ const LinkWrapper = styled.div<{ $selected?: boolean }>`
   }
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  height: 50px;
-  width: 100%;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: flex-start;
-`;
-
 const LinkText = styled.div`
   overflow: hidden;
   white-space: nowrap;
@@ -64,7 +54,7 @@ const LinkText = styled.div`
   transition: border-bottom-color 0.3s ease-out;
 `;
 
-const ProjectLogo = styled(projectIcon)`
+const ProjectIcon = styled(projectIcon)`
   width: 24px;
   margin-right: 10px;
   path {
@@ -76,31 +66,19 @@ const ProjectLogo = styled(projectIcon)`
   }
 `;
 
-const ChartLogo = styled(chartIcon)`
+const UserIcon = styled(userIcon)`
   width: 20px;
   margin-right: 10px;
   path {
     fill: #fff;
   }
 
-  rect {
+  circle {
     fill: #fff;
   }
 `;
 
-const GanttLogo = styled(ganttIcon)`
-  width: 20px;
-  margin-right: 10px;
-  path {
-    fill: #fff;
-  }
-
-  rect {
-    fill: #fff;
-  }
-`;
-
-const PieChartLogo = styled(pieChartIcon)`
+const LogoutIcon = styled(logoutIcon)`
   width: 20px;
   margin-right: 10px;
   path {
@@ -114,35 +92,45 @@ const PieChartLogo = styled(pieChartIcon)`
 
 interface Props {
   isShow: boolean;
+  contentType: string;
+  setContentType: (value: string) => void;
 }
 
-const ChartSidebar: React.FC<Props> = ({ isShow }) => {
-  const { id, chartType } = useParams();
+const DashboardSidebar: React.FC<Props> = ({
+  isShow,
+  contentType,
+  setContentType,
+}) => {
+  const { logout } = useAuth();
 
   return (
     <SidebarWrapper isShow={isShow}>
       <LinkList isShow={isShow}>
+        <LinkWrapper
+          $selected={contentType === "workspace"}
+          onClick={() => {
+            setContentType("workspace");
+          }}
+        >
+          <ProjectIcon />
+          <LinkText>Workspace</LinkText>
+        </LinkWrapper>
+        <LinkWrapper
+          $selected={contentType === "profile"}
+          onClick={() => {
+            setContentType("profile");
+          }}
+        >
+          <UserIcon />
+          <LinkText>Profile</LinkText>
+        </LinkWrapper>
         <LinkWrapper>
-          <StyledLink to={`/project/${id}/`} relative="path">
-            <ProjectLogo />
-            <LinkText>Back to Board</LinkText>
-          </StyledLink>
-        </LinkWrapper>
-        <LinkWrapper $selected={chartType === "gantt"}>
-          <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
-            <GanttLogo />
-            <LinkText>Gantt Chart</LinkText>
-          </StyledLink>
-        </LinkWrapper>
-        <LinkWrapper $selected={chartType === "progress"}>
-          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
-            <PieChartLogo />
-            <LinkText>Progress Chart</LinkText>
-          </StyledLink>
+          <LogoutIcon />
+          <LinkText onClick={logout}>Logout</LinkText>
         </LinkWrapper>
       </LinkList>
     </SidebarWrapper>
   );
 };
 
-export default ChartSidebar;
+export default DashboardSidebar;

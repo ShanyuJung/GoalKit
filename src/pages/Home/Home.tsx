@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import { useProgressiveImage } from "../../utils/hooks";
+import placeholder from "../../assets/home-placeholder.jpg";
 
 const Wrapper = styled.div<{ $url: string | null }>`
   display: flex;
@@ -31,9 +32,8 @@ const Wrapper = styled.div<{ $url: string | null }>`
     left: 0;
     z-index: -2;
     background-image: ${(props) =>
-      props.$url
-        ? `url(${props.$url})`
-        : "url(https://source.unsplash.com/Lks7vei-eAg/640x426);"};
+      props.$url ? `url(${props.$url})` : `url(${placeholder})`};
+
     background-repeat: no-repeat;
     background-size: cover;
     width: 100%;
@@ -88,8 +88,9 @@ const Home = () => {
   };
 
   const loaded = useProgressiveImage(
-    "https://source.unsplash.com/Lks7vei-eAg/"
+    "https://source.unsplash.com/Lks7vei-eAg/2400x1600"
   );
+
   return (
     <Wrapper $url={loaded}>
       <LandingText>

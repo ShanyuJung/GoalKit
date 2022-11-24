@@ -7,7 +7,7 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, firebaseConfig } from "../firebase";
 import { initializeApp } from "firebase/app";
 import {
@@ -25,6 +25,8 @@ interface AuthContextInterface {
   login(email: string, password: string): void;
   logout(): void;
   resetPassword(email: string): void;
+  updatePhotoURL(url: string): void;
+  updateUserDisplayName(newName: string): void;
 }
 
 const AuthContext = React.createContext<AuthContextInterface>(
@@ -89,12 +91,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const updatePhotoURL = async (url: string) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, {
+      photoURL: url,
+    });
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      photoURL: url,
+    });
+    setCurrentUser((prev) => ({
+      ...prev,
+      photoURL: url,
+    }));
+  };
+
+  const updateUserDisplayName = async (newName: string) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, {
+      displayName: newName,
+    });
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      displayName: newName,
+    });
+    setCurrentUser((prev) => ({
+      ...prev,
+      displayName: newName,
+    }));
+  };
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
     resetPassword,
+    updatePhotoURL,
+    updateUserDisplayName,
   };
 
   useEffect(() => {

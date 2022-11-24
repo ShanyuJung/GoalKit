@@ -30,6 +30,7 @@ import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
 import OnlineMembers from "./components/OnlineMembers";
+import Swal from "sweetalert2";
 
 const Container = styled.div`
   display: flex;
@@ -134,6 +135,7 @@ interface Member {
   displayName: string;
   last_changed?: Timestamp;
   state?: string;
+  photoURL?: string;
 }
 
 const Project = () => {
@@ -156,13 +158,13 @@ const Project = () => {
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
 
   const isDraggingHandler = async ({ draggableId, type }: DragStart) => {
-    if (!id) return;
+    if (!id || isLoading) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
       await updateDoc(projectRef, { draggingLists: arrayUnion(draggableId) });
@@ -173,7 +175,7 @@ const Project = () => {
   };
 
   const isDroppedHandler = async (draggableId: string, type: string) => {
-    if (!id) return;
+    if (!id || isLoading) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
       await updateDoc(projectRef, { draggingLists: arrayRemove(draggableId) });
@@ -186,34 +188,38 @@ const Project = () => {
   const onDragEndHandler = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     isDroppedHandler(draggableId, result.type);
-    if (!destination) return;
+    if (!destination || isLoading) return;
 
-    if (result.type === "BOARD") {
-      const newLists = produce(lists, (draftState) => {
-        const [newOrder] = draftState.splice(source.index, 1);
-        draftState.splice(destination.index, 0, newOrder);
-      });
-      setLists(newLists);
-      updateDataHandler(newLists);
-    }
-
-    if (result.type === "LIST") {
-      const newLists = produce(lists, (draftState) => {
-        const prevListIndex = draftState.findIndex((item) => {
-          return item.id === source.droppableId;
+    try {
+      if (result.type === "BOARD") {
+        const newLists = produce(lists, (draftState) => {
+          const [newOrder] = draftState.splice(source.index, 1);
+          draftState.splice(destination.index, 0, newOrder);
         });
-        const newListIndex = draftState.findIndex((item) => {
-          return item.id === destination.droppableId;
-        });
+        setLists(newLists);
+        updateDataHandler(newLists);
+      }
 
-        const [newOrder] = draftState[prevListIndex].cards.splice(
-          source.index,
-          1
-        );
-        draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
-      });
-      setLists(newLists);
-      updateDataHandler(newLists);
+      if (result.type === "LIST") {
+        const newLists = produce(lists, (draftState) => {
+          const prevListIndex = draftState.findIndex((item) => {
+            return item.id === source.droppableId;
+          });
+          const newListIndex = draftState.findIndex((item) => {
+            return item.id === destination.droppableId;
+          });
+
+          const [newOrder] = draftState[prevListIndex].cards.splice(
+            source.index,
+            1
+          );
+          draftState[newListIndex].cards.splice(destination.index, 0, newOrder);
+        });
+        setLists(newLists);
+        updateDataHandler(newLists);
+      }
+    } catch {
+      Swal.fire("Something went wrong!", "Please, try again later.", "warning");
     }
   };
 

@@ -8,6 +8,8 @@ import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
+import { Timestamp } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -193,6 +195,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {
@@ -232,11 +237,20 @@ const CardDetailSideBar: React.FC<Props> = ({
   };
 
   const checkDeleteCardHandler = () => {
-    const r = window.confirm("Check to delete selected card");
-    if (r === true) {
-      navigate(`/project/${id}`);
-      onDelete(cardId || "");
-    }
+    Swal.fire({
+      title: "Confirm to delete selected card",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.value === true) {
+        navigate(`/project/${id}`);
+        onDelete(cardId || "");
+        Swal.fire("Deleted!", "Selected card has been deleted.", "success");
+      }
+    });
   };
 
   return (

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
@@ -12,6 +12,7 @@ import Owners from "./Owners";
 import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 
 const Container = styled.div`
   display: flex;
@@ -74,6 +75,9 @@ interface Member {
   uid: string;
   email: string;
   displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
 
 interface Props {
@@ -171,7 +175,7 @@ const CardDetail: React.FC<Props> = ({
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
@@ -244,6 +248,12 @@ const CardDetail: React.FC<Props> = ({
   const updateTitleHandler = () => {
     if (!titleRef.current?.value.trim()) {
       alert("Empty title is not allowed!");
+      Swal.fire(
+        "Empty title is not allowed!",
+        "Please type something",
+        "warning"
+      );
+
       return;
     }
     if (titleRef.current?.value.trim() === state.title) {

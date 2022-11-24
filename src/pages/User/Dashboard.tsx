@@ -14,27 +14,103 @@ import {
 import { db } from "../../firebase";
 import produce from "immer";
 import NewWorkspace from "./components/NewWorkspace";
+import DashboardSidebar from "./components/DashboardSidebar";
+import Profile from "./components/Profile";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   display: flex;
 `;
 
-const Sidebar = styled.div`
-  background-color: red;
-  height: calc(100vh - 50px);
-`;
-
-const WorkspaceWrapper = styled.div`
+const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   background-color: aliceblue;
   flex-grow: 1;
   height: calc(100vh - 50px);
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  transition: padding 0.3s;
 `;
 
 const Workspace = styled.div`
-  width: 100px;
+  position: relative;
+  z-index: 1;
+  width: 240px;
   height: 100px;
-  background-color: aqua;
-  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    background-color: #ddd;
+    position: absolute;
+    z-index: -1;
+    width: 240px;
+    height: 100px;
+    border-radius: 5px;
+  }
+
+  &:hover {
+    &::before {
+      background-color: #ccc;
+    }
+  }
+`;
+
+const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1976d2;
+  top: 60px;
+  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
+  height: 30px;
+  width: 30px;
+  background-color: aliceblue;
+  border-color: #1976d2;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 12;
+  transition: left 0.3s;
+`;
+
+const WorkspaceBanner = styled.div`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+`;
+
+const WorkspaceSubBanner = styled.div`
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: #000;
+`;
+
+const WorkspaceListWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0px auto;
+  padding: 35px 50px;
 `;
 
 interface Workspace {
@@ -50,9 +126,11 @@ const Dashboard = () => {
   const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[] | never>(
     []
   );
+  const [contentType, setContentType] = useState("workspace");
   const [isLoading, setIsLoading] = useState(false);
+  const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
-  const { logout, currentUser } = useAuth();
+  const { currentUser } = useAuth();
 
   const getWorkspaceHandler = async () => {
     const userID = currentUser.uid;
@@ -120,7 +198,7 @@ const Dashboard = () => {
         await getWorkspaceHandler();
         await getGuestWorkspaceHandler();
       } catch (e) {
-        alert(e);
+        Swal.fire("Something went wrong!", `${e}`, "warning");
       }
       setIsLoading(false);
     };
@@ -128,15 +206,12 @@ const Dashboard = () => {
     getDataHandler();
   }, []);
 
-  return (
-    <PrivateRoute>
-      <Wrapper>
-        <Sidebar>
-          Sidebar
-          <button onClick={logout}>logout</button>
-        </Sidebar>
-        <WorkspaceWrapper>
-          <div>My workspace</div>
+  const workspaceList = () => {
+    return (
+      <>
+        <WorkspaceSubBanner>My workspace</WorkspaceSubBanner>
+        <WorkspaceListWrapper>
+          <NewWorkspace onSubmit={newWorkspaceHandler} />
           {workspaces.length > 0 &&
             workspaces.map((workspace) => {
               return (
@@ -150,7 +225,9 @@ const Dashboard = () => {
                 </Workspace>
               );
             })}
-          <div>Guest workspace</div>
+        </WorkspaceListWrapper>
+        <WorkspaceSubBanner>Guest workspace</WorkspaceSubBanner>
+        <WorkspaceListWrapper>
           {guestWorkspaces.length > 0 &&
             guestWorkspaces.map((workspace) => {
               return (
@@ -164,7 +241,34 @@ const Dashboard = () => {
                 </Workspace>
               );
             })}
-          <NewWorkspace onSubmit={newWorkspaceHandler} />
+        </WorkspaceListWrapper>
+      </>
+    );
+  };
+
+  return (
+    <PrivateRoute>
+      <Wrapper>
+        <DashboardSidebar
+          isShow={isShowSidebar}
+          contentType={contentType}
+          setContentType={setContentType}
+        />
+        <ShowSidebarButton
+          isShowSidebar={isShowSidebar}
+          onClick={() => {
+            setIsShowSidebar((prev) => !prev);
+          }}
+        >
+          {isShowSidebar ? "<" : ">"}
+        </ShowSidebarButton>
+        <WorkspaceWrapper isShowSidebar={isShowSidebar}>
+          {currentUser && (
+            <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
+          )}
+
+          {contentType === "workspace" ? workspaceList() : <></>}
+          {contentType === "profile" ? <Profile /> : <></>}
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>

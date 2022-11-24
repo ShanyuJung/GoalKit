@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
 import { useOnClickOutside } from "../../../../utils/hooks";
+import Swal from "sweetalert2";
 
 const Form = styled.form`
   display: flex;
@@ -159,7 +160,12 @@ const Time: React.FC<Props> = ({
       const newStartTime = new Date(`${startTime}:00Z`).getTime();
       const newDeadline = new Date(`${deadline}:00Z`).getTime();
       if (newStartTime >= newDeadline) {
-        alert("Start time must not be later than deadline!");
+        Swal.fire(
+          "Error!",
+          "Start time must not be later than deadline!",
+          "warning"
+        );
+
         return;
       }
       onSubmit(newStartTime, newDeadline);
@@ -176,7 +182,11 @@ const Time: React.FC<Props> = ({
     if (event.target.checked && !isUnDoneTodo) {
       onCheck(true);
     } else if (event.target.checked && isUnDoneTodo) {
-      alert("You have undone tasks in your to do list!");
+      Swal.fire(
+        "You have undone tasks in your todo list!",
+        "Check out all todo before complete task.",
+        "warning"
+      );
     } else {
       onCheck(false);
     }

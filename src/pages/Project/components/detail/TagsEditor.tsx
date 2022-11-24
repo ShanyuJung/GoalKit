@@ -6,6 +6,7 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
 import { uuidv4 } from "@firebase/util";
 import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const TagSelectorList = styled.div`
   display: flex;
@@ -294,7 +295,7 @@ const TagsEditor: React.FC<Props> = ({
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { tags: arrayUnion(newTag) });
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
@@ -368,7 +369,7 @@ const TagsEditor: React.FC<Props> = ({
       await updateDoc(projectRef, { lists: newLists });
       stopEditHandler();
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
@@ -405,7 +406,7 @@ const TagsEditor: React.FC<Props> = ({
       await updateDoc(projectRef, { tags: newTags });
       stopEditHandler();
     } catch (e) {
-      alert(e);
+      Swal.fire("Something went wrong!", `${e}`, "warning");
     }
     setIsLoading(false);
   };
