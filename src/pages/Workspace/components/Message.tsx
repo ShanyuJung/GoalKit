@@ -54,11 +54,20 @@ const Time = styled.div<{ isCurrentUser: boolean }>`
   text-align: ${(props) => (props.isCurrentUser ? "right" : "left")};
 `;
 
+const MessageUserPhoto = styled.div<{ $background: string }>`
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-image: ${(props) => `url(${props.$background})`};
+  background-size: cover;
+`;
+
 interface Props {
   messageUserID: string;
   userFirstChar: string;
   messageText: string;
   messageTime: Timestamp;
+  messagePhoto: string;
 }
 
 const Message: React.FC<Props> = ({
@@ -66,6 +75,7 @@ const Message: React.FC<Props> = ({
   userFirstChar,
   messageText,
   messageTime,
+  messagePhoto,
 }) => {
   const [isShowTime, setIsShowTime] = useState(false);
   const { currentUser } = useAuth();
@@ -86,9 +96,13 @@ const Message: React.FC<Props> = ({
           setIsShowTime((prev) => !prev);
         }}
       >
-        <MessageUserIcon isCurrentUser={currentUser.uid === messageUserID}>
-          {userFirstChar}
-        </MessageUserIcon>
+        {messagePhoto ? (
+          <MessageUserPhoto $background={messagePhoto} />
+        ) : (
+          <MessageUserIcon isCurrentUser={currentUser.uid === messageUserID}>
+            {userFirstChar}
+          </MessageUserIcon>
+        )}
         <MessageText isCurrentUser={currentUser.uid === messageUserID}>
           {`${messageText}`}
         </MessageText>

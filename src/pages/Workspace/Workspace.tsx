@@ -565,6 +565,7 @@ const Workspace = () => {
                   userFirstChar={membersInfo[index].displayName.charAt(0)}
                   messageText={message.message}
                   messageTime={message.time}
+                  messagePhoto={membersInfo[index].photoURL || ""}
                 />
               );
             })}
