@@ -1,5 +1,10 @@
 import { useEffect, useState, useRef, FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useLoaderData,
+  useNavigate,
+  useParams,
+  LoaderFunctionArgs,
+} from "react-router-dom";
 import styled from "styled-components";
 import PrivateRoute from "../../components/route/PrivateRoute";
 import {
@@ -295,6 +300,25 @@ interface MessageInterface {
   id: string;
 }
 
+interface Response {
+  id: string;
+  title: string;
+  projects: { id: string; title: string }[];
+  owner: string;
+  members: string[];
+}
+
+export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
+  if (!params.id) return null;
+  const workspaceRef = doc(db, "workspaces", params.id);
+  const docSnap = await getDoc(workspaceRef);
+  if (docSnap.exists()) {
+    const response = docSnap.data();
+    return response;
+  }
+  return null;
+};
+
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
@@ -313,27 +337,7 @@ const Workspace = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { currentUser } = useAuth();
-
-  const getProjectHandler = async () => {
-    if (!id || isLoading) return;
-    try {
-      setIsLoading(true);
-      const workspaceRef = doc(db, "workspaces", id);
-      const docSnap = await getDoc(workspaceRef);
-      if (docSnap.exists()) {
-        setIsExist(true);
-        setProjects(docSnap.data().projects);
-        setTitle(docSnap.data().title);
-        setMemberIDs(docSnap.data().members);
-        setOwnerID(docSnap.data().owner);
-      } else {
-        setIsExist(false);
-      }
-    } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
-    }
-    setIsLoading(false);
-  };
+  const response = useLoaderData() as Response | null;
 
   const newProjectHandler = async (projectTitle: string) => {
     if (!id || isLoading) return;
@@ -352,7 +356,8 @@ const Workspace = () => {
         title: projectTitle,
       };
       await updateDoc(docRef, { projects: arrayUnion(newObj) });
-      await getProjectHandler();
+      Swal.fire("Succeed!", "Build new project succeed!", "success");
+      navigate(`/workspace/${id}`);
     } catch (e) {
       Swal.fire("Something went wrong!", `${e}`, "warning");
     }
@@ -374,15 +379,14 @@ const Workspace = () => {
   };
 
   const updateMemberHandler = async (userID: string) => {
-    if (id) {
-      const workspaceRef = doc(db, "workspaces", id);
-      await updateDoc(workspaceRef, { members: arrayUnion(userID) });
-    }
+    if (!id) return;
+    const workspaceRef = doc(db, "workspaces", id);
+    await updateDoc(workspaceRef, { members: arrayUnion(userID) });
   };
 
   const addMemberHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!memberRef.current?.value.trim() || isLoading) return;
+    if (!id || !memberRef.current?.value.trim() || isLoading) return;
 
     try {
       setIsLoading(true);
@@ -394,6 +398,11 @@ const Workspace = () => {
       }
       const searchedUser = [...userList][0];
       await updateMemberHandler(searchedUser.uid);
+      const workspaceRef = doc(db, "workspaces", id);
+      const docSnap = await getDoc(workspaceRef);
+      if (docSnap.exists()) {
+        setMemberIDs(docSnap.data().members);
+      }
       memberRef.current.value = "";
       Swal.fire("Succeed!", "Add User to workspace.", "success");
     } catch (e) {
@@ -419,8 +428,13 @@ const Workspace = () => {
   };
 
   useEffect(() => {
-    getProjectHandler();
-  }, []);
+    if (!response) return;
+    setIsExist(true);
+    setProjects(response.projects);
+    setTitle(response.title);
+    setMemberIDs(response.members);
+    setOwnerID(response.owner);
+  }, [response]);
 
   useEffect(() => {
     const getMemberInfo = async () => {
@@ -510,6 +524,12 @@ const Workspace = () => {
   };
 
   const memberList = () => {
+    const displayMember = produce(membersInfo, (draftState) => {
+      const index = draftState.findIndex((member) => member.uid === ownerID);
+      const [owner] = draftState.splice(index, 1);
+      draftState.splice(0, 0, owner);
+    });
+
     return (
       <>
         {isExist && (
@@ -524,7 +544,7 @@ const Workspace = () => {
                 />
                 <MemberButton>Add member</MemberButton>
               </MemberForm>
-              {membersInfo.map((member) => {
+              {displayMember.map((member) => {
                 return (
                   <MemberWrapper key={member.uid}>
                     <MemberName>{member.displayName}</MemberName>

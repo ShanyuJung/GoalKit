@@ -62,6 +62,7 @@ const LinkWrapper = styled.div<{ $selected?: boolean }>`
   padding: 0px 20px;
   background-color: ${(props) => (props.$selected ? "#165fa8" : "")};
   border-right: ${(props) => (props.$selected ? "5px solid #ccc" : "")};
+  cursor: pointer;
 
   &:hover {
     background-color: #156cc2;
@@ -77,7 +78,6 @@ const LinkText = styled.div`
   font-weight: 600;
   border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-  cursor: pointer;
 `;
 
 const ProjectIcon = styled(projectIcon)`
