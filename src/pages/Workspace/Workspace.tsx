@@ -310,13 +310,18 @@ interface Response {
 
 export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
   if (!params.id) return null;
-  const workspaceRef = doc(db, "workspaces", params.id);
-  const docSnap = await getDoc(workspaceRef);
-  if (docSnap.exists()) {
-    const response = docSnap.data();
-    return response;
+  try {
+    const workspaceRef = doc(db, "workspaces", params.id);
+    const docSnap = await getDoc(workspaceRef);
+    if (docSnap.exists()) {
+      const response = docSnap.data();
+      return response;
+    }
+    Swal.fire("Error", "Workspace is not exist!", "warning");
+    return null;
+  } catch (e) {
+    Swal.fire("Something went wrong!", `${e}`, "warning");
   }
-  return null;
 };
 
 const Workspace = () => {
@@ -428,7 +433,10 @@ const Workspace = () => {
   };
 
   useEffect(() => {
-    if (!response) return;
+    if (!response) {
+      setIsExist(false);
+      return;
+    }
     setIsExist(true);
     setProjects(response.projects);
     setTitle(response.title);
@@ -518,7 +526,7 @@ const Workspace = () => {
             })}
           </ProjectCardWrapper>
         )}
-        {isExist === false && <ErrorText>workspace not exist.</ErrorText>}
+        {isExist === false && <ErrorText>workspace is not exist.</ErrorText>}
       </>
     );
   };
@@ -558,12 +566,13 @@ const Workspace = () => {
             </MemberContainer>
           </>
         )}
-        {isExist === false && <ErrorText>workspace not exist.</ErrorText>}
+        {isExist === false && <ErrorText>workspace is not exist.</ErrorText>}
       </>
     );
   };
 
   const chatRoom = () => {
+    if (!isExist) return <></>;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
