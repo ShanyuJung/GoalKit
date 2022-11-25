@@ -14,7 +14,7 @@ import Signup from "./pages/Signup/Signup";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/User/Dashboard";
 import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
-import Project from "./pages/Project/Project";
+import Project, { firstRenderProjectHandler } from "./pages/Project/Project";
 import Chart from "./pages/Chart/Chart";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
@@ -34,7 +34,11 @@ const router = createBrowserRouter(
         element={<Workspace />}
         loader={getProjectsHandler}
       />
-      <Route path="project/:id" element={<Project />} />
+      <Route
+        path="project/:id"
+        element={<Project />}
+        loader={firstRenderProjectHandler}
+      />
       <Route path="project/:id/card/:cardId" element={<Project />} />
       <Route path="project/:id/chart/:chartType" element={<Chart />} />
       <Route path="*" element={<Navigate to="/" replace />} />
