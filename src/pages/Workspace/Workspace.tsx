@@ -65,6 +65,7 @@ const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   padding: 0px 40px;
   padding-left: ${(props) => (props.isShowSidebar ? "300px" : "55px")};
   transition: padding 0.3s;
+  overflow: scroll;
 `;
 
 const WorkspaceBanner = styled.div`

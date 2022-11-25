@@ -42,7 +42,7 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   flex-grow: 1;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
-  /* overflow-x: scroll; */
+  overflow: scroll;
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
