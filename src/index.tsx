@@ -1,39 +1,52 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  createBrowserRouter,
+  RouterProvider,
+  createRoutesFromElements,
+} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Signup from "./pages/Signup/Signup";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/User/Dashboard";
-import Workspace from "./pages/Workspace/Workspace";
-import Project from "./pages/Project/Project";
+import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
+import Project, { firstRenderProjectHandler } from "./pages/Project/Project";
 import Chart from "./pages/Chart/Chart";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />}>
-        <Route index element={<Home />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="login" element={<Login />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="workspace/:id" element={<Workspace />} />
-        <Route path="project/:id" element={<Project />} />
-        <Route path="project/:id/card/:cardId" element={<Project />} />
-        <Route path="project/:id/chart/:chartType" element={<Chart />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<App />}>
+      <Route index element={<Home />} />
+      <Route path="signup" element={<Signup />} />
+      <Route path="login" element={<Login />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route
+        path="workspace/:id"
+        element={<Workspace />}
+        loader={getProjectsHandler}
+      />
+      <Route
+        path="project/:id"
+        element={<Project />}
+        loader={firstRenderProjectHandler}
+      />
+      <Route path="project/:id/card/:cardId" element={<Project />} />
+      <Route path="project/:id/chart/:chartType" element={<Chart />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Route>
+  )
 );
+
+root.render(<RouterProvider router={router} />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

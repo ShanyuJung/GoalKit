@@ -17,6 +17,7 @@ import NewWorkspace from "./components/NewWorkspace";
 import DashboardSidebar from "./components/DashboardSidebar";
 import Profile from "./components/Profile";
 import Swal from "sweetalert2";
+import ReactLoading from "react-loading";
 
 const Wrapper = styled.div`
   display: flex;
@@ -111,6 +112,10 @@ const WorkspaceListWrapper = styled.div`
   max-width: 1160px;
   margin: 0px auto;
   padding: 35px 50px;
+`;
+
+const Loading = styled(ReactLoading)`
+  margin: auto;
 `;
 
 interface Workspace {
@@ -211,24 +216,33 @@ const Dashboard = () => {
       <>
         <WorkspaceSubBanner>My workspace</WorkspaceSubBanner>
         <WorkspaceListWrapper>
-          <NewWorkspace onSubmit={newWorkspaceHandler} />
-          {workspaces.length > 0 &&
-            workspaces.map((workspace) => {
-              return (
-                <Workspace
-                  key={workspace.id}
-                  onClick={() => {
-                    navigate(`/workspace/${workspace.id}`);
-                  }}
-                >
-                  {workspace.title}
-                </Workspace>
-              );
-            })}
+          {isLoading ? (
+            <Loading type="spinningBubbles" color="#313538" />
+          ) : (
+            <>
+              <NewWorkspace onSubmit={newWorkspaceHandler} />
+              {workspaces.length > 0 &&
+                workspaces.map((workspace) => {
+                  return (
+                    <Workspace
+                      key={workspace.id}
+                      onClick={() => {
+                        navigate(`/workspace/${workspace.id}`);
+                      }}
+                    >
+                      {workspace.title}
+                    </Workspace>
+                  );
+                })}
+            </>
+          )}
         </WorkspaceListWrapper>
         <WorkspaceSubBanner>Guest workspace</WorkspaceSubBanner>
         <WorkspaceListWrapper>
-          {guestWorkspaces.length > 0 &&
+          {isLoading ? (
+            <Loading type="spinningBubbles" color="#313538" />
+          ) : (
+            guestWorkspaces.length > 0 &&
             guestWorkspaces.map((workspace) => {
               return (
                 <Workspace
@@ -240,7 +254,8 @@ const Dashboard = () => {
                   {workspace.title}
                 </Workspace>
               );
-            })}
+            })
+          )}
         </WorkspaceListWrapper>
       </>
     );

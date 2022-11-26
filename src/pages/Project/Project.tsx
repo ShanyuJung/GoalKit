@@ -15,6 +15,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -25,7 +26,12 @@ import {
 import { db } from "../../firebase";
 import NewList from "./components/NewList";
 import { v4 as uuidv4 } from "uuid";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  LoaderFunctionArgs,
+  useLoaderData,
+} from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
@@ -42,7 +48,7 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   flex-grow: 1;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
-  /* overflow-x: scroll; */
+  overflow: scroll;
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
@@ -138,6 +144,24 @@ interface Member {
   photoURL?: string;
 }
 
+export const firstRenderProjectHandler = async ({
+  params,
+}: LoaderFunctionArgs) => {
+  if (!params.id) return null;
+  try {
+    const projectRef = doc(db, "projects", params.id);
+    const docSnap = await getDoc(projectRef);
+    if (docSnap.exists()) {
+      const response = docSnap.data();
+      return response;
+    }
+    Swal.fire("Error", "Workspace is not exist!", "warning");
+    return null;
+  } catch (e) {
+    Swal.fire("Something went wrong!", `${e}`, "warning");
+  }
+};
+
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
@@ -150,6 +174,17 @@ const Project = () => {
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
   const { id, cardId } = useParams();
+  const response = useLoaderData() as ProjectInterface;
+
+  useEffect(() => {
+    if (!response) {
+      setIsExist(false);
+      return;
+    }
+    setIsExist(true);
+    setProject(response);
+    setLists(response.lists);
+  }, [response]);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
