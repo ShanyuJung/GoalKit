@@ -6,10 +6,13 @@ import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com
 import { Timestamp } from "firebase/firestore";
 
 interface IsDraggingProps {
-  isDragging: boolean;
+  $isDragging: boolean;
+  $draggingUser: string;
 }
 
 const Container = styled.div<IsDraggingProps>`
+  position: relative;
+  z-index: 9;
   width: 260px;
   min-height: 60px;
   margin: 10px 5px;
@@ -20,7 +23,19 @@ const Container = styled.div<IsDraggingProps>`
   font-weight: 400;
   line-height: 20px;
   box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.15);
-  outline: ${(props) => (props.isDragging ? "2px solid blue" : "none")};
+  outline: ${(props) => (props.$isDragging ? "2px solid blue" : "none")};
+
+  &::before {
+    content: ${(props) =>
+      props.$draggingUser ? `"${props.$draggingUser}"` : ""};
+    position: absolute;
+    z-index: 10;
+    background-color: #3498db;
+    padding: 0px 5px;
+    border-radius: 5px;
+    bottom: -10px;
+    right: 10px;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -188,13 +203,14 @@ interface Props {
   cardInfo: CardInterface;
   tags?: { id: string; colorCode: string; title: string }[];
   members: Member[];
-  draggingCards: string[] | undefined;
+  draggingCards: { cardID: string; displayName: string }[] | undefined;
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   const [timeLabelColor, setTimeLabelColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
+  const [draggingUser, setDraggingUser] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -297,9 +313,23 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     TimeCheckboxColorHandler();
   }, [cardInfo]);
 
+  useEffect(() => {
+    const draggingInfo = draggingCards?.find(
+      (card) => card.cardID === cardInfo.id
+    );
+    if (!draggingInfo) {
+      setDraggingUser("");
+      return;
+    }
+    setDraggingUser(draggingInfo.displayName);
+  }, [draggingCards]);
+
   return (
     <Container
-      isDragging={draggingCards?.includes(cardInfo.id) || false}
+      $isDragging={
+        draggingCards?.some((card) => card.cardID === cardInfo.id) || false
+      }
+      $draggingUser={draggingUser}
       onClick={() => {
         navigate(`/project/${id}/card/${cardInfo.id}`);
       }}

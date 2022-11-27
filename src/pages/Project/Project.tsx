@@ -37,6 +37,7 @@ import CardDetail from "./components/detail/CardDetail";
 import ProjectSidebar from "./components/ProjectSidebar";
 import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Container = styled.div`
   display: flex;
@@ -79,6 +80,7 @@ const ListWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow-x: scroll;
+  height: calc(100vh - 50px - 40px);
 `;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
@@ -123,8 +125,8 @@ interface ProjectInterface {
   title: string;
   lists: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: string[];
-  draggingCards?: string[];
+  draggingLists?: { listID: string; displayName: string }[];
+  draggingCards?: { cardID: string; displayName: string }[];
 }
 
 interface Workspace {
@@ -175,6 +177,7 @@ const Project = () => {
   const navigate = useNavigate();
   const { id, cardId } = useParams();
   const response = useLoaderData() as ProjectInterface;
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (!response) {
@@ -199,24 +202,40 @@ const Project = () => {
   };
 
   const isDraggingHandler = async ({ draggableId, type }: DragStart) => {
-    if (!id || isLoading) return;
+    if (!id || isLoading || !currentUser) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
-      await updateDoc(projectRef, { draggingLists: arrayUnion(draggableId) });
+      const draggingObj = {
+        listID: draggableId,
+        displayName: currentUser.displayName,
+      };
+      await updateDoc(projectRef, { draggingLists: arrayUnion(draggingObj) });
     }
     if (type === "LIST") {
-      await updateDoc(projectRef, { draggingCards: arrayUnion(draggableId) });
+      const draggingObj = {
+        cardID: draggableId,
+        displayName: currentUser.displayName,
+      };
+      await updateDoc(projectRef, { draggingCards: arrayUnion(draggingObj) });
     }
   };
 
   const isDroppedHandler = async (draggableId: string, type: string) => {
-    if (!id || isLoading) return;
+    if (!id || isLoading || !currentUser) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
-      await updateDoc(projectRef, { draggingLists: arrayRemove(draggableId) });
+      const draggingObj = {
+        listID: draggableId,
+        displayName: currentUser.displayName,
+      };
+      await updateDoc(projectRef, { draggingLists: arrayRemove(draggingObj) });
     }
     if (type === "LIST") {
-      await updateDoc(projectRef, { draggingCards: arrayRemove(draggableId) });
+      const draggingObj = {
+        cardID: draggableId,
+        displayName: currentUser.displayName,
+      };
+      await updateDoc(projectRef, { draggingCards: arrayRemove(draggingObj) });
     }
   };
 
@@ -382,7 +401,9 @@ const Project = () => {
                       draggableId={list.id}
                       index={index}
                       isDragDisabled={
-                        project?.draggingLists?.includes(list.id) || false
+                        project?.draggingLists?.some(
+                          (draggingList) => draggingList.listID === list.id
+                        ) || false
                       }
                     >
                       {(provided, snapshot) => (

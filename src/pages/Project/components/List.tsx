@@ -4,28 +4,44 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
 import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg";
 import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 
 interface IsDraggingProps {
-  isDragging: boolean;
+  $isDragging: boolean;
+  $draggingUser: string;
 }
 
 const Container = styled.div<IsDraggingProps>`
+  position: relative;
   border-radius: 10px;
   margin: 0px 5px;
   background-color: #ebecf0;
   padding: 10px 3px 10px 10px;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
-  outline: ${(props) => (props.isDragging ? "2px solid blue" : "none")};
+  outline: ${(props) => (props.$isDragging ? "2px solid blue" : "none")};
   min-width: 283px;
+
+  &::before {
+    content: ${(props) =>
+      props.$draggingUser ? `"${props.$draggingUser}"` : ""};
+    position: absolute;
+    z-index: 2;
+    background-color: #3498db;
+    padding: 0px 5px;
+    border-radius: 5px;
+    bottom: -10px;
+    right: 10px;
+  }
 `;
 
 const Wrapper = styled.div`
   /* max-height: calc(100vh - 150px);
   overflow-y: scroll; */
+  position: relative;
+  z-index: 5;
 
   &::-webkit-scrollbar {
     width: 7px;
@@ -153,8 +169,8 @@ interface Props {
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
   members: Member[];
-  draggingLists: string[] | undefined;
-  draggingCards: string[] | undefined;
+  draggingLists: { listID: string; displayName: string }[] | undefined;
+  draggingCards: { cardID: string; displayName: string }[] | undefined;
   deleteList: (targetListID: string) => void;
 }
 
@@ -170,6 +186,7 @@ const List = ({
   deleteList,
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
+  const [draggingUser, setDraggingUser] = useState("");
   const ref = useRef(null);
 
   const checkDeleteListHandler = () => {
@@ -190,13 +207,28 @@ const List = ({
 
   useOnClickOutside(ref, () => setIsShowModal(false));
 
+  useEffect(() => {
+    const draggingInfo = draggingLists?.find(
+      (draggingList) => draggingList.listID === id
+    );
+    if (!draggingInfo) {
+      setDraggingUser("");
+      return;
+    }
+    setDraggingUser(draggingInfo.displayName);
+  }, [draggingLists]);
+
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
         <Container
           {...provided.droppableProps}
           ref={provided.innerRef}
-          isDragging={draggingLists?.includes(id) || false}
+          $isDragging={
+            draggingLists?.some((draggingList) => draggingList.listID === id) ||
+            false
+          }
+          $draggingUser={draggingUser}
         >
           <TitleWrapper>
             <Title>{title}</Title>
@@ -225,7 +257,11 @@ const List = ({
                   key={`draggable-card-${card.id}`}
                   draggableId={card.id}
                   index={index}
-                  isDragDisabled={draggingCards?.includes(card.id) || false}
+                  isDragDisabled={
+                    draggingCards?.some(
+                      (draggingCard) => draggingCard.cardID === card.id
+                    ) || false
+                  }
                 >
                   {(provided, snapshot) => (
                     <div
