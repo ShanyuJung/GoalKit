@@ -12,7 +12,7 @@ interface IsDraggingProps {
 
 const Container = styled.div<IsDraggingProps>`
   position: relative;
-  z-index: 1;
+  z-index: 9;
   width: 260px;
   min-height: 60px;
   margin: 10px 5px;
@@ -29,7 +29,7 @@ const Container = styled.div<IsDraggingProps>`
     content: ${(props) =>
       props.$draggingUser ? `"${props.$draggingUser}"` : ""};
     position: absolute;
-    z-index: 2;
+    z-index: 10;
     background-color: #3498db;
     padding: 0px 5px;
     border-radius: 5px;

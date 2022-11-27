@@ -16,7 +16,6 @@ interface IsDraggingProps {
 
 const Container = styled.div<IsDraggingProps>`
   position: relative;
-  z-index: 1;
   border-radius: 10px;
   margin: 0px 5px;
   background-color: #ebecf0;
@@ -41,6 +40,8 @@ const Container = styled.div<IsDraggingProps>`
 const Wrapper = styled.div`
   /* max-height: calc(100vh - 150px);
   overflow-y: scroll; */
+  position: relative;
+  z-index: 5;
 
   &::-webkit-scrollbar {
     width: 7px;

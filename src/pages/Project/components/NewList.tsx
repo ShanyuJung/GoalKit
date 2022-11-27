@@ -20,6 +20,7 @@ const TextArea = styled.textarea<{ isShow: boolean }>`
   background-color: ${(props) => (props.isShow ? "#fff" : "#ddd")};
   border-radius: 5px;
   border-color: ${(props) => (props.isShow ? "#000" : "transparent")};
+  overflow: hidden;
 
   &:hover {
     background-color: ${(props) => (props.isShow ? "#fff" : "#ccc")};

@@ -80,6 +80,7 @@ const ListWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow-x: scroll;
+  height: calc(100vh - 50px - 40px);
 `;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
