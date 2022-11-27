@@ -204,11 +204,17 @@ const Project = () => {
     if (!id || isLoading || !currentUser) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
-      const draggingObj = { listID: draggableId, displayName: currentUser.uid };
+      const draggingObj = {
+        listID: draggableId,
+        displayName: currentUser.displayName,
+      };
       await updateDoc(projectRef, { draggingLists: arrayUnion(draggingObj) });
     }
     if (type === "LIST") {
-      const draggingObj = { cardID: draggableId, displayName: currentUser.uid };
+      const draggingObj = {
+        cardID: draggableId,
+        displayName: currentUser.displayName,
+      };
       await updateDoc(projectRef, { draggingCards: arrayUnion(draggingObj) });
     }
   };
@@ -217,11 +223,17 @@ const Project = () => {
     if (!id || isLoading || !currentUser) return;
     const projectRef = doc(db, "projects", id);
     if (type === "BOARD") {
-      const draggingObj = { listID: draggableId, displayName: currentUser.uid };
+      const draggingObj = {
+        listID: draggableId,
+        displayName: currentUser.displayName,
+      };
       await updateDoc(projectRef, { draggingLists: arrayRemove(draggingObj) });
     }
     if (type === "LIST") {
-      const draggingObj = { cardID: draggableId, displayName: currentUser.uid };
+      const draggingObj = {
+        cardID: draggableId,
+        displayName: currentUser.displayName,
+      };
       await updateDoc(projectRef, { draggingCards: arrayRemove(draggingObj) });
     }
   };
