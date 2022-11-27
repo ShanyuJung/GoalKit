@@ -188,7 +188,7 @@ interface Props {
   cardInfo: CardInterface;
   tags?: { id: string; colorCode: string; title: string }[];
   members: Member[];
-  draggingCards: string[] | undefined;
+  draggingCards: { cardID: string; displayName: string }[] | undefined;
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
@@ -299,7 +299,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
 
   return (
     <Container
-      isDragging={draggingCards?.includes(cardInfo.id) || false}
+      isDragging={
+        draggingCards?.some((card) => card.cardID === cardInfo.id) || false
+      }
       onClick={() => {
         navigate(`/project/${id}/card/${cardInfo.id}`);
       }}

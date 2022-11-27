@@ -153,8 +153,8 @@ interface Props {
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
   members: Member[];
-  draggingLists: string[] | undefined;
-  draggingCards: string[] | undefined;
+  draggingLists: { listID: string; displayName: string }[] | undefined;
+  draggingCards: { cardID: string; displayName: string }[] | undefined;
   deleteList: (targetListID: string) => void;
 }
 
@@ -196,7 +196,10 @@ const List = ({
         <Container
           {...provided.droppableProps}
           ref={provided.innerRef}
-          isDragging={draggingLists?.includes(id) || false}
+          isDragging={
+            draggingLists?.some((draggingList) => draggingList.listID === id) ||
+            false
+          }
         >
           <TitleWrapper>
             <Title>{title}</Title>
@@ -225,7 +228,11 @@ const List = ({
                   key={`draggable-card-${card.id}`}
                   draggableId={card.id}
                   index={index}
-                  isDragDisabled={draggingCards?.includes(card.id) || false}
+                  isDragDisabled={
+                    draggingCards?.some(
+                      (draggingCard) => draggingCard.cardID === card.id
+                    ) || false
+                  }
                 >
                   {(provided, snapshot) => (
                     <div
