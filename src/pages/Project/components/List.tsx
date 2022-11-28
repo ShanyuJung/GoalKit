@@ -10,6 +10,7 @@ import { useOnClickOutside } from "../../../utils/hooks";
 import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
+import produce from "immer";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -254,7 +255,27 @@ const List = ({
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [draggingUser, setDraggingUser] = useState("");
+  const [displayCards, setDisplayCards] = useState<CardInterface[]>([]);
   const ref = useRef(null);
+
+  useEffect(() => {
+    if (isFilter) {
+      const newCards = cards.filter((card) => {
+        try {
+          return card.title.toLowerCase().match(keyword.toLowerCase());
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      setDisplayCards(newCards);
+      return;
+    }
+
+    setDisplayCards(cards);
+  }, [cards, isFilter, keyword]);
+
+  // console.log("display", displayCards);
 
   const checkDeleteListHandler = () => {
     Swal.fire({
@@ -347,16 +368,18 @@ const List = ({
             </LogoWrapper>
           </TitleWrapper>
           <Wrapper>
-            {cards.map((card, index) => {
+            {displayCards.map((card, index) => {
               return (
                 <Draggable
                   key={`draggable-card-${card.id}`}
                   draggableId={card.id}
                   index={index}
                   isDragDisabled={
+                    isFilter ||
                     draggingCards?.some(
                       (draggingCard) => draggingCard.cardID === card.id
-                    ) || false
+                    ) ||
+                    false
                   }
                 >
                   {(provided, snapshot) => (

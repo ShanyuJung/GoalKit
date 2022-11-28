@@ -170,7 +170,6 @@ export const firstRenderProjectHandler = async ({
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
-  const [displayLists, setDisplayList] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
@@ -201,7 +200,6 @@ const Project = () => {
     setIsExist(true);
     setProject(response);
     setLists(response.lists);
-    setDisplayList(response.lists);
   }, [response]);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
@@ -405,7 +403,6 @@ const Project = () => {
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
         setLists(snapshot.data()?.lists);
-        setDisplayList(snapshot.data()?.lists);
       } else setIsExist(false);
     });
 
@@ -424,8 +421,8 @@ const Project = () => {
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
             <ListWrapper>
-              {displayLists.length > 0 &&
-                displayLists.map((list, index) => {
+              {lists.length > 0 &&
+                lists.map((list, index) => {
                   return (
                     <Draggable
                       key={`draggable-${list.id}`}
