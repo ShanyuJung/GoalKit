@@ -38,6 +38,7 @@ import ProjectSidebar from "./components/ProjectSidebar";
 import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
+import CardFilter from "./components/CardFilter";
 
 const Container = styled.div`
   display: flex;
@@ -63,11 +64,13 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   background-color: #fff;
   z-index: 9;
   transition: width 0.3s;
+  gap: 20px;
 `;
 
 const TitleWrapper = styled.div`
   font-size: 20px;
   font-weight: bolder;
+  flex-grow: 1;
 `;
 
 const Wrapper = styled.div`
@@ -178,6 +181,16 @@ const Project = () => {
   const { id, cardId } = useParams();
   const response = useLoaderData() as ProjectInterface;
   const { currentUser } = useAuth();
+  const [keyword, setKeyword] = useState("");
+  const [isFilter, setIsFilter] = useState(false);
+
+  useEffect(() => {
+    if (!keyword.trim()) {
+      setIsFilter(false);
+      return;
+    }
+    setIsFilter(true);
+  }, [keyword]);
 
   useEffect(() => {
     if (!response) {
@@ -324,6 +337,21 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
+  const moveAllCardsHandler = (curListID: string, targetListID: string) => {
+    const newList = produce(lists, (draftState) => {
+      const curIndex = draftState.findIndex((list) => list.id === curListID);
+      const targetIndex = draftState.findIndex(
+        (list) => list.id === targetListID
+      );
+      draftState[curIndex].cards = [];
+      draftState[targetIndex].cards.push(...lists[curIndex].cards);
+    });
+
+    updateDataHandler(newList);
+    const targetList = lists.find((list) => list.id === targetListID);
+    Swal.fire("Succeed!", `Move all cards to ${targetList?.title}`, "success");
+  };
+
   const onCloseHandler = () => {
     navigate(`/project/${id}`);
   };
@@ -401,9 +429,11 @@ const Project = () => {
                       draggableId={list.id}
                       index={index}
                       isDragDisabled={
+                        isFilter ||
                         project?.draggingLists?.some(
                           (draggingList) => draggingList.listID === list.id
-                        ) || false
+                        ) ||
+                        false
                       }
                     >
                       {(provided, snapshot) => (
@@ -426,6 +456,10 @@ const Project = () => {
                             draggingLists={project?.draggingLists || undefined}
                             draggingCards={project?.draggingCards || undefined}
                             deleteList={deleteListHandler}
+                            lists={lists}
+                            moveAllCardsHandler={moveAllCardsHandler}
+                            isFilter={isFilter}
+                            keyword={keyword}
                           />
                         </div>
                       )}
@@ -471,6 +505,7 @@ const Project = () => {
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
               <TitleWrapper>{project && project.title}</TitleWrapper>
+              <CardFilter keyword={keyword} setKeyword={setKeyword} />
               <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
             <DragDropContext

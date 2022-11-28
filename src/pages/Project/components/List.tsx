@@ -4,10 +4,13 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
 import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg";
 import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
+import { ReactComponent as moveIcon } from "../../../assets/move-arrows-svgrepo-com.svg";
 import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
+import DropdownButton from "../../../components/button/DropdownButton";
+import produce from "immer";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -85,7 +88,7 @@ const LogoWrapper = styled.div`
   width: 48px;
 `;
 
-const MoreLogo = styled(moreIcon)`
+const MoreIcon = styled(moreIcon)`
   height: 18px;
   width: 48px;
   margin: 5px 0px;
@@ -110,12 +113,12 @@ const MoreModal = styled.div<{ isShow: boolean }>`
   display: ${(props) => (props.isShow ? "block" : "none")};
   background-color: #ddd;
   position: relative;
-  width: 110px;
+  width: 150px;
   padding: 5px;
   top: -5px;
-  right: 67px;
+  right: 107px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
-  z-index: 5;
+  z-index: 20;
 `;
 
 const ModalList = styled.div`
@@ -125,22 +128,24 @@ const ModalList = styled.div`
 `;
 
 const ModalListItem = styled.div`
-  padding: 5px;
+  padding: 5px 10px;
   width: 100%;
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
-  color: #333;
+  color: #666;
   display: flex;
   align-items: center;
 
   &:hover {
+    color: #111;
     background-color: #ccc;
   }
 `;
 
-const TrashLogo = styled(trashIcon)`
+const TrashIcon = styled(trashIcon)`
   height: 16px;
+  width: 16px;
   margin-right: 5px;
 
   path {
@@ -152,6 +157,61 @@ const NewCardWrapper = styled.div`
   margin: 10px;
   width: 230px;
 `;
+
+const MoveIcon = styled(moveIcon)`
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+`;
+
+const MoveAllWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #ccc;
+`;
+
+const MoveAllTitle = styled.div`
+  font-size: 12px;
+  text-align: center;
+  width: 90%;
+  font-weight: 600;
+  padding-top: 5px;
+  border-bottom: 1px solid #777;
+  margin: auto;
+`;
+
+const MoveAllButton = styled.button`
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border: none;
+  text-align: left;
+  background-color: #ccc;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #999;
+  }
+`;
+
+interface CardInterface {
+  title: string;
+  id: string;
+  time?: { start?: number; deadline: number };
+  description?: string;
+  owner?: string[];
+  tagsIDs?: string[];
+  complete?: boolean;
+  todo?: { title: string; isDone: boolean; id: string }[];
+}
+
+interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}
 
 interface Member {
   uid: string;
@@ -172,6 +232,10 @@ interface Props {
   draggingLists: { listID: string; displayName: string }[] | undefined;
   draggingCards: { cardID: string; displayName: string }[] | undefined;
   deleteList: (targetListID: string) => void;
+  lists: ListInterface[];
+  moveAllCardsHandler: (curListID: string, targetListID: string) => void;
+  isFilter: boolean;
+  keyword: string;
 }
 
 const List = ({
@@ -184,10 +248,34 @@ const List = ({
   draggingLists,
   draggingCards,
   deleteList,
+  lists,
+  moveAllCardsHandler,
+  isFilter,
+  keyword,
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [draggingUser, setDraggingUser] = useState("");
+  const [displayCards, setDisplayCards] = useState<CardInterface[]>([]);
   const ref = useRef(null);
+
+  useEffect(() => {
+    if (isFilter) {
+      const newCards = cards.filter((card) => {
+        try {
+          return card.title.toLowerCase().match(keyword.toLowerCase());
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      setDisplayCards(newCards);
+      return;
+    }
+
+    setDisplayCards(cards);
+  }, [cards, isFilter, keyword]);
+
+  // console.log("display", displayCards);
 
   const checkDeleteListHandler = () => {
     Swal.fire({
@@ -218,6 +306,28 @@ const List = ({
     setDraggingUser(draggingInfo.displayName);
   }, [draggingLists]);
 
+  const listGroup = () => {
+    return (
+      <MoveAllWrapper>
+        <MoveAllTitle>Move cards to :</MoveAllTitle>
+        {lists.map((list) => {
+          if (id !== list.id) {
+            return (
+              <MoveAllButton
+                key={`move-all-${list.id}`}
+                onClick={() => {
+                  moveAllCardsHandler(id, list.id);
+                }}
+              >
+                {list.title}
+              </MoveAllButton>
+            );
+          }
+        })}
+      </MoveAllWrapper>
+    );
+  };
+
   return (
     <Droppable droppableId={id} type="LIST">
       {(provided) => (
@@ -233,7 +343,7 @@ const List = ({
           <TitleWrapper>
             <Title>{title}</Title>
             <LogoWrapper ref={ref}>
-              <MoreLogo
+              <MoreIcon
                 onClick={() => {
                   setIsShowModal((prev) => !prev);
                 }}
@@ -242,25 +352,34 @@ const List = ({
                 <MoreModal isShow={isShowModal}>
                   <ModalList>
                     <ModalListItem onClick={checkDeleteListHandler}>
-                      <TrashLogo />
+                      <TrashIcon />
                       Delete list
                     </ModalListItem>
+                    <DropdownButton
+                      logo={<MoveIcon />}
+                      text={"Move all cards"}
+                      fontSize={12}
+                    >
+                      {listGroup()}
+                    </DropdownButton>
                   </ModalList>
                 </MoreModal>
               </ModalWrapper>
             </LogoWrapper>
           </TitleWrapper>
           <Wrapper>
-            {cards.map((card, index) => {
+            {displayCards.map((card, index) => {
               return (
                 <Draggable
                   key={`draggable-card-${card.id}`}
                   draggableId={card.id}
                   index={index}
                   isDragDisabled={
+                    isFilter ||
                     draggingCards?.some(
                       (draggingCard) => draggingCard.cardID === card.id
-                    ) || false
+                    ) ||
+                    false
                   }
                 >
                   {(provided, snapshot) => (
