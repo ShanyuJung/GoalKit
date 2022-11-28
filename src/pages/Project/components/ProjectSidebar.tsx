@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import styled from "styled-components";
 import { db } from "../../../firebase";
-import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
 import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
 import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
 

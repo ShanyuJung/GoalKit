@@ -38,7 +38,7 @@ import ProjectSidebar from "./components/ProjectSidebar";
 import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
-import { list } from "firebase/storage";
+import CardFilter from "./components/CardFilter";
 
 const Container = styled.div`
   display: flex;
@@ -64,11 +64,13 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   background-color: #fff;
   z-index: 9;
   transition: width 0.3s;
+  gap: 20px;
 `;
 
 const TitleWrapper = styled.div`
   font-size: 20px;
   font-weight: bolder;
+  flex-grow: 1;
 `;
 
 const Wrapper = styled.div`
@@ -168,6 +170,7 @@ export const firstRenderProjectHandler = async ({
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [lists, setLists] = useState<ListInterface[]>([]);
+  const [displayLists, setDisplayList] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
@@ -179,6 +182,16 @@ const Project = () => {
   const { id, cardId } = useParams();
   const response = useLoaderData() as ProjectInterface;
   const { currentUser } = useAuth();
+  const [keyword, setKeyword] = useState("");
+  const [isFilter, setIsFilter] = useState(false);
+
+  useEffect(() => {
+    if (!keyword.trim()) {
+      setIsFilter(false);
+      return;
+    }
+    setIsFilter(true);
+  }, [keyword]);
 
   useEffect(() => {
     if (!response) {
@@ -188,6 +201,7 @@ const Project = () => {
     setIsExist(true);
     setProject(response);
     setLists(response.lists);
+    setDisplayList(response.lists);
   }, [response]);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
@@ -391,6 +405,7 @@ const Project = () => {
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
         setLists(snapshot.data()?.lists);
+        setDisplayList(snapshot.data()?.lists);
       } else setIsExist(false);
     });
 
@@ -409,17 +424,19 @@ const Project = () => {
         {(provided) => (
           <Wrapper {...provided.droppableProps} ref={provided.innerRef}>
             <ListWrapper>
-              {lists.length > 0 &&
-                lists.map((list, index) => {
+              {displayLists.length > 0 &&
+                displayLists.map((list, index) => {
                   return (
                     <Draggable
                       key={`draggable-${list.id}`}
                       draggableId={list.id}
                       index={index}
                       isDragDisabled={
+                        isFilter ||
                         project?.draggingLists?.some(
                           (draggingList) => draggingList.listID === list.id
-                        ) || false
+                        ) ||
+                        false
                       }
                     >
                       {(provided, snapshot) => (
@@ -444,6 +461,8 @@ const Project = () => {
                             deleteList={deleteListHandler}
                             lists={lists}
                             moveAllCardsHandler={moveAllCardsHandler}
+                            isFilter={isFilter}
+                            keyword={keyword}
                           />
                         </div>
                       )}
@@ -489,6 +508,7 @@ const Project = () => {
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
               <TitleWrapper>{project && project.title}</TitleWrapper>
+              <CardFilter keyword={keyword} setKeyword={setKeyword} />
               <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
             <DragDropContext

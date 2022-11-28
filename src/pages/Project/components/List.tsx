@@ -233,6 +233,8 @@ interface Props {
   deleteList: (targetListID: string) => void;
   lists: ListInterface[];
   moveAllCardsHandler: (curListID: string, targetListID: string) => void;
+  isFilter: boolean;
+  keyword: string;
 }
 
 const List = ({
@@ -247,6 +249,8 @@ const List = ({
   deleteList,
   lists,
   moveAllCardsHandler,
+  isFilter,
+  keyword,
 }: Props) => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [draggingUser, setDraggingUser] = useState("");
