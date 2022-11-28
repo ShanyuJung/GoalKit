@@ -6,12 +6,15 @@ const ButtonListItem = styled.div`
   height: 30px;
 `;
 
-const CardFeatureButton = styled.button<{ isToggle: boolean }>`
+const CardFeatureButton = styled.button<{
+  isToggle: boolean;
+  $fontSize: number | undefined;
+}>`
   height: 30px;
   width: 100%;
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: ${(props) => (props.$fontSize ? `${props.$fontSize}px` : "16px")};
   padding: 5px 10px;
   border: none;
   color: ${(props) => (props.isToggle ? "#111" : "#666")};
@@ -42,9 +45,15 @@ interface Props {
   logo: JSX.Element;
   text: string;
   children: React.ReactNode;
+  fontSize?: number;
 }
 
-const DropdownButton: React.FC<Props> = ({ logo, text, children }) => {
+const DropdownButton: React.FC<Props> = ({
+  logo,
+  text,
+  children,
+  fontSize,
+}) => {
   const [isToggle, setIsToggle] = useState(false);
   const ref = useRef(null);
 
@@ -56,7 +65,11 @@ const DropdownButton: React.FC<Props> = ({ logo, text, children }) => {
 
   return (
     <ButtonListItem ref={ref}>
-      <CardFeatureButton onClick={toggleHandler} isToggle={isToggle}>
+      <CardFeatureButton
+        onClick={toggleHandler}
+        isToggle={isToggle}
+        $fontSize={fontSize}
+      >
         {logo}
         {text}
       </CardFeatureButton>

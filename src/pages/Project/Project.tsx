@@ -38,6 +38,7 @@ import ProjectSidebar from "./components/ProjectSidebar";
 import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
+import { list } from "firebase/storage";
 
 const Container = styled.div`
   display: flex;
@@ -324,6 +325,21 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
+  const moveAllCardsHandler = (curListID: string, targetListID: string) => {
+    const newList = produce(lists, (draftState) => {
+      const curIndex = draftState.findIndex((list) => list.id === curListID);
+      const targetIndex = draftState.findIndex(
+        (list) => list.id === targetListID
+      );
+      draftState[curIndex].cards = [];
+      draftState[targetIndex].cards.push(...lists[curIndex].cards);
+    });
+
+    updateDataHandler(newList);
+    const targetList = lists.find((list) => list.id === targetListID);
+    Swal.fire("Succeed!", `Move all cards to ${targetList?.title}`, "success");
+  };
+
   const onCloseHandler = () => {
     navigate(`/project/${id}`);
   };
@@ -426,6 +442,8 @@ const Project = () => {
                             draggingLists={project?.draggingLists || undefined}
                             draggingCards={project?.draggingCards || undefined}
                             deleteList={deleteListHandler}
+                            lists={lists}
+                            moveAllCardsHandler={moveAllCardsHandler}
                           />
                         </div>
                       )}
