@@ -130,8 +130,8 @@ const Tag = styled.div`
 const OwnerContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: 0px 5px;
   margin-bottom: 5px;
+  margin-right: 5px;
 `;
 
 const OwnerWrapper = styled.div<{ $background?: string }>`
@@ -145,6 +145,8 @@ const OwnerWrapper = styled.div<{ $background?: string }>`
   justify-content: center;
   background-image: ${(props) => `url(${props.$background})`};
   background-size: cover;
+  margin-right: -5px;
+  outline: 2px solid #fff;
 `;
 
 const ConditionWrapper = styled.div`
@@ -259,17 +261,35 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       <OwnerContainer>
         {cardInfo.owner &&
           members &&
-          members.map((owner) => {
-            if (cardInfo.owner?.includes(owner.uid) && owner.photoURL) {
+          cardInfo.owner.map((owner, index) => {
+            const curOwner = members.find((member) => member.uid === owner) || {
+              uid: "",
+              email: "",
+              displayName: "",
+            };
+
+            if (
+              cardInfo.owner?.includes(curOwner.uid) &&
+              curOwner.photoURL &&
+              index < 2
+            ) {
               return (
-                <OwnerWrapper key={owner.uid} $background={owner.photoURL} />
+                <OwnerWrapper key={owner} $background={curOwner.photoURL} />
               );
-            } else if (cardInfo.owner?.includes(owner.uid)) {
+            } else if (cardInfo.owner?.includes(curOwner.uid) && index < 2) {
               return (
-                <OwnerWrapper key={owner.uid}>
-                  {owner.displayName.charAt(0)}
+                <OwnerWrapper key={owner}>
+                  {curOwner.displayName.charAt(0)}
                 </OwnerWrapper>
               );
+            } else if (cardInfo.owner?.includes(curOwner.uid) && index === 2) {
+              return (
+                <OwnerWrapper key={owner}>
+                  {`${cardInfo.owner.length - index}+`}
+                </OwnerWrapper>
+              );
+            } else {
+              return <div key={owner}></div>;
             }
           })}
       </OwnerContainer>
