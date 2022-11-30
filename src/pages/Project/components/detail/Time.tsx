@@ -205,7 +205,7 @@ const Time: React.FC<Props> = ({
     };
 
     TimeCheckboxColorHandler();
-  }, [isComplete]);
+  }, [isComplete, curStart, curDeadline]);
 
   return (
     <TimeWrapper>
