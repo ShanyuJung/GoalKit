@@ -7,7 +7,7 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { auth, db, firebaseConfig } from "../firebase";
 import { initializeApp } from "firebase/app";
 import {
@@ -18,6 +18,15 @@ import {
   ref,
   onValue,
 } from "firebase/database";
+
+interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
+}
 
 interface AuthContextInterface {
   currentUser: any;
@@ -38,11 +47,11 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<{
-    uid: string | undefined;
-    email: string | null;
-    displayName: string;
-  }>({ uid: undefined, email: null, displayName: "" });
+  const [currentUser, setCurrentUser] = useState<User | null>({
+    uid: "",
+    email: "",
+    displayName: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   const signup = async (
@@ -55,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email,
       password
     );
+    if (!response.user.email) return;
     setCurrentUser({
       uid: response.user.uid,
       email: response.user.email,
@@ -77,12 +87,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
-    const isOfflineForDatabase = {
-      state: "offline",
-      last_changed: serverTimestamp(),
-    };
-    set(userStatusDatabaseRef, isOfflineForDatabase);
+    if (currentUser) {
+      const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
+      const isOfflineForDatabase = {
+        state: "offline",
+        last_changed: serverTimestamp(),
+      };
+      set(userStatusDatabaseRef, isOfflineForDatabase);
+    }
 
     return signOut(auth);
   };
@@ -100,10 +112,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateDoc(userRef, {
       photoURL: url,
     });
-    setCurrentUser((prev) => ({
-      ...prev,
-      photoURL: url,
-    }));
+    setCurrentUser((prev) => {
+      if (prev === null) return prev;
+      return {
+        ...prev,
+        photoURL: url,
+      };
+    });
   };
 
   const updateUserDisplayName = async (newName: string) => {
@@ -115,10 +130,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateDoc(userRef, {
       displayName: newName,
     });
-    setCurrentUser((prev) => ({
-      ...prev,
-      displayName: newName,
-    }));
+
+    setCurrentUser((prev) => {
+      if (prev === null) return prev;
+      return {
+        ...prev,
+        displayName: newName,
+      };
+    });
   };
 
   const value = {
@@ -132,9 +151,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoading(false);
-      setCurrentUser(user);
+      const curUser = user as User;
+      setCurrentUser(curUser);
     });
 
     return unsubscribe;
