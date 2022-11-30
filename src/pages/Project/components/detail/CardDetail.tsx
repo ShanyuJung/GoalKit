@@ -497,7 +497,7 @@ const CardDetail: React.FC<Props> = ({
       <CardDetailSideBar
         onDelete={onDelete}
         todoHandler={addNewTodoHandler}
-        setIsEditData={setIsEditDate}
+        setIsEditDate={setIsEditDate}
         members={members || []}
         addOwnerHandler={addOwnerHandler}
         tagsIDs={state.tagsIDs}

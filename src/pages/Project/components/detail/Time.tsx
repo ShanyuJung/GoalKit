@@ -2,7 +2,6 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
-import { useOnClickOutside } from "../../../../utils/hooks";
 import Swal from "sweetalert2";
 
 const Form = styled.form`
@@ -140,7 +139,6 @@ const Time: React.FC<Props> = ({
 }) => {
   const startTimeRef = useRef<HTMLInputElement | null>(null);
   const deadlineRef = useRef<HTMLInputElement | null>(null);
-  const ref = useRef(null);
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
@@ -192,8 +190,6 @@ const Time: React.FC<Props> = ({
     }
   };
 
-  useOnClickOutside(ref, () => setIsEdit(false));
-
   useEffect(() => {
     const TimeCheckboxColorHandler = () => {
       if (isComplete) {
@@ -237,7 +233,7 @@ const Time: React.FC<Props> = ({
       ) : (
         <></>
       )}
-      <TimeEditAreaWrapper isEdit={isEdit} ref={ref}>
+      <TimeEditAreaWrapper isEdit={isEdit}>
         <Form onSubmit={submitHandler}>
           <TimeInputWrapper>
             <TimeInputLabel>Start from:</TimeInputLabel>
