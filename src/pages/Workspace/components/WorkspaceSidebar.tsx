@@ -168,7 +168,7 @@ const WorkspaceSidebar: React.FC<Props> = ({
           }}
         >
           <ChatIcon />
-          <LinkText>Chart Room</LinkText>
+          <LinkText>Chat Room</LinkText>
         </LinkWrapper>
       </LinkList>
     </SidebarWrapper>

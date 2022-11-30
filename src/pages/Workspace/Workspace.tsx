@@ -150,6 +150,7 @@ const ChatRoomWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: #fff;
 `;
 
 const ChatRoomHeader = styled.div`
@@ -573,7 +574,7 @@ const Workspace = () => {
   };
 
   const chatRoom = () => {
-    if (!isExist) return <></>;
+    if (!isExist || membersInfo.length === 0) return <></>;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
@@ -592,7 +593,7 @@ const Workspace = () => {
                 <Message
                   key={message.id}
                   messageUserID={message.userID}
-                  userFirstChar={membersInfo[index].displayName.charAt(0)}
+                  userFirstChar={membersInfo[index].displayName.charAt(0) || ""}
                   messageText={message.message}
                   messageTime={message.time}
                   messagePhoto={membersInfo[index].photoURL || ""}
