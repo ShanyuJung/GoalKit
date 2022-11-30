@@ -486,6 +486,7 @@ const Project = () => {
                 tags={project?.tags || undefined}
                 members={members}
                 onDelete={deleteCardHandler}
+                onClose={onCloseHandler}
               />
             ) : (
               <div></div>

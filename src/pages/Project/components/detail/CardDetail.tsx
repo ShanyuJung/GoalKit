@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { db } from "../../../../firebase";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
@@ -60,6 +61,24 @@ const ErrorText = styled.div`
   font-size: 20px;
 `;
 
+const CloseButton = styled(closeIcon)`
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  path {
+    fill: #999;
+  }
+
+  &:hover {
+    path {
+      fill: #333;
+    }
+  }
+`;
+
 interface CardInterface {
   title: string;
   id: string;
@@ -91,6 +110,7 @@ interface Props {
   tags?: { id: string; colorCode: string; title: string }[];
   members?: Member[];
   onDelete: (targetCardID: string) => void;
+  onClose: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
 
 const initialState = {
@@ -167,6 +187,7 @@ const CardDetail: React.FC<Props> = ({
   tags,
   members,
   onDelete,
+  onClose,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
@@ -444,11 +465,25 @@ const CardDetail: React.FC<Props> = ({
   };
 
   if (isExist === false) {
-    return <ErrorText>Card is deleted or not exist.</ErrorText>;
+    return (
+      <Container>
+        <ErrorText>Card is deleted or not exist.</ErrorText>
+        <CloseButton
+          onClick={() => {
+            onClose(false);
+          }}
+        />
+      </Container>
+    );
   }
 
   return (
     <Container>
+      <CloseButton
+        onClick={() => {
+          onClose(false);
+        }}
+      />
       <TitleWrapper>
         <CardLogo />
         <TitleInput

@@ -275,8 +275,6 @@ const List = ({
     setDisplayCards(cards);
   }, [cards, isFilter, keyword]);
 
-  // console.log("display", displayCards);
-
   const checkDeleteListHandler = () => {
     Swal.fire({
       title: "Confirm to delete selected list",

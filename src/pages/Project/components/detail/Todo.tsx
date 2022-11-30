@@ -118,10 +118,6 @@ const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
   };
 
   const onDeleteHandler = (todoID: string) => {
-    // const r = window.confirm("Would you like to remove task from todo list?");
-    // if (r === true) {
-    //   onDelete(todoID);
-    // }
     Swal.fire({
       title: "Confirm to remove selected task from todo list.",
       text: "You won't be able to revert this!",
