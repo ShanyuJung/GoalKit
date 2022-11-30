@@ -48,8 +48,8 @@ const Container = styled.div`
 const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 50px);
   flex-grow: 1;
-  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
-  transition: padding 0.3s;
+  margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  transition: margin 0.3s;
   overflow: scroll;
 `;
 
