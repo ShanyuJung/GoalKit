@@ -54,6 +54,12 @@ const TitleInput = styled.input`
   }
 `;
 
+const ErrorText = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+`;
+
 interface CardInterface {
   title: string;
   id: string;
@@ -163,13 +169,14 @@ const CardDetail: React.FC<Props> = ({
   onDelete,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const [isEditDate, setIsEditDate] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
   const updateDataHandler = async (newList: ListInterface[]) => {
-    if (!id || isLoading) return;
+    if (!id || isLoading || !isExist) return;
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
@@ -246,6 +253,7 @@ const CardDetail: React.FC<Props> = ({
   const [state, dispatch] = useReducer(cardDetailReducer, initialState);
 
   const updateTitleHandler = () => {
+    if (!isExist) return;
     if (!titleRef.current?.value.trim()) {
       alert("Empty title is not allowed!");
       Swal.fire(
@@ -264,6 +272,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const updateDescriptionHandler = (text: string) => {
+    if (!isExist) return;
     dispatch({
       type: "UPDATE_DESCRIPTION",
       payload: { description: text },
@@ -271,15 +280,18 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const updateTimeHandler = (curStart: number, curDeadline: number) => {
+    if (!isExist) return;
     const newTime = { start: curStart, deadline: curDeadline };
     dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
   };
 
   const selectTagHandler = (newTags: string[]) => {
+    if (!isExist) return;
     dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
   };
 
   const addOwnerHandler = (ownerID: string) => {
+    if (!isExist) return;
     const isOwnerExist = state.owner?.includes(ownerID);
     if (isOwnerExist) return;
     const curOwners: string[] = state.owner || [];
@@ -290,6 +302,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const removeOwnerHandler = (ownerID: string) => {
+    if (!isExist) return;
     const isOwnerExist = state.owner?.includes(ownerID);
     if (!isOwnerExist) return;
     const curOwners: string[] = state.owner || [];
@@ -302,10 +315,12 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const completeTaskHandler = (isChecked: boolean) => {
+    if (!isExist) return;
     dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
 
   const addNewTodoHandler = (titleText: string) => {
+    if (!isExist) return;
     const newId = uuidv4();
     const curTodo: { title: string; isDone: boolean; id: string }[] =
       state.todo || [];
@@ -323,6 +338,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const deleteTodoHandler = (todoID: string) => {
+    if (!isExist) return;
     if (state.todo && state.todo.length > 0) {
       const todoIndex = state.todo.findIndex((item) => item.id === todoID);
       const cutTodo = [...state.todo];
@@ -335,6 +351,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const completeTodoHandler = (isChecked: boolean, id: string) => {
+    if (!isExist) return;
     const newTodo =
       state.todo?.map((item) => {
         if (item.id === id) {
@@ -355,6 +372,11 @@ const CardDetail: React.FC<Props> = ({
           return card.id === cardId;
         });
       });
+      if (!newList) {
+        setIsExist(false);
+        return;
+      }
+      setIsExist(true);
       const [newCard] = newList.cards.filter((card) => {
         return card.id === cardId;
       });
@@ -383,7 +405,7 @@ const CardDetail: React.FC<Props> = ({
   }, [state.owner, members]);
 
   useEffect(() => {
-    if (state.id === "") return;
+    if (state.id === "" || isExist === false) return;
     const newLists = newListHandler(state);
     updateDataHandler(newLists);
   }, [state]);
@@ -420,6 +442,10 @@ const CardDetail: React.FC<Props> = ({
       </Wrapper>
     );
   };
+
+  if (isExist === false) {
+    return <ErrorText>Card is deleted or not exist.</ErrorText>;
+  }
 
   return (
     <Container>

@@ -482,7 +482,7 @@ const Project = () => {
           <Modal onClose={onCloseHandler}>
             {lists ? (
               <CardDetail
-                listsArray={lists}
+                listsArray={[...lists]}
                 tags={project?.tags || undefined}
                 members={members}
                 onDelete={deleteCardHandler}
