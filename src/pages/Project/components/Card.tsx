@@ -270,12 +270,6 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       <OwnerContainer>
         {displayOwner &&
           displayOwner.map((owner, index) => {
-            // const curOwner = members.find((member) => member.uid === owner) || {
-            //   uid: "",
-            //   email: "",
-            //   displayName: "",
-            // };
-
             if (owner && owner.photoURL && index < 2) {
               return (
                 <OwnerWrapper key={owner.uid} $background={owner.photoURL} />
