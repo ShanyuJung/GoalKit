@@ -295,7 +295,11 @@ const TagsEditor: React.FC<Props> = ({
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { tags: arrayUnion(newTag) });
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to create tag!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
@@ -368,8 +372,12 @@ const TagsEditor: React.FC<Props> = ({
       });
       await updateDoc(projectRef, { lists: newLists });
       stopEditHandler();
-    } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+    } catch {
+      Swal.fire(
+        "Fail to delete tag!",
+        "Please check your internet connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
@@ -406,7 +414,11 @@ const TagsEditor: React.FC<Props> = ({
       await updateDoc(projectRef, { tags: newTags });
       stopEditHandler();
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to update tag!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };

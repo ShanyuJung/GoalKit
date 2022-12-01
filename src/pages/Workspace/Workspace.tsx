@@ -321,8 +321,12 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
     }
     Swal.fire("Error", "Workspace is not exist!", "warning");
     return null;
-  } catch (e) {
-    Swal.fire("Something went wrong!", `${e}`, "warning");
+  } catch {
+    Swal.fire(
+      "Failed to connect server!",
+      "Please check your internet is connected and try again later",
+      "warning"
+    );
   }
 };
 
@@ -366,7 +370,11 @@ const Workspace = () => {
       Swal.fire("Succeed!", "Build new project succeed!", "success");
       navigate(`/workspace/${id}`);
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to create project!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
@@ -413,7 +421,11 @@ const Workspace = () => {
       memberRef.current.value = "";
       Swal.fire("Succeed!", "Add User to workspace.", "success");
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to add member",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
 
     setIsLoading(false);

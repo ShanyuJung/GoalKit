@@ -163,7 +163,11 @@ export const firstRenderProjectHandler = async ({
     Swal.fire("Error", "Workspace is not exist!", "warning");
     return null;
   } catch (e) {
-    Swal.fire("Something went wrong!", `${e}`, "warning");
+    Swal.fire(
+      "Failed to connect server!",
+      "Please check your internet is connected and try again later",
+      "warning"
+    );
   }
 };
 
@@ -208,8 +212,8 @@ const Project = () => {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
-    } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+    } catch {
+      Swal.fire("Something went wrong!", "Please try again later", "warning");
     }
     setIsLoading(false);
   };

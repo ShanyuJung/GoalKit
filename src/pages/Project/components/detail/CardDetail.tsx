@@ -203,7 +203,11 @@ const CardDetail: React.FC<Props> = ({
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to update card!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
