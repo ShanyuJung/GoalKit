@@ -35,6 +35,7 @@ const Wrapper = styled.div<{ $url: string | null }>`
     z-index: -2;
     background-image: ${(props) =>
       props.$url ? `url(${props.$url})` : `url(${placeholder})`};
+    filter: ${(props) => (props.$url ? "blur(0px)" : "blur(4px)")};
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 0%;

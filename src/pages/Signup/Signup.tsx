@@ -16,6 +16,7 @@ const LandingWrapper = styled.div<{ $url: string | null }>`
   flex-grow: 1;
   background-image: ${(props) =>
     props.$url ? `url(${props.$url})` : `url(${placeholder})`};
+  filter: ${(props) => (props.$url ? "blur(0px)" : "blur(4px)")};
   background-size: cover;
   background-position: 0 35%;
   opacity: 0.9;
