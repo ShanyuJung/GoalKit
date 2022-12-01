@@ -48,8 +48,8 @@ const Container = styled.div`
 const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 50px);
   flex-grow: 1;
-  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
-  transition: padding 0.3s;
+  margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  transition: margin 0.3s;
   overflow: scroll;
 `;
 
@@ -163,7 +163,11 @@ export const firstRenderProjectHandler = async ({
     Swal.fire("Error", "Workspace is not exist!", "warning");
     return null;
   } catch (e) {
-    Swal.fire("Something went wrong!", `${e}`, "warning");
+    Swal.fire(
+      "Failed to connect server!",
+      "Please check your internet is connected and try again later",
+      "warning"
+    );
   }
 };
 
@@ -208,8 +212,8 @@ const Project = () => {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
-    } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+    } catch {
+      Swal.fire("Something went wrong!", "Please try again later", "warning");
     }
     setIsLoading(false);
   };
@@ -482,10 +486,11 @@ const Project = () => {
           <Modal onClose={onCloseHandler}>
             {lists ? (
               <CardDetail
-                listsArray={lists}
+                listsArray={[...lists]}
                 tags={project?.tags || undefined}
                 members={members}
                 onDelete={deleteCardHandler}
+                onClose={onCloseHandler}
               />
             ) : (
               <div></div>

@@ -10,7 +10,6 @@ import { useOnClickOutside } from "../../../utils/hooks";
 import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
-import produce from "immer";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -274,8 +273,6 @@ const List = ({
 
     setDisplayCards(cards);
   }, [cards, isFilter, keyword]);
-
-  // console.log("display", displayCards);
 
   const checkDeleteListHandler = () => {
     Swal.fire({

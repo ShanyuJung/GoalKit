@@ -203,7 +203,7 @@ interface Member {
 interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
-  setIsEditData: (value: boolean) => void;
+  setIsEditDate: (value: boolean | ((prevVar: boolean) => boolean)) => void;
   members: Member[];
   addOwnerHandler(id: string): void;
   tagsIDs: string[] | undefined;
@@ -215,7 +215,7 @@ interface Props {
 const CardDetailSideBar: React.FC<Props> = ({
   onDelete,
   todoHandler,
-  setIsEditData,
+  setIsEditDate,
   members,
   addOwnerHandler,
   tagsIDs,
@@ -260,7 +260,7 @@ const CardDetailSideBar: React.FC<Props> = ({
         <ButtonListItem>
           <CardFeatureButton
             onClick={() => {
-              setIsEditData(true);
+              setIsEditDate((prev) => !prev);
             }}
           >
             <DateIcon />

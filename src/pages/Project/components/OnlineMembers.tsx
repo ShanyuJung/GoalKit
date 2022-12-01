@@ -15,6 +15,7 @@ const Wrapper = styled.div``;
 
 const MemberList = styled.div`
   display: flex;
+  margin-right: 5px;
 `;
 
 const Member = styled.div<{ colorCode: string; $background?: string }>`
@@ -28,6 +29,9 @@ const Member = styled.div<{ colorCode: string; $background?: string }>`
   background-size: cover;
   text-align: center;
   margin: 0px 1px;
+  margin-right: -5px;
+  outline: 2px solid #fff;
+  cursor: default;
 `;
 
 const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];
@@ -58,7 +62,9 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
       const newMembers = produce(emptyArr, (draftState) => {
         snapshot.forEach((doc) => {
           const newDoc = doc.data() as Member;
-          draftState.push(newDoc);
+          if (newDoc.state === "online") {
+            draftState.push(newDoc);
+          }
         });
       });
       setMembersInfo(newMembers);
@@ -78,7 +84,7 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
               return (
                 <Member
                   key={member.uid}
-                  colorCode={"transparent"}
+                  colorCode={"#fff"}
                   $background={member.photoURL}
                 />
               );

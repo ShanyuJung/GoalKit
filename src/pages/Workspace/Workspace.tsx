@@ -150,6 +150,7 @@ const ChatRoomWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: #fff;
 `;
 
 const ChatRoomHeader = styled.div`
@@ -320,8 +321,12 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
     }
     Swal.fire("Error", "Workspace is not exist!", "warning");
     return null;
-  } catch (e) {
-    Swal.fire("Something went wrong!", `${e}`, "warning");
+  } catch {
+    Swal.fire(
+      "Failed to connect server!",
+      "Please check your internet is connected and try again later",
+      "warning"
+    );
   }
 };
 
@@ -340,6 +345,7 @@ const Workspace = () => {
   const messageRef = useRef<HTMLInputElement | null>(null);
   const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { currentUser } = useAuth();
@@ -365,7 +371,11 @@ const Workspace = () => {
       Swal.fire("Succeed!", "Build new project succeed!", "success");
       navigate(`/workspace/${id}`);
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to create project!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
@@ -412,7 +422,11 @@ const Workspace = () => {
       memberRef.current.value = "";
       Swal.fire("Succeed!", "Add User to workspace.", "success");
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to add member",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
 
     setIsLoading(false);
@@ -420,17 +434,27 @@ const Workspace = () => {
 
   const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!messageRef.current?.value.trim() || !id) return;
-    const newMessage = messageRef.current?.value.trim();
-    const newId = uuidv4();
-    const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
-    await setDoc(newMessageRef, {
-      message: newMessage,
-      userID: currentUser.uid,
-      time: serverTimestamp(),
-      id: newId,
-    });
+    if (!messageRef.current?.value.trim() || !id || isSending) return;
+    try {
+      setIsSending(true);
+      const newMessage = messageRef.current?.value.trim();
+      const newId = uuidv4();
+      const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
+      await setDoc(newMessageRef, {
+        message: newMessage,
+        userID: currentUser.uid,
+        time: serverTimestamp(),
+        id: newId,
+      });
+    } catch {
+      Swal.fire(
+        "Failed to send message",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
+    }
     messageRef.current.value = "";
+    setIsSending(false);
   };
 
   useEffect(() => {
@@ -573,7 +597,7 @@ const Workspace = () => {
   };
 
   const chatRoom = () => {
-    if (!isExist) return <></>;
+    if (!isExist || membersInfo.length === 0) return <></>;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
@@ -592,10 +616,12 @@ const Workspace = () => {
                 <Message
                   key={message.id}
                   messageUserID={message.userID}
-                  userFirstChar={membersInfo[index].displayName.charAt(0)}
+                  userFirstChar={
+                    membersInfo[index]?.displayName.charAt(0) || ""
+                  }
                   messageText={message.message}
                   messageTime={message.time}
-                  messagePhoto={membersInfo[index].photoURL || ""}
+                  messagePhoto={membersInfo[index]?.photoURL || ""}
                 />
               );
             })}

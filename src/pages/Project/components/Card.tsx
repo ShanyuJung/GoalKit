@@ -130,8 +130,8 @@ const Tag = styled.div`
 const OwnerContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: 0px 5px;
   margin-bottom: 5px;
+  margin-right: 5px;
 `;
 
 const OwnerWrapper = styled.div<{ $background?: string }>`
@@ -145,6 +145,8 @@ const OwnerWrapper = styled.div<{ $background?: string }>`
   justify-content: center;
   background-image: ${(props) => `url(${props.$background})`};
   background-size: cover;
+  margin-right: -5px;
+  outline: 2px solid #fff;
 `;
 
 const ConditionWrapper = styled.div`
@@ -255,19 +257,33 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   };
 
   const ownerList = () => {
+    const displayOwner = cardInfo.owner
+      ?.map((owner) => {
+        const curOwner = members.find((member) => member.uid === owner);
+        if (curOwner) {
+          return curOwner;
+        }
+      })
+      .filter((owner) => owner !== undefined);
+
     return (
       <OwnerContainer>
-        {cardInfo.owner &&
-          members &&
-          members.map((owner) => {
-            if (cardInfo.owner?.includes(owner.uid) && owner.photoURL) {
+        {displayOwner &&
+          displayOwner.map((owner, index) => {
+            if (owner && owner.photoURL && index < 2) {
               return (
                 <OwnerWrapper key={owner.uid} $background={owner.photoURL} />
               );
-            } else if (cardInfo.owner?.includes(owner.uid)) {
+            } else if (owner && !owner.photoURL && index < 2) {
               return (
                 <OwnerWrapper key={owner.uid}>
                   {owner.displayName.charAt(0)}
+                </OwnerWrapper>
+              );
+            } else if (owner && index === 2) {
+              return (
+                <OwnerWrapper key={owner.uid}>
+                  {`${displayOwner.length - index}+`}
                 </OwnerWrapper>
               );
             }

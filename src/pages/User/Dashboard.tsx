@@ -203,7 +203,11 @@ const Dashboard = () => {
         await getWorkspaceHandler();
         await getGuestWorkspaceHandler();
       } catch (e) {
-        Swal.fire("Something went wrong!", `${e}`, "warning");
+        Swal.fire(
+          "Failed to connect server!",
+          "Please check your internet is connected and try again later",
+          "warning"
+        );
       }
       setIsLoading(false);
     };

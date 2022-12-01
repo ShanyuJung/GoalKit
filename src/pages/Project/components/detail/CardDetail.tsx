@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { db } from "../../../../firebase";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
@@ -54,6 +55,30 @@ const TitleInput = styled.input`
   }
 `;
 
+const ErrorText = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+`;
+
+const CloseButton = styled(closeIcon)`
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  path {
+    fill: #999;
+  }
+
+  &:hover {
+    path {
+      fill: #333;
+    }
+  }
+`;
+
 interface CardInterface {
   title: string;
   id: string;
@@ -85,6 +110,7 @@ interface Props {
   tags?: { id: string; colorCode: string; title: string }[];
   members?: Member[];
   onDelete: (targetCardID: string) => void;
+  onClose: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
 
 const initialState = {
@@ -161,21 +187,27 @@ const CardDetail: React.FC<Props> = ({
   tags,
   members,
   onDelete,
+  onClose,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const [isEditDate, setIsEditDate] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
   const updateDataHandler = async (newList: ListInterface[]) => {
-    if (!id || isLoading) return;
+    if (!id || isLoading || !isExist) return;
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
       await updateDoc(projectRef, { lists: newList });
     } catch (e) {
-      Swal.fire("Something went wrong!", `${e}`, "warning");
+      Swal.fire(
+        "Failed to update card!",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
     }
     setIsLoading(false);
   };
@@ -246,6 +278,7 @@ const CardDetail: React.FC<Props> = ({
   const [state, dispatch] = useReducer(cardDetailReducer, initialState);
 
   const updateTitleHandler = () => {
+    if (!isExist) return;
     if (!titleRef.current?.value.trim()) {
       alert("Empty title is not allowed!");
       Swal.fire(
@@ -264,6 +297,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const updateDescriptionHandler = (text: string) => {
+    if (!isExist) return;
     dispatch({
       type: "UPDATE_DESCRIPTION",
       payload: { description: text },
@@ -271,15 +305,18 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const updateTimeHandler = (curStart: number, curDeadline: number) => {
+    if (!isExist) return;
     const newTime = { start: curStart, deadline: curDeadline };
     dispatch({ type: "UPDATE_TIME", payload: { time: newTime } });
   };
 
   const selectTagHandler = (newTags: string[]) => {
+    if (!isExist) return;
     dispatch({ type: "UPDATE_TAG", payload: { tagsIDs: newTags } });
   };
 
   const addOwnerHandler = (ownerID: string) => {
+    if (!isExist) return;
     const isOwnerExist = state.owner?.includes(ownerID);
     if (isOwnerExist) return;
     const curOwners: string[] = state.owner || [];
@@ -290,6 +327,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const removeOwnerHandler = (ownerID: string) => {
+    if (!isExist) return;
     const isOwnerExist = state.owner?.includes(ownerID);
     if (!isOwnerExist) return;
     const curOwners: string[] = state.owner || [];
@@ -302,10 +340,12 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const completeTaskHandler = (isChecked: boolean) => {
+    if (!isExist) return;
     dispatch({ type: "UPDATE_COMPLETE", payload: { complete: isChecked } });
   };
 
   const addNewTodoHandler = (titleText: string) => {
+    if (!isExist) return;
     const newId = uuidv4();
     const curTodo: { title: string; isDone: boolean; id: string }[] =
       state.todo || [];
@@ -323,6 +363,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const deleteTodoHandler = (todoID: string) => {
+    if (!isExist) return;
     if (state.todo && state.todo.length > 0) {
       const todoIndex = state.todo.findIndex((item) => item.id === todoID);
       const cutTodo = [...state.todo];
@@ -335,6 +376,7 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const completeTodoHandler = (isChecked: boolean, id: string) => {
+    if (!isExist) return;
     const newTodo =
       state.todo?.map((item) => {
         if (item.id === id) {
@@ -355,6 +397,11 @@ const CardDetail: React.FC<Props> = ({
           return card.id === cardId;
         });
       });
+      if (!newList) {
+        setIsExist(false);
+        return;
+      }
+      setIsExist(true);
       const [newCard] = newList.cards.filter((card) => {
         return card.id === cardId;
       });
@@ -383,7 +430,7 @@ const CardDetail: React.FC<Props> = ({
   }, [state.owner, members]);
 
   useEffect(() => {
-    if (state.id === "") return;
+    if (state.id === "" || isExist === false) return;
     const newLists = newListHandler(state);
     updateDataHandler(newLists);
   }, [state]);
@@ -421,8 +468,26 @@ const CardDetail: React.FC<Props> = ({
     );
   };
 
+  if (isExist === false) {
+    return (
+      <Container>
+        <ErrorText>Card is deleted or not exist.</ErrorText>
+        <CloseButton
+          onClick={() => {
+            onClose(false);
+          }}
+        />
+      </Container>
+    );
+  }
+
   return (
     <Container>
+      <CloseButton
+        onClick={() => {
+          onClose(false);
+        }}
+      />
       <TitleWrapper>
         <CardLogo />
         <TitleInput
@@ -436,7 +501,7 @@ const CardDetail: React.FC<Props> = ({
       <CardDetailSideBar
         onDelete={onDelete}
         todoHandler={addNewTodoHandler}
-        setIsEditData={setIsEditDate}
+        setIsEditDate={setIsEditDate}
         members={members || []}
         addOwnerHandler={addOwnerHandler}
         tagsIDs={state.tagsIDs}
