@@ -6,14 +6,14 @@ import { useAuth } from "../../../contexts/AuthContext";
 
 const Wrapper = styled.div`
   width: 100vw;
-  height: 50px;
+  height: 70px;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #1565c0;
+  background-color: #2c4859;
   z-index: 20;
   display: flex;
-  padding: 0px 20px;
+  padding: 0px 30px;
   align-items: center;
 `;
 
@@ -33,22 +33,24 @@ const HomeIconWrapper = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: rgb(57, 118, 189);
+    background-color: #658da6;
   }
 `;
 
 const HomeIcon = styled(homeIcon)`
   width: 28px;
   height: 28px;
+  margin-right: 5px;
+
   path {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 `;
 
 const HomeIconText = styled.div`
   font-size: 30px;
   font-weight: 600;
-  color: #fff;
+  color: #f2f2f2;
 `;
 
 const UserIconWrapper = styled.div`
@@ -61,22 +63,24 @@ const UserIconWrapper = styled.div`
   align-items: center;
   justify-content: center;
 
+  outline: 2px solid #f2f2f2;
+
   &:hover {
-    outline: 1px #ccc solid;
+    outline: 2px solid #f2dac4;
   }
 `;
 
 const UserIcon = styled(userIcon)`
-  width: 36px;
-  height: 36px;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
 
   path {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 
   circle {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 `;
 
@@ -87,7 +91,7 @@ const LoginUserIcon = styled.div<{ $background?: string }>`
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  background-color: aliceblue;
+  background-color: #f2f2f2;
   background-image: ${(props) => `url(${props.$background})`};
   background-size: cover;
   cursor: pointer;
