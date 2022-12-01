@@ -257,39 +257,41 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   };
 
   const ownerList = () => {
+    const displayOwner = cardInfo.owner
+      ?.map((owner) => {
+        const curOwner = members.find((member) => member.uid === owner);
+        if (curOwner) {
+          return curOwner;
+        }
+      })
+      .filter((owner) => owner !== undefined);
+
     return (
       <OwnerContainer>
-        {cardInfo.owner &&
-          members &&
-          cardInfo.owner.map((owner, index) => {
-            const curOwner = members.find((member) => member.uid === owner) || {
-              uid: "",
-              email: "",
-              displayName: "",
-            };
+        {displayOwner &&
+          displayOwner.map((owner, index) => {
+            // const curOwner = members.find((member) => member.uid === owner) || {
+            //   uid: "",
+            //   email: "",
+            //   displayName: "",
+            // };
 
-            if (
-              cardInfo.owner?.includes(curOwner.uid) &&
-              curOwner.photoURL &&
-              index < 2
-            ) {
+            if (owner && owner.photoURL && index < 2) {
               return (
-                <OwnerWrapper key={owner} $background={curOwner.photoURL} />
+                <OwnerWrapper key={owner.uid} $background={owner.photoURL} />
               );
-            } else if (cardInfo.owner?.includes(curOwner.uid) && index < 2) {
+            } else if (owner && !owner.photoURL && index < 2) {
               return (
-                <OwnerWrapper key={owner}>
-                  {curOwner.displayName.charAt(0)}
+                <OwnerWrapper key={owner.uid}>
+                  {owner.displayName.charAt(0)}
                 </OwnerWrapper>
               );
-            } else if (cardInfo.owner?.includes(curOwner.uid) && index === 2) {
+            } else if (owner && index === 2) {
               return (
-                <OwnerWrapper key={owner}>
-                  {`${cardInfo.owner.length - index}+`}
+                <OwnerWrapper key={owner.uid}>
+                  {`${displayOwner.length - index}+`}
                 </OwnerWrapper>
               );
-            } else {
-              return <div key={owner}></div>;
             }
           })}
       </OwnerContainer>
