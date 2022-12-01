@@ -345,6 +345,7 @@ const Workspace = () => {
   const messageRef = useRef<HTMLInputElement | null>(null);
   const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { currentUser } = useAuth();
@@ -433,17 +434,27 @@ const Workspace = () => {
 
   const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!messageRef.current?.value.trim() || !id) return;
-    const newMessage = messageRef.current?.value.trim();
-    const newId = uuidv4();
-    const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
-    await setDoc(newMessageRef, {
-      message: newMessage,
-      userID: currentUser.uid,
-      time: serverTimestamp(),
-      id: newId,
-    });
+    if (!messageRef.current?.value.trim() || !id || isSending) return;
+    try {
+      setIsSending(true);
+      const newMessage = messageRef.current?.value.trim();
+      const newId = uuidv4();
+      const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
+      await setDoc(newMessageRef, {
+        message: newMessage,
+        userID: currentUser.uid,
+        time: serverTimestamp(),
+        id: newId,
+      });
+    } catch {
+      Swal.fire(
+        "Failed to send message",
+        "Please check your internet is connected and try again later",
+        "warning"
+      );
+    }
     messageRef.current.value = "";
+    setIsSending(false);
   };
 
   useEffect(() => {
