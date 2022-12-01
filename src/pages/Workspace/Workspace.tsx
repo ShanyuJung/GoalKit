@@ -593,10 +593,12 @@ const Workspace = () => {
                 <Message
                   key={message.id}
                   messageUserID={message.userID}
-                  userFirstChar={membersInfo[index].displayName.charAt(0) || ""}
+                  userFirstChar={
+                    membersInfo[index]?.displayName.charAt(0) || ""
+                  }
                   messageText={message.message}
                   messageTime={message.time}
-                  messagePhoto={membersInfo[index].photoURL || ""}
+                  messagePhoto={membersInfo[index]?.photoURL || ""}
                 />
               );
             })}
