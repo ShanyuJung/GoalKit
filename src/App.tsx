@@ -13,8 +13,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #root {
-    min-height: 100vh;
-    padding: 50px 0px 0px 0px;
+    min-height: calc(100vh - 70px);
+    margin-top: 70px;
+    padding: 0px ;
     position: relative;
   }
 `;

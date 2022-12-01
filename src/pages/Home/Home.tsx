@@ -11,7 +11,7 @@ const Wrapper = styled.div<{ $url: string | null }>`
   justify-content: center;
   overflow: scroll;
   gap: 15px;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
 
   &::before {
     content: "";

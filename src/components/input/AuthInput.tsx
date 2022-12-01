@@ -13,16 +13,29 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 80%;
-  margin: 10px 0px;
+  margin: 5px 0px;
 `;
 
 const InputLabel = styled.label`
-  font-size: 24px;
+  font-size: 14px;
+  padding: 0px 5px;
   margin-bottom: 5px;
+  color: #1d3240;
+  background-color: #fff;
+
+  margin-left: 10px;
+  position: relative;
+  width: fit-content;
 `;
 
 const StyledInput = styled.input`
-  font-size: 20px;
+  margin: 0;
+  font-size: 24px;
+  line-height: 40px;
+  height: 40px;
+  border-radius: 20px;
+  padding: 0px 20px;
+  border: 1px solid #ccc;
 `;
 
 const AuthInput = forwardRef<Ref, Props>((props, ref) => {
