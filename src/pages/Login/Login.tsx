@@ -38,6 +38,7 @@ const LandingWrapper = styled.div<{ $url: string | null }>`
 `;
 
 const CardWrapper = styled.div`
+  overflow-y: scroll;
   padding-top: 80px;
   flex-shrink: 0;
   display: flex;
@@ -176,7 +177,7 @@ const Login = () => {
   return (
     <LoginRoute>
       <Wrapper>
-        <LandingWrapper $url={loaded}></LandingWrapper>
+        <LandingWrapper $url={loaded} />
         <CardWrapper>
           <Card>
             <CardTitle>Login</CardTitle>
@@ -203,7 +204,6 @@ const Login = () => {
           <Text>
             Don't have an account ?{" "}
             <StyledLink to="/signup" $fontWeight={600}>
-              {" "}
               Signup
             </StyledLink>
           </Text>
