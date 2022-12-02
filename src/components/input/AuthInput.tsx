@@ -21,8 +21,6 @@ const InputLabel = styled.label`
   padding: 0px 5px;
   margin-bottom: 5px;
   color: #1d3240;
-  background-color: #fff;
-
   margin-left: 10px;
   position: relative;
   width: fit-content;

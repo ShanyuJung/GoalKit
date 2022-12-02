@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $isEdit: boolean }>`
   position: relative;
   z-index: 5;
-  width: 240px;
+  width: 215px;
   height: 100px;
   display: flex;
   flex-direction: column;
@@ -14,23 +14,22 @@ const Wrapper = styled.div`
   justify-content: center;
   padding: 10px;
   border-radius: 5px;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
+  /* box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25); */
   cursor: pointer;
-
-  &::before {
-    content: "";
-    background-color: rgba(9, 30, 66, 0.04);
-    position: absolute;
-    z-index: -1;
-    width: 240px;
-    height: 100px;
-    border-radius: 5px;
-  }
+  flex-shrink: 0;
+  color: #2c4859;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: ${(props) =>
+    props.$isEdit ? "rgba(9, 30, 66, 0.1);" : "rgba(9, 30, 66, 0.04)"};
 
   &:hover {
-    &::before {
-      background-color: rgba(9, 30, 66, 0.1);
-    }
+    color: #1d3240;
+    background-color: rgba(9, 30, 66, 0.1);
+  }
+
+  @media (max-width: 809px) {
+    flex-grow: 1;
   }
 `;
 
@@ -41,23 +40,26 @@ const Text = styled.div`
   height: 100px;
   line-height: 100px;
   cursor: pointer;
+  font-size: 16px;
+  color: #2c4859;
 `;
 
 const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 240px;
-  height: 0px;
-  position: relative;
-  top: -90px;
-  left: 250px;
+  width: 280px;
+  position: absolute;
+  top: 110px;
+  left: 0px;
 `;
 
 const Form = styled.form`
+  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.35);
   width: 100%;
-  padding: 10px;
-  background-color: #fff;
+  padding: 20px;
+  background-color: #f2f2f2;
   border: 1px solid #ddd;
+  cursor: default;
 `;
 
 const FormTitle = styled.div`
@@ -74,11 +76,12 @@ const TextArea = styled.textarea`
   font-size: 14px;
   padding: 5px;
   font-family: "Poppins", sans-serif;
+  cursor: text;
 `;
 
 const Button = styled.button`
   color: #fff;
-  background-color: #0085d1;
+  background-color: #658da6;
   border: none;
   margin: 10px;
   font-size: 16px;
@@ -90,7 +93,7 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #0079bf;
+    filter: brightness(110%);
   }
 `;
 
@@ -136,8 +139,8 @@ const NewWorkspace = ({ onSubmit }: Props) => {
   };
 
   return (
-    <Wrapper ref={ref}>
-      <Text onClick={editHandler}>Build New Workspace</Text>
+    <Wrapper ref={ref} $isEdit={isEdit}>
+      <Text onClick={editHandler}>Create New Workspace</Text>
       <FormWrapper>
         {isEdit ? (
           <Form onSubmit={onSubmitHandler}>
@@ -147,7 +150,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
                 setIsEdit(false);
               }}
             />
-            <TextArea placeholder="&#43; Add new workspace" ref={textRef} />
+            <TextArea placeholder=" Type workspace name ..." ref={textRef} />
             <Button>Add new Workspace</Button>
           </Form>
         ) : (
