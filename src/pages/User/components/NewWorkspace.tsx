@@ -14,7 +14,6 @@ const Wrapper = styled.div<{ $isEdit: boolean }>`
   justify-content: center;
   padding: 10px;
   border-radius: 5px;
-  /* box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25); */
   cursor: pointer;
   flex-shrink: 0;
   color: #2c4859;
@@ -22,6 +21,9 @@ const Wrapper = styled.div<{ $isEdit: boolean }>`
   font-weight: 600;
   background-color: ${(props) =>
     props.$isEdit ? "rgba(9, 30, 66, 0.1);" : "rgba(9, 30, 66, 0.04)"};
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 
   &:hover {
     color: #1d3240;

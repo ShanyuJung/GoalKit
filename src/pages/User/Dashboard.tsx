@@ -47,9 +47,7 @@ const Workspace = styled.div`
   justify-content: flex-start;
   padding: 10px 15px;
   border-radius: 5px;
-  /* box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25); */
   cursor: pointer;
-  /* background-color: #fafafa; */
   background-color: #658da6;
 
   flex-shrink: 0;
@@ -60,7 +58,6 @@ const Workspace = styled.div`
     width: 60px;
     height: 10px;
     border-radius: 5px;
-    /* background-color: #2c4859; */
     background-color: #fafafa;
     top: 20px;
     left: 20px;
@@ -73,7 +70,6 @@ const Workspace = styled.div`
 
     &::before {
       width: 60%;
-      /* background-color: #658da6; */
       opacity: 1;
     }
   }

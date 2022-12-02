@@ -12,7 +12,7 @@ import { ReactComponent as editIcon } from "../../../assets/edit-svgrepo-com.svg
 import AuthInput from "../../../components/input/AuthInput";
 
 const Wrapper = styled.div`
-  padding: 100px 10px;
+  padding: 50px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 const Card = styled.div`
   width: 450px;
   padding: 20px;
-  border: 1px #ccc solid;
+  border: 1px #658da647 solid;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -43,7 +43,7 @@ const SubmitButton = styled.button`
   font-size: 20px;
   color: #fff;
   border: none;
-  background-color: #0085d1;
+  background-color: #658da6;
   border: none;
   margin: 20px;
   border-radius: 5px;
@@ -52,7 +52,7 @@ const SubmitButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #0079bf;
+    filter: brightness(110%);
   }
 `;
 
@@ -64,11 +64,11 @@ const ImageWrapper = styled.div`
 `;
 
 const Image = styled.div<{ $background: string }>`
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   font-size: 48px;
   border-radius: 50%;
-  border: 1px solid #ccc;
+  border: 4px solid #658da6;
   overflow: hidden;
   background-image: ${(props) => `url(${props.$background})`};
   background-size: cover;
@@ -80,7 +80,7 @@ const DefaultImage = styled.div`
   height: 100px;
   font-size: 48px;
   border-radius: 50%;
-  background-color: #0085d1;
+  background-color: #658da6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,27 +90,45 @@ const DefaultImage = styled.div`
 const ProfileTextWrapper = styled.div`
   display: flex;
   width: 80%;
-  align-items: center;
+  align-items: flex-end;
+  height: 35px;
+  overflow: hidden;
+`;
+
+const EditTitle = styled.div`
+  color: #1d3240;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 5px;
 `;
 
 const ProfileTitle = styled.div`
-  width: 25%;
-  font-size: 24px;
+  width: 18%;
+  font-size: 18px;
+  margin-right: 5px;
   flex-shrink: 0;
+  color: #2c4859;
+  line-height: 27px;
 `;
 
 const ProfileText = styled.div`
   font-size: 24px;
+  color: #1d3240;
+  line-height: 30px;
+  font-weight: 600;
 `;
 
 const EndEdit = styled.div`
-  color: #0d6efd;
   font-size: 16px;
   margin: 10px;
   cursor: pointer;
+  color: #658da6;
+  font-weight: 600;
 
   &:hover {
-    text-decoration: underline;
+    color: #1d3240;
+    text-decoration: underline 2px;
+    opacity: 0.7;
   }
 `;
 
@@ -127,20 +145,21 @@ const ImageInput = styled.input`
 
 const ImageInputLabel = styled.label`
   position: relative;
-  top: -45px;
-  right: -40px;
+  top: -65px;
+  right: -65px;
 `;
 
 const EditIcon = styled(editIcon)`
-  width: 20px;
-  height: 20px;
-  opacity: 0.5;
+  width: 36px;
+  height: 36px;
+  opacity: 0.4;
+  cursor: pointer;
   path {
-    fill: #ccc;
+    fill: #2c4859;
   }
 
   &:hover {
-    opacity: 1;
+    opacity: 0.7;
   }
 `;
 
@@ -154,6 +173,8 @@ const ErrorMessageWrapper = styled.div`
   min-height: 40px;
   line-height: 40px;
   background-color: #fadbd8;
+  margin-bottom: 5px;
+  filter: brightness(110%);
 `;
 
 const MessageWrapper = styled.div`
@@ -166,6 +187,8 @@ const MessageWrapper = styled.div`
   min-height: 40px;
   line-height: 40px;
   background-color: #d5f5e3;
+  margin-bottom: 5px;
+  filter: brightness(110%);
 `;
 
 const Profile = () => {
@@ -298,6 +321,7 @@ const Profile = () => {
   return (
     <Wrapper>
       <Card>
+        <EditTitle>Update Profile</EditTitle>
         {message === "" ? <></> : <MessageWrapper>{message}</MessageWrapper>}
         {errorMessage === "" ? (
           <></>
