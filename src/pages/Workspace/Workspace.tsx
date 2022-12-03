@@ -174,25 +174,30 @@ const ErrorText = styled.div`
 const ChatRoomWrapper = styled.div`
   position: absolute;
   z-index: 20;
-  right: 10px;
+  right: 20px;
   bottom: 0;
   width: 340px;
   height: 450px;
-  border: 1px #ddd solid;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #fff;
+  background-color: #f2f2f2;
+  box-shadow: 6px -6px 20px rgba(0, 0, 0, 0.35);
 `;
 
 const ChatRoomHeader = styled.div`
-  height: 40px;
+  min-height: 40px;
   background-color: #2c4859;
   font-size: 20px;
   line-height: 40px;
-  padding: 0px 5px;
+  padding: 0px 10px;
+  color: #f2f2f2;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: default;
 `;
 
 const MessageArea = styled.div`
@@ -249,9 +254,7 @@ const CloseButton = styled(closeIcon)`
   }
 
   &:hover {
-    path {
-      fill: #555;
-    }
+    filter: brightness(120%);
   }
 `;
 
