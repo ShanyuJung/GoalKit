@@ -74,7 +74,6 @@ const FormTitle = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   resize: none;
-  cursor: pointer;
   font-size: 14px;
   padding: 5px;
   font-family: "Poppins", sans-serif;
@@ -82,7 +81,7 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  color: #fff;
+  color: #f2f2f2;
   background-color: #658da6;
   border: none;
   margin: 10px;

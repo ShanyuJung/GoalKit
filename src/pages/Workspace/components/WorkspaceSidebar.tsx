@@ -10,13 +10,14 @@ interface StylesProps {
 
 const SidebarWrapper = styled.div<StylesProps>`
   background-color: ${(props) =>
-    props.isShow ? "#1976d2" : "rgba(25,118,210,0.2)"};
+    props.isShow ? "#658DA6" : "rgba(25,118,210,0.2)"};
   width: ${(props) => (props.isShow ? "260px" : "15px")};
   flex-shrink: 0;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   transition: width 0.3s;
   position: fixed;
   z-index: 10;
+  filter: brightness(115%);
 `;
 
 const WorkspaceTitleWrapper = styled.div<StylesProps>`
@@ -25,7 +26,12 @@ const WorkspaceTitleWrapper = styled.div<StylesProps>`
   align-items: center;
   padding: 0px 20px;
   justify-content: space-between;
-  border-bottom: ${(props) => (props.isShow ? "1px #ddd solid" : "none")};
+  border-bottom: ${(props) => (props.isShow ? "2px #f2f2f2 solid" : "none")};
+  background-color: #658da6;
+
+  &:hover {
+    filter: brightness(90%);
+  }
 `;
 
 const WorkspaceTitle = styled.div<StylesProps>`
@@ -33,17 +39,12 @@ const WorkspaceTitle = styled.div<StylesProps>`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #fff;
+  color: #f2f2f2;
   font-weight: bold;
   display: ${(props) => (props.isShow ? "block" : "none")};
   cursor: pointer;
-  border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
+  font-weight: 900;
 `;
 
 const LinkList = styled.div<StylesProps>`
@@ -60,12 +61,12 @@ const LinkWrapper = styled.div<{ $selected?: boolean }>`
   align-items: center;
   justify-content: flex-start;
   padding: 0px 20px;
-  background-color: ${(props) => (props.$selected ? "#165fa8" : "")};
-  border-right: ${(props) => (props.$selected ? "5px solid #ccc" : "")};
   cursor: pointer;
+  background-color: #658da6;
+  filter: ${(props) => (props.$selected ? "brightness(90%)" : "")};
 
   &:hover {
-    background-color: #156cc2;
+    filter: brightness(90%);
   }
 `;
 
@@ -73,7 +74,7 @@ const LinkText = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #fff;
+  color: #f2f2f2;
   font-size: 20px;
   font-weight: 600;
   border-bottom: solid 2px transparent;
@@ -84,11 +85,11 @@ const ProjectIcon = styled(projectIcon)`
   width: 24px;
   margin-right: 10px;
   path {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 
   rect {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 `;
 
@@ -96,11 +97,11 @@ const MemberIcon = styled(memberIcon)`
   width: 20px;
   margin-right: 10px;
   path {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 
   circle {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 `;
 
@@ -108,11 +109,11 @@ const ChatIcon = styled(chatIcon)`
   width: 20px;
   margin-right: 10px;
   path {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 
   rect {
-    fill: #fff;
+    fill: #f2f2f2;
   }
 `;
 
