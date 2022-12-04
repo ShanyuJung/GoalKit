@@ -5,6 +5,7 @@ import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.s
 
 const Wrapper = styled.div`
   width: 230px;
+  flex-shrink: 0;
   margin: 0px 10px;
   height: fit-content;
 `;

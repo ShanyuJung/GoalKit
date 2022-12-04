@@ -17,7 +17,7 @@ import Swal from "sweetalert2";
 
 const Container = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
 `;
 
 const Wrapper = styled.div`
@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   width: 410px;
   padding-right: 10px;
 `;
+
 const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -39,6 +40,10 @@ const CardLogo = styled(cardIcon)`
   path {
     fill: #828282;
   }
+`;
+
+const ContainerWrapper = styled.div`
+  display: flex;
 `;
 
 const TitleInput = styled.input`
@@ -497,18 +502,20 @@ const CardDetail: React.FC<Props> = ({
           onBlur={updateTitleHandler}
         />
       </TitleWrapper>
-      <>{cardInfo()}</>
-      <CardDetailSideBar
-        onDelete={onDelete}
-        todoHandler={addNewTodoHandler}
-        setIsEditDate={setIsEditDate}
-        members={members || []}
-        addOwnerHandler={addOwnerHandler}
-        tagsIDs={state.tagsIDs}
-        tags={tags}
-        onChange={selectTagHandler}
-        listsArray={listsArray}
-      />
+      <ContainerWrapper>
+        <>{cardInfo()}</>
+        <CardDetailSideBar
+          onDelete={onDelete}
+          todoHandler={addNewTodoHandler}
+          setIsEditDate={setIsEditDate}
+          members={members || []}
+          addOwnerHandler={addOwnerHandler}
+          tagsIDs={state.tagsIDs}
+          tags={tags}
+          onChange={selectTagHandler}
+          listsArray={listsArray}
+        />
+      </ContainerWrapper>
     </Container>
   );
 };

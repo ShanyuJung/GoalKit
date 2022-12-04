@@ -50,7 +50,7 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   flex-grow: 1;
   margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: margin 0.3s;
-  overflow: scroll;
+  overflow: hidden;
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
@@ -81,8 +81,8 @@ const Wrapper = styled.div`
 const ListWrapper = styled.div`
   padding: 10px 20px 10px 20px;
   display: flex;
-  width: fit-content;
-  overflow-x: scroll;
+  /* width: fit-content; */
+  overflow: scroll;
   height: calc(100vh - 70px - 40px);
 `;
 
