@@ -80,10 +80,10 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
 
   return (
     <RadialBarChart
-      width={480}
+      width={460}
       height={300}
       data={[timeData]}
-      cx={240}
+      cx={230}
       cy={150}
       innerRadius={110}
       outerRadius={130}
@@ -109,7 +109,7 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         }
       />
       <text
-        x={240}
+        x={230}
         y={150}
         textAnchor="middle"
         dominantBaseline="middle"
@@ -128,7 +128,7 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         }`}
       </text>
       <text
-        x={285}
+        x={275}
         y={155}
         textAnchor="middle"
         dominantBaseline="middle"
@@ -139,7 +139,7 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         {`%`}
       </text>
       <text
-        x={240}
+        x={230}
         y={185}
         textAnchor="middle"
         dominantBaseline="middle"

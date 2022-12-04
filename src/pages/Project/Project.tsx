@@ -208,10 +208,12 @@ const Project = () => {
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
+
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, { lists: newList });
+      const res = await updateDoc(projectRef, { lists: [...newList] });
+      console.log(res);
     } catch {
       Swal.fire("Something went wrong!", "Please try again later", "warning");
     }
@@ -326,6 +328,7 @@ const Project = () => {
     const newLists = produce(lists, (draftState) => {
       draftState[parentIndex].cards.splice(targetIndex, 1);
     });
+    console.log(newLists);
 
     updateDataHandler(newLists);
   };

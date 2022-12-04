@@ -13,7 +13,7 @@ const Container = styled.div`
   width: 100%;
   align-items: center;
   flex-wrap: wrap;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
 `;
 
 const Wrapper = styled.div`
@@ -28,7 +28,7 @@ const Wrapper = styled.div`
 
 const ChartWrapper = styled.div`
   border: 1px solid #ddd;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   overflow: hidden;
   display: flex;

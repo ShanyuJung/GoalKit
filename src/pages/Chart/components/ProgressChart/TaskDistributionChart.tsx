@@ -181,7 +181,7 @@ const TaskDistribution: React.FC<Props> = ({ lists }) => {
   }
 
   return (
-    <PieChart width={480} height={300}>
+    <PieChart width={460} height={300}>
       <Pie
         activeIndex={activeIndex}
         activeShape={renderActiveShape}

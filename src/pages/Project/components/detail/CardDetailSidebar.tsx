@@ -247,8 +247,9 @@ const CardDetailSideBar: React.FC<Props> = ({
       confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
-        navigate(`/project/${id}`);
+        console.log("123");
         onDelete(cardId || "");
+        navigate(`/project/${id}`);
         Swal.fire("Deleted!", "Selected card has been deleted.", "success");
       }
     });

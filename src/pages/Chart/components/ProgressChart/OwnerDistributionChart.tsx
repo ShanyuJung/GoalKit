@@ -90,9 +90,9 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
     return `${value.substring(0, limit)}...`;
   };
 
-  let barChartWidth = 480;
+  let barChartWidth = 460;
   if (ownerData.length > 5) {
-    barChartWidth = ownerData.length * 96;
+    barChartWidth = ownerData.length * 92;
   }
 
   return (
