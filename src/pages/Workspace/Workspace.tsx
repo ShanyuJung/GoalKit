@@ -44,13 +44,13 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   justify-content: center;
   font-size: 16px;
   font-weight: 900;
-  color: #1976d2;
-  top: 60px;
+  color: #658da6;
+  top: 80px;
   left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
   height: 30px;
   width: 30px;
-  background-color: aliceblue;
-  border-color: #1976d2;
+  background-color: #f2f2f2;
+  border-color: #658da6;
   border-radius: 50%;
   cursor: pointer;
   z-index: 12;
@@ -58,75 +58,109 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
 `;
 
 const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 0px 40px;
-  padding-left: ${(props) => (props.isShowSidebar ? "300px" : "55px")};
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "55px")};
   transition: padding 0.3s;
   overflow: scroll;
+
+  @media (max-width: 550px) {
+    padding-left: 15px;
+  }
 `;
 
 const WorkspaceBanner = styled.div`
-  width: 100%;
-  height: 120px;
+  width: 96%;
+  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36px;
   font-weight: 700;
-  color: #000;
-  border-bottom: 1px solid #ccc;
+  color: #1d3240;
+  border-bottom: 1px solid #658da6;
+  margin: 0px 2%;
+  padding: 0px 20px;
 `;
 
 const ProjectCardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 20px;
   width: 100%;
-  max-width: 1160px;
+  max-width: 1020px;
   margin: 0px auto;
   padding: 35px 50px;
+
+  @media (max-width: 1279px) {
+    max-width: 785px;
+  }
+
+  @media (max-width: 1044px) {
+    max-width: 550px;
+  }
+
+  @media (max-width: 809px) {
+    justify-content: center;
+  }
 `;
 
 const ProjectCard = styled.div`
   position: relative;
   z-index: 1;
-  width: 240px;
+  width: 215px;
+  max-width: 215px;
   height: 100px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 10px 15px;
   border-radius: 5px;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+  background-color: #658da6;
+
+  flex-shrink: 0;
 
   &::before {
-    content: "";
-    background-color: #ddd;
     position: absolute;
-    z-index: -1;
-    width: 240px;
-    height: 100px;
+    content: "";
+    width: 60px;
+    height: 10px;
     border-radius: 5px;
+    background-color: #fafafa;
+    top: 20px;
+    left: 20px;
+    opacity: 0.5;
+    transition: width 0.3s;
   }
 
   &:hover {
+    filter: brightness(110%);
+
     &::before {
-      background-color: #ccc;
+      width: 60%;
+      opacity: 1;
     }
+  }
+
+  @media (max-width: 809px) {
+    flex-grow: 1;
   }
 `;
 
 const ProjectCardTitle = styled.div`
-  font-size: 20px;
+  width: 100%;
+  text-align: right;
+  color: #2c4859;
+  color: #fafafa;
   font-weight: 600;
-  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 18px;
 `;
 
 const ErrorText = styled.div`
@@ -140,25 +174,30 @@ const ErrorText = styled.div`
 const ChatRoomWrapper = styled.div`
   position: absolute;
   z-index: 20;
-  right: 10px;
+  right: 20px;
   bottom: 0;
   width: 340px;
   height: 450px;
-  border: 1px #ddd solid;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #fff;
+  background-color: #f2f2f2;
+  box-shadow: 6px -6px 20px rgba(0, 0, 0, 0.35);
 `;
 
 const ChatRoomHeader = styled.div`
-  height: 40px;
-  background-color: #ddd;
+  min-height: 40px;
+  background-color: #2c4859;
   font-size: 20px;
   line-height: 40px;
-  padding: 0px 5px;
+  padding: 0px 10px;
+  color: #f2f2f2;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: default;
 `;
 
 const MessageArea = styled.div`
@@ -215,9 +254,7 @@ const CloseButton = styled(closeIcon)`
   }
 
   &:hover {
-    path {
-      fill: #555;
-    }
+    filter: brightness(120%);
   }
 `;
 
@@ -232,16 +269,24 @@ const MemberContainer = styled.div`
 const MemberForm = styled.form`
   display: flex;
   gap: 10px;
+  margin: 15px;
+  width: 60%;
 `;
 
 const MemberInput = styled.input`
-  font-size: 18px;
-  width: 250px;
+  margin: 0;
+  font-size: 20px;
+  line-height: 40px;
+  height: 40px;
+  border-radius: 20px;
+  padding: 0px 20px;
+  border: 1px solid #ccc;
+  flex-grow: 1;
 `;
 
 const MemberButton = styled.button`
   color: #fff;
-  background-color: #0085d1;
+  background-color: #658da6;
   border: none;
   margin: 10px;
   font-size: 16px;
@@ -253,18 +298,17 @@ const MemberButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #0079bf;
+    filter: brightness(110%);
   }
 `;
 
 const MemberWrapper = styled.div`
   display: flex;
   align-items: center;
-
   width: 60%;
   gap: 10px;
   padding: 20px;
-  border-bottom: 1px #ccc solid;
+  border-bottom: 1px #658da6 solid;
 
   &:hover {
     background-color: #eee;
@@ -274,16 +318,18 @@ const MemberWrapper = styled.div`
 const MemberName = styled.div`
   font-size: 22px;
   width: 150px;
+  color: #1d3240;
 `;
 
 const MemberEmail = styled.div`
   flex-grow: 1;
   font-size: 16px;
-  color: #555;
+  color: #658da6;
 `;
 
 const MemberType = styled.div`
   font-size: 20px;
+  color: #1d3240;
 `;
 
 interface Member {
@@ -410,6 +456,7 @@ const Workspace = () => {
       const userList = await searchUserHandler(emailString);
       if (!userList || userList.length === 0) {
         Swal.fire("User not found!", "Try another email", "warning");
+        setIsLoading(false);
         return;
       }
       const searchedUser = [...userList][0];
@@ -571,19 +618,19 @@ const Workspace = () => {
               <MemberForm onSubmit={addMemberHandler}>
                 <MemberInput
                   placeholder="Enter email to add member"
-                  type="text"
+                  type="email"
                   required
                   ref={memberRef}
                 />
                 <MemberButton>Add member</MemberButton>
               </MemberForm>
-              {displayMember.map((member) => {
+              {displayMember.map((member, index) => {
                 return (
-                  <MemberWrapper key={member.uid}>
-                    <MemberName>{member.displayName}</MemberName>
-                    <MemberEmail>{member.email}</MemberEmail>
+                  <MemberWrapper key={`member-${index + 1}`}>
+                    <MemberName>{member?.displayName}</MemberName>
+                    <MemberEmail>{member?.email}</MemberEmail>
                     <MemberType>
-                      {member.uid === ownerID ? "Owner" : "Member"}
+                      {member?.uid === ownerID ? "Owner" : "Member"}
                     </MemberType>
                   </MemberWrapper>
                 );

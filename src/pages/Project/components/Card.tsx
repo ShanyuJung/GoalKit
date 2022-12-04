@@ -22,7 +22,7 @@ const Container = styled.div<IsDraggingProps>`
   font-size: 16px;
   font-weight: 400;
   line-height: 20px;
-  box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
   outline: ${(props) => (props.$isDragging ? "2px solid blue" : "none")};
 
   &::before {

@@ -86,10 +86,10 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
 
   return (
     <RadialBarChart
-      width={480}
+      width={460}
       height={300}
       data={[data[0]]}
-      cx={240}
+      cx={230}
       cy={150}
       innerRadius={110}
       outerRadius={130}
@@ -109,7 +109,7 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         fill="#82ca9d"
       />
       <text
-        x={240}
+        x={230}
         y={150}
         textAnchor="middle"
         dominantBaseline="middle"
@@ -120,7 +120,7 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         {`${Math.round((data[0].value / data[0].total) * 100)}`}
       </text>
       <text
-        x={285}
+        x={275}
         y={155}
         textAnchor="middle"
         dominantBaseline="middle"
@@ -131,7 +131,7 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         {`%`}
       </text>
       <text
-        x={240}
+        x={230}
         y={185}
         textAnchor="middle"
         dominantBaseline="middle"

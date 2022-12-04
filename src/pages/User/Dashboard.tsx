@@ -26,39 +26,69 @@ const Wrapper = styled.div`
 const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   background-color: aliceblue;
   flex-grow: 1;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
+  overflow-y: scroll;
+
+  @media (max-width: 550px) {
+    padding-left: 15px;
+  }
 `;
 
 const Workspace = styled.div`
   position: relative;
   z-index: 1;
-  width: 240px;
+  width: 215px;
+  max-width: 215px;
   height: 100px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 10px 15px;
   border-radius: 5px;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+  background-color: #658da6;
+
+  flex-shrink: 0;
 
   &::before {
-    content: "";
-    background-color: #ddd;
     position: absolute;
-    z-index: -1;
-    width: 240px;
-    height: 100px;
+    content: "";
+    width: 60px;
+    height: 10px;
     border-radius: 5px;
+    background-color: #fafafa;
+    top: 20px;
+    left: 20px;
+    opacity: 0.5;
+    transition: width 0.3s;
   }
 
   &:hover {
+    filter: brightness(110%);
+
     &::before {
-      background-color: #ccc;
+      width: 60%;
+      opacity: 1;
     }
   }
+
+  @media (max-width: 809px) {
+    flex-grow: 1;
+  }
+`;
+
+const Text = styled.div`
+  width: 100%;
+  text-align: right;
+  color: #2c4859;
+  color: #fafafa;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 18px;
 `;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
@@ -68,13 +98,13 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   justify-content: center;
   font-size: 16px;
   font-weight: 900;
-  color: #1976d2;
-  top: 60px;
+  color: #658da6;
+  top: 80px;
   left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
   height: 30px;
   width: 30px;
-  background-color: aliceblue;
-  border-color: #1976d2;
+  background-color: #f2f2f2;
+  border-color: #658da6;
   border-radius: 50%;
   cursor: pointer;
   z-index: 12;
@@ -82,15 +112,17 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
 `;
 
 const WorkspaceBanner = styled.div`
-  width: 100%;
-  height: 120px;
+  width: 96%;
+  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36px;
   font-weight: 700;
-  color: #000;
-  border-bottom: 1px solid #ccc;
+  color: #1d3240;
+  border-bottom: 1px solid #658da6;
+  margin: 0px 2%;
+  padding: 0px 20px;
 `;
 
 const WorkspaceSubBanner = styled.div`
@@ -101,17 +133,30 @@ const WorkspaceSubBanner = styled.div`
   justify-content: center;
   font-size: 28px;
   font-weight: 600;
-  color: #000;
+  color: #1d3240;
 `;
 
 const WorkspaceListWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 20px;
   width: 100%;
-  max-width: 1160px;
+  max-width: 1020px;
   margin: 0px auto;
   padding: 35px 50px;
+
+  @media (max-width: 1279px) {
+    max-width: 785px;
+  }
+
+  @media (max-width: 1044px) {
+    max-width: 550px;
+  }
+
+  @media (max-width: 809px) {
+    justify-content: center;
+  }
 `;
 
 const Loading = styled(ReactLoading)`
@@ -234,7 +279,7 @@ const Dashboard = () => {
                         navigate(`/workspace/${workspace.id}`);
                       }}
                     >
-                      {workspace.title}
+                      <Text>{workspace.title}</Text>
                     </Workspace>
                   );
                 })}
@@ -255,7 +300,7 @@ const Dashboard = () => {
                     navigate(`/workspace/${workspace.id}`);
                   }}
                 >
-                  {workspace.title}
+                  <Text>{workspace.title}</Text>
                 </Workspace>
               );
             })

@@ -22,7 +22,7 @@ const Container = styled.div<IsDraggingProps>`
   margin: 0px 5px;
   background-color: #ebecf0;
   padding: 10px 3px 10px 10px;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.35);
   outline: ${(props) => (props.$isDragging ? "2px solid blue" : "none")};
   min-width: 283px;
 
@@ -40,8 +40,8 @@ const Container = styled.div<IsDraggingProps>`
 `;
 
 const Wrapper = styled.div`
-  /* max-height: calc(100vh - 150px);
-  overflow-y: scroll; */
+  /* max-height: calc(100vh - 180px); */
+  /* overflow-y: scroll; */
   position: relative;
   z-index: 5;
 
@@ -116,7 +116,7 @@ const MoreModal = styled.div<{ isShow: boolean }>`
   padding: 5px;
   top: -5px;
   right: 107px;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.35);
   z-index: 20;
 `;
 
@@ -280,8 +280,9 @@ const List = ({
       text: "You won't be able to revert this!",
       type: "warning",
       showCancelButton: true,
-      cancelButtonColor: "#d33",
+      cancelButtonColor: "#658da6b4",
       confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
         deleteList(id);

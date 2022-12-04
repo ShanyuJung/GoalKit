@@ -13,22 +13,28 @@ interface StylesProps {
 
 const SidebarWrapper = styled.div<StylesProps>`
   background-color: ${(props) =>
-    props.isShow ? "#1976d2" : "rgba(25,118,210,0.2)"};
+    props.isShow ? "#658DA6" : "rgba(25,118,210,0.2)"};
   width: ${(props) => (props.isShow ? "260px" : "15px")};
   flex-shrink: 0;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   transition: width 0.3s;
   position: fixed;
   z-index: 10;
+  filter: brightness(115%);
 `;
 
 const WorkspaceTitleWrapper = styled.div<StylesProps>`
   height: 55px;
-  display: flex;
   align-items: center;
   padding: 0px 20px;
   justify-content: space-between;
-  border-bottom: ${(props) => (props.isShow ? "1px #ddd solid" : "none")};
+  border-bottom: ${(props) => (props.isShow ? "2px #f2f2f2 solid" : "none")};
+  display: ${(props) => (props.isShow ? "flex" : "none")};
+  background-color: #658da6;
+
+  &:hover {
+    filter: brightness(90%);
+  }
 `;
 
 const WorkspaceTitle = styled.div<StylesProps>`
@@ -36,17 +42,12 @@ const WorkspaceTitle = styled.div<StylesProps>`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #fff;
+  color: #f2f2f2;
   font-weight: bold;
   display: ${(props) => (props.isShow ? "block" : "none")};
   cursor: pointer;
-  border-bottom: solid 2px transparent;
   transition: border-bottom-color 0.3s ease-out;
-
-  &:hover {
-    font-weight: 900;
-    border-bottom: solid 2px #fff;
-  }
+  font-weight: 900;
 `;
 
 const LinkList = styled.div<StylesProps>`
@@ -56,7 +57,6 @@ const LinkList = styled.div<StylesProps>`
 `;
 
 const LinkWrapper = styled.div`
-  width: 100%;
   height: 50px;
   display: flex;
   flex-wrap: nowrap;
@@ -64,9 +64,10 @@ const LinkWrapper = styled.div`
   justify-content: flex-start;
   padding: 0px 20px;
   cursor: pointer;
+  background-color: #658da6;
 
   &:hover {
-    background-color: #156cc2;
+    filter: brightness(90%);
   }
 `;
 

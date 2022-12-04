@@ -237,17 +237,19 @@ const CardDetailSideBar: React.FC<Props> = ({
   };
 
   const checkDeleteCardHandler = () => {
+    if (!cardId) return;
     Swal.fire({
       title: "Confirm to delete selected card",
       text: "You won't be able to revert this!",
       type: "warning",
       showCancelButton: true,
-      cancelButtonColor: "#d33",
+      cancelButtonColor: "#658da6b4",
       confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
+        onDelete(cardId);
         navigate(`/project/${id}`);
-        onDelete(cardId || "");
         Swal.fire("Deleted!", "Selected card has been deleted.", "success");
       }
     });

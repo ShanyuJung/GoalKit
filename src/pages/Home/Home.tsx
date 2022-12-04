@@ -11,7 +11,7 @@ const Wrapper = styled.div<{ $url: string | null }>`
   justify-content: center;
   overflow: scroll;
   gap: 15px;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
 
   &::before {
     content: "";
@@ -21,8 +21,10 @@ const Wrapper = styled.div<{ $url: string | null }>`
     left: 0;
     width: 100vw;
     height: calc(100vh - 50px);
-    background-color: #1565c0;
-    opacity: 0.5;
+    background-color: #2c4859;
+    background: linear-gradient(#1d3240, #658da6, #000);
+    mix-blend-mode: screen;
+    filter: brightness(70%);
   }
 
   &::after {
@@ -33,31 +35,79 @@ const Wrapper = styled.div<{ $url: string | null }>`
     z-index: -2;
     background-image: ${(props) =>
       props.$url ? `url(${props.$url})` : `url(${placeholder})`};
-
+    filter: ${(props) => (props.$url ? "blur(0px)" : "blur(4px)")};
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: 50% 0%;
     width: 100%;
     height: calc(100vh - 50px);
     opacity: 0.5;
+    animation: picture-loading 1s;
+  }
+
+  @keyframes picture-loading {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0.5;
+    }
   }
 `;
 
 const LandingText = styled.div`
-  font-size: 64px;
+  font-size: 60px;
   font-weight: 700;
-  color: #fff;
-  width: 80%;
-  max-width: 1280px;
+  line-height: 70px;
+  color: #f2f2f2;
+  width: 90%;
+  max-width: 1152px;
   text-align: center;
+  margin-bottom: 15px;
+  animation: text-loading 1s;
+
+  @keyframes text-loading {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
 `;
 
 const LandingDescription = styled.div`
   font-size: 30px;
-  font-weight: 500;
-  color: #fff;
-  width: 75%;
-  max-width: 1280px;
+  line-height: 40px;
+  font-weight: 600;
+  color: #f2dac4;
+  width: 80%;
+  max-width: 1024px;
   text-align: center;
+  margin-bottom: 10px;
+  animation: text-description-loading 1s;
+
+  @keyframes text-description-loading {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    30% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
 `;
 
 const LandingButton = styled.button`
@@ -67,11 +117,29 @@ const LandingButton = styled.button`
   border-radius: 10px;
   border: none;
   color: #fff;
-  background-color: #85bf31;
+  background-color: #67a3c9;
   cursor: pointer;
+  box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.25);
+  animation: button-loading 1s;
 
   &:hover {
-    box-shadow: 0px 3px 0px rgba(0, 0, 0, 0.35);
+    filter: brightness(110%);
+  }
+
+  @keyframes button-loading {
+    0% {
+      transform: translateY(-30px);
+
+      opacity: 0;
+    }
+    30% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0px);
+
+      opacity: 1;
+    }
   }
 `;
 

@@ -80,9 +80,9 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     return `${value.substring(0, limit)}...`;
   };
 
-  let barChartWidth = 480;
+  let barChartWidth = 460;
   if (tagsData.length > 5) {
-    barChartWidth = tagsData.length * 96;
+    barChartWidth = tagsData.length * 92;
   }
 
   return (
