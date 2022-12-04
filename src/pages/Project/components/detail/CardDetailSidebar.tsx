@@ -237,6 +237,7 @@ const CardDetailSideBar: React.FC<Props> = ({
   };
 
   const checkDeleteCardHandler = () => {
+    if (!cardId) return;
     Swal.fire({
       title: "Confirm to delete selected card",
       text: "You won't be able to revert this!",
@@ -247,8 +248,7 @@ const CardDetailSideBar: React.FC<Props> = ({
       confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
-        console.log("123");
-        onDelete(cardId || "");
+        onDelete(cardId);
         navigate(`/project/${id}`);
         Swal.fire("Deleted!", "Selected card has been deleted.", "success");
       }
