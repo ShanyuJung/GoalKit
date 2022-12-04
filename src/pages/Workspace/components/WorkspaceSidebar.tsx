@@ -22,11 +22,11 @@ const SidebarWrapper = styled.div<StylesProps>`
 
 const WorkspaceTitleWrapper = styled.div<StylesProps>`
   height: 55px;
-  display: flex;
   align-items: center;
   padding: 0px 20px;
   justify-content: space-between;
   border-bottom: ${(props) => (props.isShow ? "2px #f2f2f2 solid" : "none")};
+  display: ${(props) => (props.isShow ? "flex" : "none")};
   background-color: #658da6;
 
   &:hover {

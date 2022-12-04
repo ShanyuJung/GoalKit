@@ -46,7 +46,7 @@ const Container = styled.div`
 `;
 
 const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   flex-grow: 1;
   margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: margin 0.3s;
@@ -83,7 +83,7 @@ const ListWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow-x: scroll;
-  height: calc(100vh - 50px - 40px);
+  height: calc(100vh - 70px - 40px);
 `;
 
 const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
@@ -93,13 +93,13 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   justify-content: center;
   font-size: 16px;
   font-weight: 900;
-  color: #1976d2;
-  top: 60px;
+  color: #658da6;
+  top: 80px;
   left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
   height: 30px;
   width: 30px;
-  background-color: aliceblue;
-  border-color: #1976d2;
+  background-color: #f2f2f2;
+  border-color: #658da6;
   border-radius: 50%;
   cursor: pointer;
   z-index: 12;

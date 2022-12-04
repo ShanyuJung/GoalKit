@@ -11,13 +11,14 @@ interface StylesProps {
 
 const SidebarWrapper = styled.div<StylesProps>`
   background-color: ${(props) =>
-    props.isShow ? "#1976d2" : "rgba(25,118,210,0.2)"};
+    props.isShow ? "#658DA6" : "rgba(25,118,210,0.2)"};
   width: ${(props) => (props.isShow ? "260px" : "15px")};
   flex-shrink: 0;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 70px);
   transition: width 0.3s;
   position: fixed;
   z-index: 10;
+  filter: brightness(115%);
 `;
 
 const LinkList = styled.div<StylesProps>`
@@ -35,11 +36,11 @@ const LinkWrapper = styled.div<{ $selected?: boolean }>`
   justify-content: flex-start;
   padding: 0px 20px;
   cursor: pointer;
-  background-color: ${(props) => (props.$selected ? "#165fa8" : "")};
-  border-right: ${(props) => (props.$selected ? "5px solid #ccc" : "")};
+  background-color: #658da6;
+  filter: ${(props) => (props.$selected ? "brightness(90%)" : "")};
 
   &:hover {
-    background-color: #156cc2;
+    filter: brightness(90%);
   }
 `;
 
