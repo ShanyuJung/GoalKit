@@ -39,6 +39,7 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
+import { async } from "@firebase/util";
 
 const Container = styled.div`
   display: flex;
@@ -188,31 +189,13 @@ const Project = () => {
   const [keyword, setKeyword] = useState("");
   const [isFilter, setIsFilter] = useState(false);
 
-  useEffect(() => {
-    if (!keyword.trim()) {
-      setIsFilter(false);
-      return;
-    }
-    setIsFilter(true);
-  }, [keyword]);
-
-  useEffect(() => {
-    if (!response) {
-      setIsExist(false);
-      return;
-    }
-    setIsExist(true);
-    setProject(response);
-    setLists(response.lists);
-  }, [response]);
-
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
 
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, { lists: [...newList] });
+      await updateDoc(projectRef, { lists: newList });
     } catch {
       Swal.fire("Something went wrong!", "Please try again later", "warning");
     }
@@ -316,7 +299,7 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
-  const deleteCardHandler = (targetCardID: string) => {
+  const deleteCardHandler = async (targetCardID: string) => {
     const parentIndex = lists.findIndex((list) => {
       return list.cards.find((card) => card.id === targetCardID);
     });
@@ -400,6 +383,24 @@ const Project = () => {
   }, [project]);
 
   useEffect(() => {
+    if (!keyword.trim()) {
+      setIsFilter(false);
+      return;
+    }
+    setIsFilter(true);
+  }, [keyword]);
+
+  useEffect(() => {
+    if (!response) {
+      setIsExist(false);
+      return;
+    }
+    setIsExist(true);
+    setProject(response);
+    setLists(response.lists);
+  }, [response]);
+
+  useEffect(() => {
     if (!id) return;
     const projectRef = doc(db, "projects", id);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
@@ -408,7 +409,9 @@ const Project = () => {
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
         setLists(snapshot.data()?.lists);
-      } else setIsExist(false);
+      } else {
+        setIsExist(false);
+      }
     });
 
     return () => {
@@ -494,7 +497,7 @@ const Project = () => {
                 onClose={onCloseHandler}
               />
             ) : (
-              <div></div>
+              <></>
             )}
           </Modal>
         )}
