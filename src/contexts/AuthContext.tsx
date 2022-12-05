@@ -161,7 +161,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!currentUser || currentUser.uid === undefined) return;
+    if (!currentUser || currentUser.uid === "") return;
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
