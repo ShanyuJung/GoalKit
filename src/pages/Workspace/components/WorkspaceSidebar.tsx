@@ -138,7 +138,7 @@ const WorkspaceSidebar: React.FC<Props> = ({
         <WorkspaceTitle
           isShow={isShow}
           onClick={() => {
-            navigate(`/dashboard`);
+            navigate("/dashboard");
           }}
         >
           Back to DashBoard

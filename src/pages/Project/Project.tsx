@@ -39,7 +39,6 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
-import { async } from "@firebase/util";
 
 const Container = styled.div`
   display: flex;

@@ -84,7 +84,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
     return <ErrorText>Members are not found.</ErrorText>;
   }
 
-  const tickFormatter = (value: string, index: number) => {
+  const tickFormatter = (value: string) => {
     const limit = 8; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;

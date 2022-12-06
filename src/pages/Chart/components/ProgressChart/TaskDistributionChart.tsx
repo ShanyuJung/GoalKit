@@ -130,7 +130,7 @@ const TaskDistribution: React.FC<Props> = ({ lists }) => {
   const [data, setData] = useState(DUMMY_DATA);
   const [activeIndex, setActiveIndex] = useState(0);
   const onPieEnter = useCallback(
-    (_: any, index: number) => {
+    (_: number, index: number) => {
       setActiveIndex(index);
     },
     [setActiveIndex]

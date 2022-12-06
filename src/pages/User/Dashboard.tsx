@@ -183,6 +183,7 @@ const Dashboard = () => {
   const { currentUser } = useAuth();
 
   const getWorkspaceHandler = async () => {
+    if (!currentUser) return;
     const userID = currentUser.uid;
     const workspaceRef = collection(db, "workspaces");
     const q = query(workspaceRef, where("owner", "==", userID));
@@ -198,7 +199,7 @@ const Dashboard = () => {
   };
 
   const newWorkspaceHandler = async (newWorkspaceTitle: string) => {
-    if (isLoading) return;
+    if (isLoading || !currentUser) return;
     try {
       setIsLoading(true);
       const setRef = doc(collection(db, "workspaces"));
@@ -221,6 +222,7 @@ const Dashboard = () => {
   };
 
   const getGuestWorkspaceHandler = async () => {
+    if (!currentUser) return;
     const userID = currentUser.uid;
     const workspaceRef = collection(db, "workspaces");
     const q = query(

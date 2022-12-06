@@ -481,7 +481,8 @@ const Workspace = () => {
 
   const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!messageRef.current?.value.trim() || !id || isSending) return;
+    if (!currentUser || !messageRef.current?.value.trim() || !id || isSending)
+      return;
     try {
       setIsSending(true);
       const newMessage = messageRef.current?.value.trim();
@@ -542,7 +543,6 @@ const Workspace = () => {
       orderBy("time", "asc")
     );
     const unsubscribe = onSnapshot(chatRoomRef, (querySnapshot) => {
-      const data = querySnapshot.docs;
       const messageFormat: MessageInterface[] = [];
       const messageList = produce(messageFormat, (draftState) => {
         querySnapshot.forEach((doc) => {
