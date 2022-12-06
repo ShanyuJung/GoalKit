@@ -198,6 +198,7 @@ const CardDetail: React.FC<Props> = ({
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
   const [isEditDate, setIsEditDate] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const { id, cardId } = useParams();
 
@@ -394,6 +395,11 @@ const CardDetail: React.FC<Props> = ({
     dispatch({ type: "UPDATE_TODO", payload: { todo: newTodo } });
   };
 
+  const deleteCardHandler = (targetCardID: string) => {
+    setIsDelete(true);
+    onDelete(targetCardID);
+  };
+
   useEffect(() => {
     const curCardHandler = () => {
       if (!cardId || listsArray.length === 0) return;
@@ -435,7 +441,7 @@ const CardDetail: React.FC<Props> = ({
   }, [state.owner, members]);
 
   useEffect(() => {
-    if (state.id === "" || isExist === false) return;
+    if (state.id === "" || isExist === false || isDelete) return;
     const newLists = newListHandler(state);
     updateDataHandler(newLists);
   }, [state]);
@@ -464,7 +470,7 @@ const CardDetail: React.FC<Props> = ({
           onCheck={completeTodoHandler}
           onDelete={deleteTodoHandler}
         />
-        <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
+        <Tags tagsIDs={state.tagsIDs} tags={tags} />
         <Owners
           ownerInfo={ownerInfo || []}
           removeOwnerHandler={removeOwnerHandler}
@@ -505,7 +511,7 @@ const CardDetail: React.FC<Props> = ({
       <ContainerWrapper>
         <>{cardInfo()}</>
         <CardDetailSideBar
-          onDelete={onDelete}
+          onDelete={deleteCardHandler}
           todoHandler={addNewTodoHandler}
           setIsEditDate={setIsEditDate}
           members={members || []}

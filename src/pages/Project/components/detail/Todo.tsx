@@ -167,21 +167,21 @@ const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
         </Progressbar>
       </ProgressbarWrapper>
       <TodoListWrapper>
-        {todo.map((item) => {
+        {todo.map(({ id, isDone, title }) => {
           return (
-            <TodoWrapper key={item.id}>
+            <TodoWrapper key={id}>
               <TodoCheckbox
-                id={`todo-${item.id}`}
+                id={`todo-${id}`}
                 type="checkbox"
-                checked={item.isDone}
+                checked={isDone}
                 onChange={(e) => {
-                  onCheckHandler(e, item.id);
+                  onCheckHandler(e, id);
                 }}
               />
-              <TodoLabel htmlFor={`todo-${item.id}`}>{item.title}</TodoLabel>
+              <TodoLabel htmlFor={`todo-${id}`}>{title}</TodoLabel>
               <CloseButton
                 onClick={() => {
-                  onDeleteHandler(item.id);
+                  onDeleteHandler(id);
                 }}
               />
             </TodoWrapper>

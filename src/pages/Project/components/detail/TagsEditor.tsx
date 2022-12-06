@@ -405,9 +405,9 @@ const TagsEditor: React.FC<Props> = ({
       const projectRef = doc(db, "projects", id);
       const newTags = produce(tags, (draftState) => {
         draftState.forEach((tag) => {
-          if (tag.id === selectTag.id) {
+          if (tag.id === selectTag.id && editTagRef.current?.value.trim()) {
             tag.colorCode = selectColor;
-            tag.title = editTagRef.current?.value.trim()!;
+            tag.title = editTagRef.current?.value.trim();
           }
         });
       });
@@ -486,9 +486,9 @@ const TagsEditor: React.FC<Props> = ({
     return (
       <TagEditBoardWrapper>
         <EditBoardTitleWrapper>
-          <EditBoardCancelButton
-            onClick={stopEditHandler}
-          >{`<`}</EditBoardCancelButton>
+          <EditBoardCancelButton onClick={stopEditHandler}>
+            {"<"}
+          </EditBoardCancelButton>
           <EditBoardTitle>Edit </EditBoardTitle>
         </EditBoardTitleWrapper>
         <NewTagInputForm

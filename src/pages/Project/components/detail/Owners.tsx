@@ -108,23 +108,21 @@ const Owners: React.FC<Props> = ({ ownerInfo, removeOwnerHandler }) => {
         <OwnerTitle>Owner:</OwnerTitle>
       </TitleWrapper>
       <OwnerList>
-        {ownerInfo && ownerInfo.length > 0 ? (
-          ownerInfo?.map((owner) => {
-            return (
-              <OwnerWrapper key={owner.uid}>
-                <OwnerPoint />
-                <Owner>{owner.displayName}</Owner>
-                <RemoveOwnerButton
-                  onClick={() => {
-                    removeOwnerHandler(owner.uid);
-                  }}
-                />
-              </OwnerWrapper>
-            );
-          })
-        ) : (
-          <></>
-        )}
+        {ownerInfo && ownerInfo.length > 0
+          ? ownerInfo?.map((owner) => {
+              return (
+                <OwnerWrapper key={owner.uid}>
+                  <OwnerPoint />
+                  <Owner>{owner.displayName}</Owner>
+                  <RemoveOwnerButton
+                    onClick={() => {
+                      removeOwnerHandler(owner.uid);
+                    }}
+                  />
+                </OwnerWrapper>
+              );
+            })
+          : null}
       </OwnerList>
     </OwnerContainer>
   );

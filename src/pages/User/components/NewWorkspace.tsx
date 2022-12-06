@@ -136,7 +136,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
     event.preventDefault();
     if (!textRef.current?.value) return;
     onSubmit(textRef.current?.value || "");
-    textRef.current!.value = "";
+    textRef.current.value = "";
   };
 
   return (
@@ -154,9 +154,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
             <TextArea placeholder=" Type workspace name ..." ref={textRef} />
             <Button>Add new Workspace</Button>
           </Form>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </FormWrapper>
     </Wrapper>
   );

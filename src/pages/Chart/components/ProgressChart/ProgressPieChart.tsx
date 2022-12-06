@@ -128,7 +128,7 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
         fontSize={20}
         fill="#666"
       >
-        {`%`}
+        {"%"}
       </text>
       <text
         x={230}

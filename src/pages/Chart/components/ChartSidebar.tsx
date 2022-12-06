@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as projectIcon } from "../../../assets/board-svgrepo-com.svg";
-import { ReactComponent as chartIcon } from "../../../assets/bar-chart-svgrepo-com.svg";
 import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
 import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
 
@@ -67,18 +66,6 @@ const LinkText = styled.div`
 
 const ProjectLogo = styled(projectIcon)`
   width: 24px;
-  margin-right: 10px;
-  path {
-    fill: #fff;
-  }
-
-  rect {
-    fill: #fff;
-  }
-`;
-
-const ChartLogo = styled(chartIcon)`
-  width: 20px;
   margin-right: 10px;
   path {
     fill: #fff;

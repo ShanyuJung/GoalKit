@@ -29,7 +29,7 @@ interface User {
 }
 
 interface AuthContextInterface {
-  currentUser: any;
+  currentUser: User | null;
   signup(email: string, password: string, displayName: string): void;
   login(email: string, password: string): void;
   logout(): void;
@@ -70,9 +70,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email: response.user.email,
       displayName: displayName,
     });
-    await updateProfile(auth.currentUser!, {
-      displayName: displayName,
-    });
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, {
+        displayName: displayName,
+      });
+    }
     await setDoc(doc(db, "users", response.user.uid), {
       uid: response.user.uid,
       email: response.user.email,
@@ -91,6 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
       const isOfflineForDatabase = {
         state: "offline",
+        // eslint-disable-next-line camelcase
         last_changed: serverTimestamp(),
       };
       set(userStatusDatabaseRef, isOfflineForDatabase);
@@ -161,19 +164,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!currentUser || currentUser.uid === undefined) return;
+    if (!currentUser || currentUser.uid === "") return;
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const userStatusDatabaseRef = ref(db, `/status/${currentUser.uid}`);
 
-    var isOfflineForDatabase = {
+    const isOfflineForDatabase = {
       state: "offline",
+      // eslint-disable-next-line camelcase
       last_changed: serverTimestamp(),
     };
 
-    var isOnlineForDatabase = {
+    const isOnlineForDatabase = {
       state: "online",
+      // eslint-disable-next-line camelcase
       last_changed: serverTimestamp(),
     };
 

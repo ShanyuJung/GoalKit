@@ -88,6 +88,8 @@ const Message: React.FC<Props> = ({
     }/${newTime.getDate()} ${newTime.getHours()}:${newTime.getMinutes()}`;
   }
 
+  if (!currentUser) return <></>;
+
   return (
     <>
       <MessageWrapper

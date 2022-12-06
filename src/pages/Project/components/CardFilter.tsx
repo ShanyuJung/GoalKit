@@ -142,9 +142,7 @@ const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
       <DropdownWrapper $isToggle={isToggle}>
         {isToggle ? (
           <DropdownMenuList>{dropdownContent()}</DropdownMenuList>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </DropdownWrapper>
     </Container>
   );

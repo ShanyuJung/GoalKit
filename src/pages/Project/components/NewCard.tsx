@@ -86,7 +86,7 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
     event.preventDefault();
     if (!textRef.current?.value) return;
     onSubmit(textRef.current?.value || "", parentID);
-    textRef.current!.value = "";
+    textRef.current.value = "";
   };
 
   useOnClickOutside(ref, clickOutsideHandler);

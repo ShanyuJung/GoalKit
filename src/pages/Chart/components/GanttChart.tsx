@@ -167,11 +167,6 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
   };
 
   useEffect(() => {
-    const progressHandler = (
-      isComplete: boolean,
-      todo: { title: string; isDone: boolean; id: string }[]
-    ) => {};
-
     const listTransformHandler = () => {
       if (lists.length === 0) return;
 
@@ -221,7 +216,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
     listTransformHandler();
   }, [lists]);
 
-  const displayChart = () => {
+  const renderDisplayChart = () => {
     if (tasks.length === 0) {
       return (
         <div>
@@ -278,7 +273,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
           </TogglePillWrapper>
         </ChartDashboardWrapper>
       </Wrapper>
-      <ChartWrapper>{displayChart()}</ChartWrapper>
+      <ChartWrapper>{renderDisplayChart()}</ChartWrapper>
     </Container>
   );
 };

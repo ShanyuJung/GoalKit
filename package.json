@@ -54,6 +54,10 @@
   "devDependencies": {
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/styled-components": "^5.1.26",
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.29.0",
+    "eslint-plugin-react": "^7.31.11"
   }
 }

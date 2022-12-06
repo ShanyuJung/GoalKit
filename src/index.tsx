@@ -39,7 +39,11 @@ const router = createBrowserRouter(
         element={<Project />}
         loader={firstRenderProjectHandler}
       />
-      <Route path="project/:id/card/:cardId" element={<Project />} />
+      <Route
+        path="project/:id/card/:cardId"
+        element={<Project />}
+        loader={firstRenderProjectHandler}
+      />
       <Route path="project/:id/chart/:chartType" element={<Chart />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>

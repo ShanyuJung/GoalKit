@@ -136,7 +136,7 @@ const NewProject = ({ onSubmit }: Props) => {
     event.preventDefault();
     if (!textRef.current?.value) return;
     onSubmit(textRef.current?.value || "");
-    textRef.current!.value = "";
+    textRef.current.value = "";
   };
 
   return (
@@ -154,9 +154,7 @@ const NewProject = ({ onSubmit }: Props) => {
             <TextArea placeholder="  Type project name ..." ref={textRef} />
             <Button>Add new project</Button>
           </Form>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </FormWrapper>
     </Wrapper>
   );

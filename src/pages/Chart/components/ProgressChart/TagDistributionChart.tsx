@@ -74,7 +74,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     );
   }
 
-  const tickFormatter = (value: string, index: number) => {
+  const tickFormatter = (value: string) => {
     const limit = 8; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;

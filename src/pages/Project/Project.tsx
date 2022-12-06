@@ -106,6 +106,14 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   transition: left 0.3s;
 `;
 
+const ErrorText = styled.div`
+  margin-top: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+`;
+
 interface CardInterface {
   title: string;
   id: string;
@@ -188,31 +196,13 @@ const Project = () => {
   const [keyword, setKeyword] = useState("");
   const [isFilter, setIsFilter] = useState(false);
 
-  useEffect(() => {
-    if (!keyword.trim()) {
-      setIsFilter(false);
-      return;
-    }
-    setIsFilter(true);
-  }, [keyword]);
-
-  useEffect(() => {
-    if (!response) {
-      setIsExist(false);
-      return;
-    }
-    setIsExist(true);
-    setProject(response);
-    setLists(response.lists);
-  }, [response]);
-
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
 
     try {
       setIsLoading(true);
       const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, { lists: [...newList] });
+      await updateDoc(projectRef, { lists: newList });
     } catch {
       Swal.fire("Something went wrong!", "Please try again later", "warning");
     }
@@ -316,7 +306,7 @@ const Project = () => {
     updateDataHandler(newLists);
   };
 
-  const deleteCardHandler = (targetCardID: string) => {
+  const deleteCardHandler = async (targetCardID: string) => {
     const parentIndex = lists.findIndex((list) => {
       return list.cards.find((card) => card.id === targetCardID);
     });
@@ -400,6 +390,24 @@ const Project = () => {
   }, [project]);
 
   useEffect(() => {
+    if (!keyword.trim()) {
+      setIsFilter(false);
+      return;
+    }
+    setIsFilter(true);
+  }, [keyword]);
+
+  useEffect(() => {
+    if (!response) {
+      setIsExist(false);
+      return;
+    }
+    setIsExist(true);
+    setProject(response);
+    setLists(response.lists);
+  }, [response]);
+
+  useEffect(() => {
     if (!id) return;
     const projectRef = doc(db, "projects", id);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
@@ -408,7 +416,9 @@ const Project = () => {
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
         setLists(snapshot.data()?.lists);
-      } else setIsExist(false);
+      } else {
+        setIsExist(false);
+      }
     });
 
     return () => {
@@ -416,7 +426,7 @@ const Project = () => {
     };
   }, []);
 
-  const projectBoard = () => {
+  const renderProjectBoard = () => {
     return (
       <Droppable
         droppableId={id || "default"}
@@ -483,9 +493,9 @@ const Project = () => {
   return (
     <PrivateRoute>
       <>
-        {cardId && (
+        {cardId !== undefined && (
           <Modal onClose={onCloseHandler}>
-            {lists ? (
+            {lists.length > 0 ? (
               <CardDetail
                 listsArray={[...lists]}
                 tags={project?.tags || undefined}
@@ -493,9 +503,7 @@ const Project = () => {
                 onDelete={deleteCardHandler}
                 onClose={onCloseHandler}
               />
-            ) : (
-              <div></div>
-            )}
+            ) : null}
           </Modal>
         )}
         <Container>
@@ -510,7 +518,9 @@ const Project = () => {
           </ShowSidebarButton>
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
-              <TitleWrapper>{project && project.title}</TitleWrapper>
+              <TitleWrapper>
+                {project !== undefined && project.title}
+              </TitleWrapper>
               <CardFilter keyword={keyword} setKeyword={setKeyword} />
               <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
@@ -518,8 +528,10 @@ const Project = () => {
               onDragEnd={onDragEndHandler}
               onDragStart={isDraggingHandler}
             >
-              {isExist && projectBoard()}
-              {isExist === false && <div>Project is not exist.</div>}
+              {isExist && renderProjectBoard()}
+              {isExist === false && (
+                <ErrorText>Project is not exist.</ErrorText>
+              )}
             </DragDropContext>
           </BorderWrapper>
         </Container>

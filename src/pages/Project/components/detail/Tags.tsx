@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import styled from "styled-components";
 import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
 
@@ -87,12 +86,9 @@ const TagsIcon = styled(tagsIcon)`
 interface Props {
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
-  onChange(newTags: string[]): void;
 }
 
-const Tags: React.FC<Props> = ({ tagsIDs, tags, onChange }) => {
-  const newTagRef = useRef<HTMLInputElement | null>(null);
-
+const Tags: React.FC<Props> = ({ tagsIDs, tags }) => {
   return (
     <TagsContainer>
       <TagTitleWrapper>

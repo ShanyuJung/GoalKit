@@ -207,7 +207,10 @@ const Profile = () => {
       return;
     }
 
-    if (nameRef.current.value.trim() === currentUser.displayName) {
+    if (
+      currentUser &&
+      nameRef.current.value.trim() === currentUser.displayName
+    ) {
       setErrorMessage("New name is same to previous one.");
       return;
     }
@@ -262,10 +265,12 @@ const Profile = () => {
     return (
       <>
         <ImageWrapper>
-          {currentUser.photoURL ? (
+          {currentUser && currentUser.photoURL ? (
             <Image $background={currentUser.photoURL} />
           ) : (
-            <DefaultImage>{currentUser.displayName.charAt()}</DefaultImage>
+            <DefaultImage>
+              {currentUser ? currentUser.displayName.charAt(0) : ""}
+            </DefaultImage>
           )}
           <ImageInputWrapper>
             <ImageInputLabel>
@@ -284,11 +289,11 @@ const Profile = () => {
         </ImageWrapper>
         <ProfileTextWrapper>
           <ProfileTitle>Name:</ProfileTitle>
-          <ProfileText>{currentUser.displayName}</ProfileText>
+          <ProfileText>{currentUser && currentUser.displayName}</ProfileText>
         </ProfileTextWrapper>
         <ProfileTextWrapper>
           <ProfileTitle>Email:</ProfileTitle>
-          <ProfileText>{currentUser.email}</ProfileText>
+          <ProfileText>{currentUser && currentUser.email}</ProfileText>
         </ProfileTextWrapper>
         <SubmitButton
           disabled={isLoading}
@@ -310,7 +315,7 @@ const Profile = () => {
         <AuthInput
           labelText="Name"
           type="text"
-          defaultValue={currentUser.displayName}
+          defaultValue={currentUser ? currentUser.displayName : ""}
           ref={nameRef}
         />
         <SubmitButton>Update Profile</SubmitButton>

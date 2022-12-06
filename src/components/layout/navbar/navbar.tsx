@@ -119,7 +119,7 @@ const Navbar = () => {
           navigate("/dashboard");
         }}
       >
-        {currentUser.displayName.charAt()}
+        {currentUser ? currentUser?.displayName?.charAt(0) : ""}
       </LoginUserIcon>
     );
   };

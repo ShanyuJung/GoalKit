@@ -9,13 +9,6 @@ const ErrorText = styled.div`
   font-size: 16px;
 `;
 
-const DUMMY_DATA = [
-  { name: "Complete", value: 0, total: 0 },
-  { name: "In Progress", value: 0, total: 0 },
-  { name: "Over Time", value: 0, total: 0 },
-  { name: "Without Plan", value: 0, total: 0 },
-];
-
 const DUMMY_TIME_DATA = { start: 0, end: 1, passed: 0 };
 
 interface CardInterface {
@@ -136,7 +129,7 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         fontSize={20}
         fill="#666"
       >
-        {`%`}
+        {"%"}
       </text>
       <text
         x={230}
