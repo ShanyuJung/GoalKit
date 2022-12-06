@@ -62,6 +62,25 @@ const DropdownTitle = styled.div`
   border-bottom: 1px #999 solid;
 `;
 
+const ClearFilterCriteriaButton = styled(closeIcon)`
+  position: relative;
+  top: 0px;
+  right: 3px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+
+  path {
+    fill: #777;
+  }
+
+  &:hover {
+    path {
+      fill: #333;
+    }
+  }
+`;
+
 const CloseButton = styled(closeIcon)`
   position: absolute;
   top: 3px;
@@ -79,6 +98,31 @@ const CloseButton = styled(closeIcon)`
       fill: #333;
     }
   }
+`;
+
+const ClearKeywordButton = styled(closeIcon)`
+  position: absolute;
+  top: 57px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+
+  path {
+    fill: #777;
+  }
+
+  &:hover {
+    path {
+      fill: #333;
+    }
+  }
+`;
+
+const WarningText = styled.div`
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #e74c3c;
 `;
 
 const DropdownInputWrapper = styled.div`
@@ -102,8 +146,15 @@ interface Props {
 const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
   const [isToggle, setIsToggle] = useState(false);
   const ref = useRef(null);
+  const textRef = useRef<HTMLInputElement>(null);
 
   useOnClickOutside(ref, () => setIsToggle(false));
+
+  const clearKeywordHandler = () => {
+    if (!textRef.current) return;
+    setKeyword("");
+    textRef.current.value = "";
+  };
 
   const dropdownContent = () => {
     return (
@@ -122,8 +173,14 @@ const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
             onChange={(e) => {
               setKeyword(e.target.value);
             }}
+            ref={textRef}
           />
+          {keyword && <ClearKeywordButton onClick={clearKeywordHandler} />}
         </DropdownInputWrapper>
+
+        <WarningText>
+          Drag and drop feature will not work while filtering cards
+        </WarningText>
       </DropdownChildrenWrapper>
     );
   };
@@ -138,6 +195,7 @@ const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
       >
         <FilterIcon />
         <FilterTitle>Filter Criteria</FilterTitle>
+        {keyword && <ClearFilterCriteriaButton onClick={clearKeywordHandler} />}
       </Wrapper>
       <DropdownWrapper $isToggle={isToggle}>
         {isToggle ? (
