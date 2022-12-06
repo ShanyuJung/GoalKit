@@ -216,7 +216,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
     listTransformHandler();
   }, [lists]);
 
-  const displayChart = () => {
+  const renderDisplayChart = () => {
     if (tasks.length === 0) {
       return (
         <div>
@@ -273,7 +273,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
           </TogglePillWrapper>
         </ChartDashboardWrapper>
       </Wrapper>
-      <ChartWrapper>{displayChart()}</ChartWrapper>
+      <ChartWrapper>{renderDisplayChart()}</ChartWrapper>
     </Container>
   );
 };

@@ -154,9 +154,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
             <TextArea placeholder=" Type workspace name ..." ref={textRef} />
             <Button>Add new Workspace</Button>
           </Form>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </FormWrapper>
     </Wrapper>
   );

@@ -106,6 +106,14 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   transition: left 0.3s;
 `;
 
+const ErrorText = styled.div`
+  margin-top: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+`;
+
 interface CardInterface {
   title: string;
   id: string;
@@ -418,7 +426,7 @@ const Project = () => {
     };
   }, []);
 
-  const projectBoard = () => {
+  const renderProjectBoard = () => {
     return (
       <Droppable
         droppableId={id || "default"}
@@ -485,9 +493,9 @@ const Project = () => {
   return (
     <PrivateRoute>
       <>
-        {cardId && (
+        {cardId !== undefined && (
           <Modal onClose={onCloseHandler}>
-            {lists ? (
+            {lists.length > 0 ? (
               <CardDetail
                 listsArray={[...lists]}
                 tags={project?.tags || undefined}
@@ -495,9 +503,7 @@ const Project = () => {
                 onDelete={deleteCardHandler}
                 onClose={onCloseHandler}
               />
-            ) : (
-              <></>
-            )}
+            ) : null}
           </Modal>
         )}
         <Container>
@@ -512,7 +518,9 @@ const Project = () => {
           </ShowSidebarButton>
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
-              <TitleWrapper>{project && project.title}</TitleWrapper>
+              <TitleWrapper>
+                {project !== undefined && project.title}
+              </TitleWrapper>
               <CardFilter keyword={keyword} setKeyword={setKeyword} />
               <OnlineMembers memberIDs={memberIDs} />
             </SubNavbar>
@@ -520,8 +528,10 @@ const Project = () => {
               onDragEnd={onDragEndHandler}
               onDragStart={isDraggingHandler}
             >
-              {isExist && projectBoard()}
-              {isExist === false && <div>Project is not exist.</div>}
+              {isExist && renderProjectBoard()}
+              {isExist === false && (
+                <ErrorText>Project is not exist.</ErrorText>
+              )}
             </DragDropContext>
           </BorderWrapper>
         </Container>

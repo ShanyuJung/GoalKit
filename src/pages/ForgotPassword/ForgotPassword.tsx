@@ -198,19 +198,11 @@ const ForgotPassword = () => {
         <CardWrapper>
           <Card>
             <CardTitle>Reset Email</CardTitle>
-            {message || errorMessage ? (
-              <></>
-            ) : (
+            {message || errorMessage ? null : (
               <DescriptionText>Request reset password email</DescriptionText>
             )}
-            {message === "" ? (
-              <></>
-            ) : (
-              <MessageWrapper>{message}</MessageWrapper>
-            )}
-            {errorMessage === "" ? (
-              <></>
-            ) : (
+            {message !== "" && <MessageWrapper>{message}</MessageWrapper>}
+            {errorMessage !== "" && (
               <ErrorMessageWrapper>{errorMessage}</ErrorMessageWrapper>
             )}
             <Form onSubmit={submitHandler}>
@@ -224,7 +216,6 @@ const ForgotPassword = () => {
           <Text>
             {"Don't have an account? "}
             <StyledLink to="/signup" $fontWeight={600}>
-              {" "}
               Signup
             </StyledLink>
           </Text>

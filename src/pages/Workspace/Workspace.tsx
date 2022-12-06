@@ -203,7 +203,6 @@ const ChatRoomHeader = styled.div`
 const MessageArea = styled.div`
   overflow-y: scroll;
   flex-grow: 1;
-
   padding: 5px 10px;
 `;
 
@@ -481,8 +480,9 @@ const Workspace = () => {
 
   const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!currentUser || !messageRef.current?.value.trim() || !id || isSending)
+    if (!currentUser || !messageRef.current?.value.trim() || !id || isSending) {
       return;
+    }
     try {
       setIsSending(true);
       const newMessage = messageRef.current?.value.trim();
@@ -577,7 +577,7 @@ const Workspace = () => {
     scrollToBottomHandler();
   }, [messages]);
 
-  const projectList = () => {
+  const renderProjectList = () => {
     return (
       <>
         {isExist && (
@@ -603,7 +603,7 @@ const Workspace = () => {
     );
   };
 
-  const memberList = () => {
+  const renderMemberList = () => {
     const displayMember = produce(membersInfo, (draftState) => {
       const index = draftState.findIndex((member) => member.uid === ownerID);
       const [owner] = draftState.splice(index, 1);
@@ -643,7 +643,7 @@ const Workspace = () => {
     );
   };
 
-  const chatRoom = () => {
+  const renderChatRoom = () => {
     if (!isExist || membersInfo.length === 0) return <></>;
     return (
       <ChatRoomWrapper>
@@ -655,19 +655,19 @@ const Workspace = () => {
         />
         <MessageArea>
           {messages.length > 0 &&
-            messages.map((message) => {
+            messages.map(({ userID, id, message, time }) => {
               const index = membersInfo.findIndex(
-                (member) => member.uid === message.userID
+                (member) => member.uid === userID
               );
               return (
                 <Message
-                  key={message.id}
-                  messageUserID={message.userID}
+                  key={id}
+                  messageUserID={userID}
                   userFirstChar={
                     membersInfo[index]?.displayName.charAt(0) || ""
                   }
-                  messageText={message.message}
-                  messageTime={message.time}
+                  messageText={message}
+                  messageTime={time}
                   messagePhoto={membersInfo[index]?.photoURL || ""}
                 />
               );
@@ -709,10 +709,10 @@ const Workspace = () => {
         </ShowSidebarButton>
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
           <WorkspaceBanner>{title}</WorkspaceBanner>
-          {contentType === "project" ? projectList() : <></>}
-          {contentType === "member" ? memberList() : <></>}
+          {contentType === "project" && renderProjectList()}
+          {contentType === "member" && renderMemberList()}
         </ProjectsWrapper>
-        <>{isShowChatRoom ? chatRoom() : <></>}</>
+        <>{isShowChatRoom && renderChatRoom()}</>
       </Wrapper>
     </PrivateRoute>
   );

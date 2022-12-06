@@ -470,7 +470,7 @@ const CardDetail: React.FC<Props> = ({
           onCheck={completeTodoHandler}
           onDelete={deleteTodoHandler}
         />
-        <Tags tagsIDs={state.tagsIDs} tags={tags} onChange={selectTagHandler} />
+        <Tags tagsIDs={state.tagsIDs} tags={tags} />
         <Owners
           ownerInfo={ownerInfo || []}
           removeOwnerHandler={removeOwnerHandler}

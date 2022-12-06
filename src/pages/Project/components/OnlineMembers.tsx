@@ -75,9 +75,9 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
     };
   }, [memberIDs]);
 
-  return (
-    <Wrapper>
-      <MemberList>
+  const renderMemberIcon = () => {
+    return (
+      <>
         {membersInfo.length > 0 &&
           membersInfo.map((member, index) => {
             if (member.state === "online" && index < 3 && member.photoURL) {
@@ -102,7 +102,13 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
               );
             }
           })}
-      </MemberList>
+      </>
+    );
+  };
+
+  return (
+    <Wrapper>
+      <MemberList>{renderMemberIcon()}</MemberList>
     </Wrapper>
   );
 };

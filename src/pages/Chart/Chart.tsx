@@ -168,14 +168,13 @@ const Chart = () => {
           draftState.push(docData);
         });
       });
-      // setMemberIDs(curWorkspaces[0].members);
       setMembers(curMembers);
     };
 
     getMembersHandler();
   }, [project]);
 
-  const chartHandler = () => {
+  const renderDisplayChart = () => {
     if (!project) return;
     if (chartType === "gantt") {
       return <GanttChart lists={project.lists} />;
@@ -209,7 +208,7 @@ const Chart = () => {
               {isExist ? project?.title : "Project is not exist"}
             </ProjectTitle>
           </SubNavbar>
-          {isExist && chartHandler()}
+          {isExist && renderDisplayChart()}
         </ChartArea>
       </Container>
     </PrivateRoute>

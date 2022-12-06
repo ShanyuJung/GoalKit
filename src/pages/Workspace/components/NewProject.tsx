@@ -154,9 +154,7 @@ const NewProject = ({ onSubmit }: Props) => {
             <TextArea placeholder="  Type project name ..." ref={textRef} />
             <Button>Add new project</Button>
           </Form>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </FormWrapper>
     </Wrapper>
   );
