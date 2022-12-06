@@ -212,7 +212,7 @@ const Signup = () => {
             </Form>
           </Card>
           <Text>
-            Already have an account?{" "}
+            {"Already have an account? "}
             <StyledLink to="/login" $fontWeight={600}>
               Login
             </StyledLink>

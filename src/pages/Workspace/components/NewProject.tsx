@@ -136,7 +136,7 @@ const NewProject = ({ onSubmit }: Props) => {
     event.preventDefault();
     if (!textRef.current?.value) return;
     onSubmit(textRef.current?.value || "");
-    textRef.current!.value = "";
+    textRef.current.value = "";
   };
 
   return (

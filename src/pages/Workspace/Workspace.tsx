@@ -712,7 +712,7 @@ const Workspace = () => {
           {contentType === "project" ? projectList() : <></>}
           {contentType === "member" ? memberList() : <></>}
         </ProjectsWrapper>
-        <>{isShowChatRoom && chatRoom()}</>
+        <>{isShowChatRoom ? chatRoom() : <></>}</>
       </Wrapper>
     </PrivateRoute>
   );

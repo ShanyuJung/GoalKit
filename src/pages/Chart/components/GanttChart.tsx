@@ -167,11 +167,6 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
   };
 
   useEffect(() => {
-    const progressHandler = (
-      isComplete: boolean,
-      todo: { title: string; isDone: boolean; id: string }[]
-    ) => {};
-
     const listTransformHandler = () => {
       if (lists.length === 0) return;
 
