@@ -317,7 +317,7 @@ const List = ({
             <LogoWrapper ref={ref}>
               <MoreIcon
                 onClick={() => {
-                  setIsShowModal((prev) => !prev);
+                  setIsShowModal((prevIsShowModal) => !prevIsShowModal);
                 }}
               />
               <ModalWrapper>

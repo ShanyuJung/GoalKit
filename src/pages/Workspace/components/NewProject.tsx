@@ -129,7 +129,7 @@ const NewProject = ({ onSubmit }: Props) => {
   useOnClickOutside(ref, () => setIsEdit(false));
 
   const editHandler = () => {
-    setIsEdit((prev) => !prev);
+    setIsEdit((prevIsEdit) => !prevIsEdit);
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {

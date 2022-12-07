@@ -58,7 +58,7 @@ const DropdownButton: React.FC<Props> = ({
   const ref = useRef(null);
 
   const toggleHandler = () => {
-    setIsToggle((prev) => !prev);
+    setIsToggle((prevToggle) => !prevToggle);
   };
 
   useOnClickOutside(ref, () => setIsToggle(false));

@@ -95,7 +95,7 @@ const Message: React.FC<Props> = ({
       <MessageWrapper
         isCurrentUser={currentUser.uid === messageUserID}
         onClick={() => {
-          setIsShowTime((prev) => !prev);
+          setIsShowTime((prevIsShowTime) => !prevIsShowTime);
         }}
       >
         {messagePhoto ? (

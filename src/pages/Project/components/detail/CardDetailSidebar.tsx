@@ -236,7 +236,7 @@ const CardDetailSideBar: React.FC<Props> = ({
         <ButtonListItem>
           <CardFeatureButton
             onClick={() => {
-              setIsEditDate((prev) => !prev);
+              setIsEditDate((prevIsEdit) => !prevIsEdit);
             }}
           >
             <DateIcon />

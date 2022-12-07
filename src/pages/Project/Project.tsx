@@ -473,7 +473,7 @@ const Project = () => {
           <ShowSidebarButton
             isShowSidebar={isShowSidebar}
             onClick={() => {
-              setIsShowSidebar((prev) => !prev);
+              setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
             }}
           >
             {isShowSidebar ? "<" : ">"}

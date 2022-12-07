@@ -107,10 +107,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateDoc(userRef, {
       photoURL: url,
     });
-    setCurrentUser((prev) => {
-      if (prev === null) return prev;
+    setCurrentUser((prevCurrentUser) => {
+      if (prevCurrentUser === null) return prevCurrentUser;
       return {
-        ...prev,
+        ...prevCurrentUser,
         photoURL: url,
       };
     });
@@ -126,10 +126,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       displayName: newName,
     });
 
-    setCurrentUser((prev) => {
-      if (prev === null) return prev;
+    setCurrentUser((prevCurrentUser) => {
+      if (prevCurrentUser === null) return prevCurrentUser;
       return {
-        ...prev,
+        ...prevCurrentUser,
         displayName: newName,
       };
     });

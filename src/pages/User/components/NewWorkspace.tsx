@@ -129,7 +129,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
   useOnClickOutside(ref, () => setIsEdit(false));
 
   const editHandler = () => {
-    setIsEdit((prev) => !prev);
+    setIsEdit((prevEdit) => !prevEdit);
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {

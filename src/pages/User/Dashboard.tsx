@@ -316,7 +316,7 @@ const Dashboard = () => {
         <ShowSidebarButton
           isShowSidebar={isShowSidebar}
           onClick={() => {
-            setIsShowSidebar((prev) => !prev);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         >
           {isShowSidebar ? "<" : ">"}
