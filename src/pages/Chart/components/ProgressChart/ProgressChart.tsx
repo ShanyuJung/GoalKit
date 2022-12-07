@@ -4,7 +4,7 @@ import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
 import DurationChart from "./DurationChart";
-import { CardInterface, Member } from "../../../../types";
+import { CardInterface, MemberInterface } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -52,7 +52,7 @@ interface ListInterface {
 interface Props {
   lists: ListInterface[];
   tags: { id: string; colorCode: string; title: string }[];
-  members: Member[];
+  members: MemberInterface[];
 }
 
 const ProgressChart: React.FC<Props> = ({ lists, tags, members }) => {

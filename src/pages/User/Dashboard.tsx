@@ -18,7 +18,7 @@ import DashboardSidebar from "./components/DashboardSidebar";
 import Profile from "./components/Profile";
 import Swal from "sweetalert2";
 import ReactLoading from "react-loading";
-import { Workspace } from "../../types";
+import { WorkspaceInterface } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -165,8 +165,10 @@ const Loading = styled(ReactLoading)`
 `;
 
 const Dashboard = () => {
-  const [workspaces, setWorkspace] = useState<Workspace[]>([]);
-  const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspace] = useState<WorkspaceInterface[]>([]);
+  const [guestWorkspaces, setGuestWorkspace] = useState<WorkspaceInterface[]>(
+    []
+  );
   const [contentType, setContentType] = useState("workspace");
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
@@ -179,10 +181,10 @@ const Dashboard = () => {
     const workspaceRef = collection(db, "workspaces");
     const q = query(workspaceRef, where("owner", "==", userID));
     const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
+    const emptyArr: WorkspaceInterface[] = [];
     const newWorkspaces = produce(emptyArr, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
+        const docData = doc.data() as WorkspaceInterface;
         draftState.push(docData);
       });
     });
@@ -221,10 +223,10 @@ const Dashboard = () => {
       where("members", "array-contains-any", [userID])
     );
     const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
+    const emptyArr: WorkspaceInterface[] = [];
     const newWorkspaces = produce(emptyArr, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
+        const docData = doc.data() as WorkspaceInterface;
         if (docData.owner !== userID) {
           draftState.push(docData);
         }

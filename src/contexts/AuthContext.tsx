@@ -18,10 +18,10 @@ import {
   ref,
   onValue,
 } from "firebase/database";
-import { Member } from "../types";
+import { MemberInterface } from "../types";
 
 interface AuthContextInterface {
-  currentUser: Member | null;
+  currentUser: MemberInterface | null;
   signup(email: string, password: string, displayName: string): void;
   login(email: string, password: string): void;
   logout(): void;
@@ -39,7 +39,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<Member | null>({
+  const [currentUser, setCurrentUser] = useState<MemberInterface | null>({
     uid: "",
     email: "",
     displayName: "",
@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoading(false);
-      const curUser = user as Member;
+      const curUser = user as MemberInterface;
       setCurrentUser(curUser);
     });
 

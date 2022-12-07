@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { db } from "../../../firebase";
 import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
 import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
+import { WorkspaceInterface } from "../../../types";
 
 interface StylesProps {
   isShow: boolean;
@@ -116,14 +117,6 @@ const PieChartIcon = styled(pieChartIcon)`
   }
 `;
 
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
-}
-
 interface Props {
   title: string | undefined;
   isShow: boolean;
@@ -143,10 +136,10 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
         where("projects", "array-contains-any", [{ id: id, title: title }])
       );
       const querySnapshot = await getDocs(q);
-      const emptyArr: Workspace[] = [];
+      const emptyArr: WorkspaceInterface[] = [];
       const [newWorkspaces] = produce(emptyArr, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
+          const docData = doc.data() as WorkspaceInterface;
           draftState.push(docData);
         });
       });

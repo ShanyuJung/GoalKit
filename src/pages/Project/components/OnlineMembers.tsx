@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { db } from "../../../firebase";
-import { Member } from "../../../types";
+import { MemberInterface } from "../../../types";
 
 const Wrapper = styled.div``;
 
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
-  const [membersInfo, setMembersInfo] = useState<Member[]>([]);
+  const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -44,10 +44,10 @@ const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
     const colRef = collection(db, "users");
     const q = query(colRef, where("uid", "in", memberIDs));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const emptyArr: Member[] = [];
+      const emptyArr: MemberInterface[] = [];
       const newMembers = produce(emptyArr, (draftState) => {
         snapshot.forEach((doc) => {
-          const newDoc = doc.data() as Member;
+          const newDoc = doc.data() as MemberInterface;
           if (newDoc.state === "online") {
             draftState.push(newDoc);
           }

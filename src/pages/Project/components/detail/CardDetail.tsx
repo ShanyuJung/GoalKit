@@ -14,7 +14,7 @@ import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
-import { CardInterface, Member } from "../../../../types";
+import { CardInterface, MemberInterface } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -94,7 +94,7 @@ interface ListInterface {
 interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
-  members?: Member[];
+  members?: MemberInterface[];
   onDelete: (targetCardID: string) => void;
   onClose: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
@@ -177,7 +177,7 @@ const CardDetail: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
+  const [ownerInfo, setOwnerInfo] = useState<MemberInterface[]>([]);
   const [isEditDate, setIsEditDate] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -407,7 +407,7 @@ const CardDetail: React.FC<Props> = ({
     const setOwnerInfoHandler = () => {
       if (!state.owner || !members) return;
 
-      const emptyArr: Member[] = [];
+      const emptyArr: MemberInterface[] = [];
       const newOwnerInfo = produce(emptyArr, (draftState) => {
         members.forEach((member) => {
           if (state.owner?.includes(member.uid)) {

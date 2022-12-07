@@ -38,7 +38,7 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
-import { CardInterface, Member, Workspace } from "../../types";
+import { CardInterface, Member, WorkspaceInterface } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -334,10 +334,10 @@ const Project = () => {
         ])
       );
       const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: Workspace[] = [];
+      const emptyWorkspaceArr: WorkspaceInterface[] = [];
       const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
+          const docData = doc.data() as WorkspaceInterface;
           draftState.push(docData);
         });
       });

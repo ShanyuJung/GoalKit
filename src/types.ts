@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-export interface Member {
+export interface MemberInterface {
   uid: string;
   email: string;
   displayName: string;
@@ -9,7 +9,7 @@ export interface Member {
   photoURL?: string;
 }
 
-export interface Workspace {
+export interface WorkspaceInterface {
   id: string;
   owner: string;
   title: string;

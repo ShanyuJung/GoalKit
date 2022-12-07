@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { CardInterface, Member } from "../../../../types";
+import { CardInterface, MemberInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -26,7 +26,7 @@ interface ListInterface {
 
 interface Props {
   lists: ListInterface[];
-  members: Member[];
+  members: MemberInterface[];
 }
 
 const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {

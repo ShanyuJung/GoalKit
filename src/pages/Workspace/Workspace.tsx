@@ -32,7 +32,7 @@ import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import Swal from "sweetalert2";
 import Message from "./components/Message";
-import { Member } from "../../types";
+import { MemberInterface } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -371,7 +371,7 @@ const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
-  const [membersInfo, setMembersInfo] = useState<Member[]>([]);
+  const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
   const [contentType, setContentType] = useState("project");
   const [ownerID, setOwnerID] = useState("");
   const [title, setTitle] = useState("");
@@ -421,10 +421,10 @@ const Workspace = () => {
     const userRef = collection(db, "users");
     const q = query(userRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
-    const usersFormat: Member[] = [];
+    const usersFormat: MemberInterface[] = [];
     const userList = produce(usersFormat, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const user = doc.data() as Member;
+        const user = doc.data() as MemberInterface;
         draftState.push(user);
       });
     });
@@ -515,10 +515,10 @@ const Workspace = () => {
       const usersRef = collection(db, "users");
       const userQ = query(usersRef, where("uid", "in", memberIDs));
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });

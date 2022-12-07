@@ -16,7 +16,11 @@ import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
-import { CardInterface, Member, Workspace } from "../../types";
+import {
+  CardInterface,
+  MemberInterface,
+  WorkspaceInterface,
+} from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -89,7 +93,7 @@ const Chart = () => {
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 
@@ -120,10 +124,10 @@ const Chart = () => {
         ])
       );
       const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: Workspace[] = [];
+      const emptyWorkspaceArr: WorkspaceInterface[] = [];
       const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
+          const docData = doc.data() as WorkspaceInterface;
           draftState.push(docData);
         });
       });
@@ -133,10 +137,10 @@ const Chart = () => {
         where("uid", "in", curWorkspaces[0].members)
       );
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });

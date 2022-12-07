@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
-import { Member } from "../../../../types";
+import { MemberInterface } from "../../../../types";
 
 const OwnerContainer = styled.div`
   margin: 10px;
@@ -83,7 +83,7 @@ const RemoveOwnerButton = styled(closeIcon)`
 `;
 
 interface Props {
-  ownerInfo: Member[];
+  ownerInfo: MemberInterface[];
   removeOwnerHandler(id: string): void;
 }
 

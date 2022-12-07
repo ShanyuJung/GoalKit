@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
-import { CardInterface, Member } from "../../../types";
+import { CardInterface, MemberInterface } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -207,7 +207,7 @@ interface Props {
   id: string;
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
-  members: Member[];
+  members: MemberInterface[];
   draggingLists: { listID: string; displayName: string }[] | undefined;
   draggingCards: { cardID: string; displayName: string }[] | undefined;
   deleteList: (targetListID: string) => void;

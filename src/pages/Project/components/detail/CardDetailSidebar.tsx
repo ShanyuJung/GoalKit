@@ -9,7 +9,7 @@ import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
 import Swal from "sweetalert2";
-import { CardInterface, Member } from "../../../../types";
+import { CardInterface, MemberInterface } from "../../../../types";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -184,7 +184,7 @@ interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
   setIsEditDate: (value: boolean | ((prevVar: boolean) => boolean)) => void;
-  members: Member[];
+  members: MemberInterface[];
   addOwnerHandler(id: string): void;
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
