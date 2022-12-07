@@ -442,7 +442,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  const tagSelector = () => {
+  const renderTagSelector = () => {
     return (
       <TagSelectorList>
         {tags &&
@@ -482,7 +482,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  const tagEditBoard = () => {
+  const renderTagEditBoard = () => {
     return (
       <TagEditBoardWrapper>
         <EditBoardTitleWrapper>
@@ -517,7 +517,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  return <>{isEdit ? tagEditBoard() : tagSelector()}</>;
+  return <>{isEdit ? renderTagEditBoard() : renderTagSelector()}</>;
 };
 
 export default TagsEditor;

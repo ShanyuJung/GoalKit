@@ -213,7 +213,7 @@ const Time: React.FC<Props> = ({
         <DateIcon />
         <TimeTitle>Date:</TimeTitle>
       </TimeTitleWrapper>
-      {curStart && curDeadline ? (
+      {curStart !== undefined && curDeadline !== undefined ? (
         <TimeCheckboxWrapper>
           <TimeCheckbox
             type="checkbox"
@@ -230,9 +230,7 @@ const Time: React.FC<Props> = ({
             </TimeCheckboxLabel>
           </TimeLabelWrapper>
         </TimeCheckboxWrapper>
-      ) : (
-        <></>
-      )}
+      ) : null}
       <TimeEditAreaWrapper isEdit={isEdit}>
         <Form onSubmit={submitHandler}>
           <TimeInputWrapper>

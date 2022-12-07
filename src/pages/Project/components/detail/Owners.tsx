@@ -98,7 +98,7 @@ interface Props {
 
 const Owners: React.FC<Props> = ({ ownerInfo, removeOwnerHandler }) => {
   if (ownerInfo?.length === 0) {
-    return <></>;
+    return null;
   }
 
   return (

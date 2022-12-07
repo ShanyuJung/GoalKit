@@ -261,7 +261,7 @@ const Profile = () => {
     uploadUserPhotoHandler();
   }, [imageUpload]);
 
-  const profileCard = () => {
+  const renderProfileCard = () => {
     return (
       <>
         <ImageWrapper>
@@ -309,7 +309,7 @@ const Profile = () => {
     );
   };
 
-  const editBoard = () => {
+  const renderEditBoard = () => {
     return (
       <Form onSubmit={onSubmitHandler}>
         <AuthInput
@@ -327,13 +327,11 @@ const Profile = () => {
     <Wrapper>
       <Card>
         <EditTitle>Update Profile</EditTitle>
-        {message === "" ? <></> : <MessageWrapper>{message}</MessageWrapper>}
-        {errorMessage === "" ? (
-          <></>
-        ) : (
+        {message === "" ? null : <MessageWrapper>{message}</MessageWrapper>}
+        {errorMessage === "" ? null : (
           <ErrorMessageWrapper>{errorMessage}</ErrorMessageWrapper>
         )}
-        {isEdit ? editBoard() : profileCard()}
+        {isEdit ? renderEditBoard() : renderProfileCard()}
       </Card>
       {isEdit ? (
         <EndEdit
@@ -346,9 +344,7 @@ const Profile = () => {
         >
           Back to Dashboard
         </EndEdit>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </Wrapper>
   );
 };

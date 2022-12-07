@@ -74,7 +74,7 @@ const DropdownButton: React.FC<Props> = ({
         {text}
       </CardFeatureButton>
       <DropdownWrapper isToggle={isToggle}>
-        {isToggle ? <DropdownMenuList>{children}</DropdownMenuList> : <></>}
+        {isToggle ? <DropdownMenuList>{children}</DropdownMenuList> : null}
       </DropdownWrapper>
     </ButtonListItem>
   );

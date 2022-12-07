@@ -216,7 +216,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const time = () => {
+  const renderTime = () => {
     if (cardInfo.time?.start && cardInfo.time?.deadline) {
       const startDate = new Date(cardInfo.time.start);
       const startMonth = startDate.getMonth();
@@ -233,9 +233,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     }
   };
 
-  const tagsCollection = () => {
+  const renderTagsCollection = () => {
     if (!cardInfo.tagsIDs || cardInfo.tagsIDs.length === 0) {
-      return <></>;
+      return null;
     }
 
     return (
@@ -256,7 +256,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     );
   };
 
-  const ownerList = () => {
+  const renderOwnerList = () => {
     const displayOwner = cardInfo.owner
       ?.map((owner) => {
         const curOwner = members.find((member) => member.uid === owner);
@@ -292,9 +292,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     );
   };
 
-  const todoList = () => {
+  const renderTodoList = () => {
     if (!cardInfo.todo || cardInfo.todo?.length === 0) {
-      return <></>;
+      return null;
     }
     const total = cardInfo.todo.length;
     let done = 0;
@@ -351,15 +351,15 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       }}
     >
       <Wrapper>
-        {cardInfo.tagsIDs && tags && tagsCollection()}
+        {cardInfo.tagsIDs && tags && renderTagsCollection()}
         <TitleWrapper>{cardInfo.title}</TitleWrapper>
         <ConditionWrapper>
           <ConditionGroupWrapper>
-            {cardInfo.time?.start && cardInfo.time?.deadline && time()}
+            {cardInfo.time?.start && cardInfo.time?.deadline && renderTime()}
             {cardInfo.description && <DescriptionIcon />}
-            {cardInfo.todo && todoList()}
+            {cardInfo.todo && renderTodoList()}
           </ConditionGroupWrapper>
-          {cardInfo.owner && ownerList()}
+          {cardInfo.owner && renderOwnerList()}
         </ConditionWrapper>
       </Wrapper>
     </Container>

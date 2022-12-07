@@ -644,7 +644,7 @@ const Workspace = () => {
   };
 
   const renderChatRoom = () => {
-    if (!isExist || membersInfo.length === 0) return <></>;
+    if (!isExist || membersInfo.length === 0) return null;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
@@ -712,7 +712,7 @@ const Workspace = () => {
           {contentType === "project" && renderProjectList()}
           {contentType === "member" && renderMemberList()}
         </ProjectsWrapper>
-        <>{isShowChatRoom && renderChatRoom()}</>
+        {isShowChatRoom && renderChatRoom()}
       </Wrapper>
     </PrivateRoute>
   );

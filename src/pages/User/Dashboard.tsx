@@ -262,7 +262,7 @@ const Dashboard = () => {
     getDataHandler();
   }, []);
 
-  const workspaceList = () => {
+  const renderWorkspaceList = () => {
     return (
       <>
         <WorkspaceSubBanner>My workspace</WorkspaceSubBanner>
@@ -333,8 +333,8 @@ const Dashboard = () => {
             <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
           )}
 
-          {contentType === "workspace" ? workspaceList() : <></>}
-          {contentType === "profile" ? <Profile /> : <></>}
+          {contentType === "workspace" && renderWorkspaceList()}
+          {contentType === "profile" && <Profile />}
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>

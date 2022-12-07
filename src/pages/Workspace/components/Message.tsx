@@ -88,7 +88,7 @@ const Message: React.FC<Props> = ({
     }/${newTime.getDate()} ${newTime.getHours()}:${newTime.getMinutes()}`;
   }
 
-  if (!currentUser) return <></>;
+  if (!currentUser) return null;
 
   return (
     <>
@@ -113,9 +113,7 @@ const Message: React.FC<Props> = ({
         <Time isCurrentUser={currentUser.uid === messageUserID}>
           {newTimeString}
         </Time>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 };

@@ -24,7 +24,7 @@ const Wrapper = styled.div`
   min-height: 65vh;
   display: flex;
   flex-direction: column;
-  width: 410px;
+  flex-grow: 1;
   padding-right: 10px;
 `;
 
@@ -446,8 +446,8 @@ const CardDetail: React.FC<Props> = ({
     updateDataHandler(newLists);
   }, [state]);
 
-  const cardInfo = () => {
-    if (state.id === "") return;
+  const renderCardInfo = () => {
+    if (state.id === "") return null;
 
     return (
       <Wrapper>
@@ -509,7 +509,7 @@ const CardDetail: React.FC<Props> = ({
         />
       </TitleWrapper>
       <ContainerWrapper>
-        <>{cardInfo()}</>
+        {renderCardInfo()}
         <CardDetailSideBar
           onDelete={deleteCardHandler}
           todoHandler={addNewTodoHandler}
