@@ -3,6 +3,7 @@ import { Gantt, Task, ViewMode } from "gantt-task-react";
 import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
 import { useParams } from "react-router-dom";
+import { CardInterface } from "../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -110,17 +111,6 @@ const TogglePillText = styled.label`
   font-size: 16px;
   font-weight: 400;
 `;
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
 
 interface ListInterface {
   id: string;

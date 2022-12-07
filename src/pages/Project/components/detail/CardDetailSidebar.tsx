@@ -9,7 +9,7 @@ import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
 import Swal from "sweetalert2";
-import { Member } from "../../../../types";
+import { CardInterface, Member } from "../../../../types";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -173,17 +173,6 @@ const TagsIcon = styled(tagsIcon)`
     fill: #777;
   }
 `;
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
 
 interface ListInterface {
   id: string;

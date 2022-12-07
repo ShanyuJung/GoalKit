@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { PieChart, Pie, Sector, Cell } from "recharts";
 import { useCallback, useEffect, useState } from "react";
 import produce from "immer";
+import { CardInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -104,17 +105,6 @@ const renderActiveShape = (props: PieChartProps) => {
     </g>
   );
 };
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
 
 interface ListInterface {
   id: string;

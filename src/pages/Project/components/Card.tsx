@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as descriptionIcon } from "../../../assets/text-description-svgrepo-com.svg";
 import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com.svg";
-import { Member } from "../../../types";
+import { CardInterface, Member } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -180,17 +180,6 @@ const TodoText = styled.div<{ $isAllDone: boolean }>`
   font-size: 12px;
   color: ${(props) => (props.$isAllDone ? "#008000" : "#828282")};
 `;
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
 
 interface Props {
   cardInfo: CardInterface;

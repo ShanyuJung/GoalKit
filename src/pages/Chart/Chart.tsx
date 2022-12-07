@@ -16,7 +16,7 @@ import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
-import { Member, Workspace } from "../../types";
+import { CardInterface, Member, Workspace } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -68,17 +68,6 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   z-index: 12;
   transition: left 0.3s;
 `;
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
 
 interface ListInterface {
   id: string;
