@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
-import { CardInterface, MemberInterface } from "../../../types";
+import { CardInterface, ListInterface, MemberInterface } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -194,12 +194,6 @@ const MoveAllButton = styled.button`
     background-color: #999;
   }
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   title: string;

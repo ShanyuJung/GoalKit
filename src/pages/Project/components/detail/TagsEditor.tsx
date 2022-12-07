@@ -7,7 +7,7 @@ import { db } from "../../../../firebase";
 import { uuidv4 } from "@firebase/util";
 import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
 import Swal from "sweetalert2";
-import { CardInterface } from "../../../../types";
+import { ListInterface } from "../../../../types";
 
 const TagSelectorList = styled.div`
   display: flex;
@@ -244,12 +244,6 @@ const TAG_COLOR_LIST = [
   "#C1C7D0",
   "#777777",
 ];
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Tag {
   id: string;

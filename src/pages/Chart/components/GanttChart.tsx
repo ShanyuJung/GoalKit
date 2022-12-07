@@ -3,7 +3,7 @@ import { Gantt, Task, ViewMode } from "gantt-task-react";
 import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
 import { useParams } from "react-router-dom";
-import { CardInterface } from "../../../types";
+import { ListInterface } from "../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -111,12 +111,6 @@ const TogglePillText = styled.label`
   font-size: 16px;
   font-weight: 400;
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   lists: ListInterface[];

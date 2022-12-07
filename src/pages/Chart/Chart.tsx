@@ -17,7 +17,7 @@ import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
 import {
-  CardInterface,
+  ListInterface,
   MemberInterface,
   WorkspaceInterface,
 } from "../../types";
@@ -72,12 +72,6 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   z-index: 12;
   transition: left 0.3s;
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface ProjectInterface {
   id: string;

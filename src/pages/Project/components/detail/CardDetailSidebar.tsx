@@ -9,7 +9,7 @@ import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
 import Swal from "sweetalert2";
-import { CardInterface, MemberInterface } from "../../../../types";
+import { ListInterface, MemberInterface } from "../../../../types";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -173,12 +173,6 @@ const TagsIcon = styled(tagsIcon)`
     fill: #777;
   }
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   onDelete: (targetCardID: string) => void;

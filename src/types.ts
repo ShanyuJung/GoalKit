@@ -27,3 +27,9 @@ export interface CardInterface {
   complete?: boolean;
   todo?: { title: string; isDone: boolean; id: string }[];
 }
+
+export interface ListInterface {
+  id: string;
+  title: string;
+  cards: CardInterface[];
+}

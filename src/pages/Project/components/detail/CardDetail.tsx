@@ -14,7 +14,11 @@ import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
-import { CardInterface, MemberInterface } from "../../../../types";
+import {
+  CardInterface,
+  ListInterface,
+  MemberInterface,
+} from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -84,12 +88,6 @@ const CloseButton = styled(closeIcon)`
     }
   }
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   listsArray: ListInterface[];

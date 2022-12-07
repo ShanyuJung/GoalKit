@@ -38,7 +38,11 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
-import { CardInterface, Member, WorkspaceInterface } from "../../types";
+import {
+  ListInterface,
+  MemberInterface,
+  WorkspaceInterface,
+} from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -114,12 +118,6 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
 interface ProjectInterface {
   id: string;
   title: string;
@@ -157,7 +155,7 @@ const Project = () => {
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberInterface[]>([]);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
@@ -347,10 +345,10 @@ const Project = () => {
         where("uid", "in", curWorkspaces[0].members)
       );
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });

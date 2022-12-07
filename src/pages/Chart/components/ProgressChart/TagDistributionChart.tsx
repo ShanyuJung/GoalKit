@@ -10,19 +10,13 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { CardInterface } from "../../../../types";
+import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
   padding: 20px;
   font-size: 16px;
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   lists: ListInterface[];

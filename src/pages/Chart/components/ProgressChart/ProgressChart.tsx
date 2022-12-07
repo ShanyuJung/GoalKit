@@ -4,7 +4,7 @@ import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
 import DurationChart from "./DurationChart";
-import { CardInterface, MemberInterface } from "../../../../types";
+import { ListInterface, MemberInterface } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -42,12 +42,6 @@ const ChartTitle = styled.div`
   font-size: 24px;
   text-align: center;
 `;
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   lists: ListInterface[];

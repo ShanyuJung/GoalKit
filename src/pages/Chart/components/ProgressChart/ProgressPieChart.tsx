@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { RadialBarChart, PolarAngleAxis, RadialBar } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { CardInterface } from "../../../../types";
+import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -16,12 +16,6 @@ const DUMMY_DATA = [
   { name: "Over Time", value: 0, total: 0 },
   { name: "Without Plan", value: 0, total: 0 },
 ];
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   lists: ListInterface[];
