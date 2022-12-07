@@ -17,6 +17,15 @@ export interface WorkspaceInterface {
   members: string[];
 }
 
+export interface ProjectInterface {
+  id: string;
+  title: string;
+  lists: ListInterface[];
+  tags?: { id: string; colorCode: string; title: string }[];
+  draggingLists?: { listID: string; displayName: string }[];
+  draggingCards?: { cardID: string; displayName: string }[];
+}
+
 export interface CardInterface {
   title: string;
   id: string;

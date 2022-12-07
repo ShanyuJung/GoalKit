@@ -17,9 +17,9 @@ import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
 import {
-  ListInterface,
   MemberInterface,
   WorkspaceInterface,
+  ProjectInterface,
 } from "../../types";
 
 const Container = styled.div`
@@ -72,15 +72,6 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   z-index: 12;
   transition: left 0.3s;
 `;
-
-interface ProjectInterface {
-  id: string;
-  title: string;
-  lists: ListInterface[];
-  tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: string[];
-  draggingCards?: string[];
-}
 
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);

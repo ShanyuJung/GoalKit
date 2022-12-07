@@ -41,6 +41,7 @@ import CardFilter from "./components/CardFilter";
 import {
   ListInterface,
   MemberInterface,
+  ProjectInterface,
   WorkspaceInterface,
 } from "../../types";
 
@@ -117,15 +118,6 @@ const ErrorText = styled.div`
   width: 100%;
   text-align: center;
 `;
-
-interface ProjectInterface {
-  id: string;
-  title: string;
-  lists: ListInterface[];
-  tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: { listID: string; displayName: string }[];
-  draggingCards?: { cardID: string; displayName: string }[];
-}
 
 export const firstRenderProjectHandler = async ({
   params,
