@@ -297,7 +297,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to create tag!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -375,7 +375,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch {
       Swal.fire(
         "Fail to delete tag!",
-        "Please check your internet connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -416,7 +416,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to update tag!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }

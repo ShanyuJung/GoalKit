@@ -7,9 +7,9 @@ import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.s
 import { ReactComponent as moveIcon } from "../../../assets/move-arrows-svgrepo-com.svg";
 import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
-import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
+import { Member } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -210,15 +210,6 @@ interface ListInterface {
   id: string;
   title: string;
   cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 interface Props {

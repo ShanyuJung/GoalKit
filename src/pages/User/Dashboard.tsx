@@ -252,7 +252,7 @@ const Dashboard = () => {
       } catch (e) {
         Swal.fire(
           "Failed to connect server!",
-          "Please check your internet is connected and try again later",
+          "Please check your internet connection and try again later",
           "warning"
         );
       }

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
-import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import Description from "./Description";
@@ -14,6 +14,7 @@ import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { Member } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -99,15 +100,6 @@ interface ListInterface {
   id: string;
   title: string;
   cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 interface Props {
@@ -211,7 +203,7 @@ const CardDetail: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to update card!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }

@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { Timestamp } from "firebase/firestore";
+import { Member } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -33,15 +33,6 @@ interface ListInterface {
   id: string;
   title: string;
   cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 interface Props {

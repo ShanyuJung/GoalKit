@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as descriptionIcon } from "../../../assets/text-description-svgrepo-com.svg";
 import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com.svg";
-import { Timestamp } from "firebase/firestore";
+import { Member } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -190,15 +190,6 @@ interface CardInterface {
   tagsIDs?: string[];
   complete?: boolean;
   todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 interface Props {

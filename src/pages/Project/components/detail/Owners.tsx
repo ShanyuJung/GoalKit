@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
 import styled from "styled-components";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
+import { Member } from "../../../../types";
 
 const OwnerContainer = styled.div`
   margin: 10px;
@@ -81,15 +81,6 @@ const RemoveOwnerButton = styled(closeIcon)`
     }
   }
 `;
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
 
 interface Props {
   ownerInfo: Member[];

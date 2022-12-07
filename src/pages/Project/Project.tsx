@@ -19,7 +19,6 @@ import {
   getDocs,
   onSnapshot,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -39,6 +38,7 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
+import { Member } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -148,15 +148,6 @@ interface Workspace {
   members: string[];
 }
 
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 export const firstRenderProjectHandler = async ({
   params,
 }: LoaderFunctionArgs) => {
@@ -173,7 +164,7 @@ export const firstRenderProjectHandler = async ({
   } catch (e) {
     Swal.fire(
       "Failed to connect server!",
-      "Please check your internet is connected and try again later",
+      "Please check your internet connection and try again later",
       "warning"
     );
   }

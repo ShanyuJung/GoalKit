@@ -32,6 +32,7 @@ import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import Swal from "sweetalert2";
 import Message from "./components/Message";
+import { Member } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -331,15 +332,6 @@ const MemberType = styled.div`
   color: #1d3240;
 `;
 
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface MessageInterface {
   userID: string;
   time: Timestamp;
@@ -369,7 +361,7 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
   } catch {
     Swal.fire(
       "Failed to connect server!",
-      "Please check your internet is connected and try again later",
+      "Please check your internet connection and try again later",
       "warning"
     );
   }
@@ -418,7 +410,7 @@ const Workspace = () => {
     } catch (e) {
       Swal.fire(
         "Failed to create project!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -470,7 +462,7 @@ const Workspace = () => {
     } catch (e) {
       Swal.fire(
         "Failed to add member",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -497,7 +489,7 @@ const Workspace = () => {
     } catch {
       Swal.fire(
         "Failed to send message",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }

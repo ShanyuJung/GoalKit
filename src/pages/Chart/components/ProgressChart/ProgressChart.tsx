@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { Timestamp } from "firebase/firestore";
 import ProgressPieChart from "./ProgressPieChart";
 import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
 import DurationChart from "./DurationChart";
+import { Member } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -58,15 +58,6 @@ interface ListInterface {
   id: string;
   title: string;
   cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 interface Props {

@@ -8,7 +8,6 @@ import {
   getDocs,
   onSnapshot,
   query,
-  Timestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -17,6 +16,7 @@ import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
+import { Member } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -101,15 +101,6 @@ interface Workspace {
   title: string;
   projects: { id: string; title: string }[];
   members: string[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
 }
 
 const Chart = () => {
