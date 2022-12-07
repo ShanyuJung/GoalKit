@@ -137,8 +137,8 @@ const Time: React.FC<Props> = ({
   isEdit,
   setIsEdit,
 }) => {
-  const startTimeRef = useRef<HTMLInputElement | null>(null);
-  const deadlineRef = useRef<HTMLInputElement | null>(null);
+  const startTimeRef = useRef<HTMLInputElement>(null);
+  const deadlineRef = useRef<HTMLInputElement>(null);
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
@@ -213,7 +213,7 @@ const Time: React.FC<Props> = ({
         <DateIcon />
         <TimeTitle>Date:</TimeTitle>
       </TimeTitleWrapper>
-      {curStart && curDeadline ? (
+      {curStart !== undefined && curDeadline !== undefined ? (
         <TimeCheckboxWrapper>
           <TimeCheckbox
             type="checkbox"
@@ -230,9 +230,7 @@ const Time: React.FC<Props> = ({
             </TimeCheckboxLabel>
           </TimeLabelWrapper>
         </TimeCheckboxWrapper>
-      ) : (
-        <></>
-      )}
+      ) : null}
       <TimeEditAreaWrapper isEdit={isEdit}>
         <Form onSubmit={submitHandler}>
           <TimeInputWrapper>

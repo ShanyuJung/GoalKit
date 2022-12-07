@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import produce from "immer";
 import styled from "styled-components";
 import { db } from "../../../../firebase";
-import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import Description from "./Description";
@@ -14,6 +14,11 @@ import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import {
+  CardInterface,
+  ListInterface,
+  MemberInterface,
+} from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -24,7 +29,7 @@ const Wrapper = styled.div`
   min-height: 65vh;
   display: flex;
   flex-direction: column;
-  width: 410px;
+  flex-grow: 1;
   padding-right: 10px;
 `;
 
@@ -84,36 +89,10 @@ const CloseButton = styled(closeIcon)`
   }
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   listsArray: ListInterface[];
   tags?: { id: string; colorCode: string; title: string }[];
-  members?: Member[];
+  members?: MemberInterface[];
   onDelete: (targetCardID: string) => void;
   onClose: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
@@ -196,7 +175,7 @@ const CardDetail: React.FC<Props> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [ownerInfo, setOwnerInfo] = useState<Member[]>([]);
+  const [ownerInfo, setOwnerInfo] = useState<MemberInterface[]>([]);
   const [isEditDate, setIsEditDate] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -211,7 +190,7 @@ const CardDetail: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to update card!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -426,7 +405,7 @@ const CardDetail: React.FC<Props> = ({
     const setOwnerInfoHandler = () => {
       if (!state.owner || !members) return;
 
-      const emptyArr: Member[] = [];
+      const emptyArr: MemberInterface[] = [];
       const newOwnerInfo = produce(emptyArr, (draftState) => {
         members.forEach((member) => {
           if (state.owner?.includes(member.uid)) {
@@ -446,8 +425,8 @@ const CardDetail: React.FC<Props> = ({
     updateDataHandler(newLists);
   }, [state]);
 
-  const cardInfo = () => {
-    if (state.id === "") return;
+  const renderCardInfo = () => {
+    if (state.id === "") return null;
 
     return (
       <Wrapper>
@@ -509,7 +488,7 @@ const CardDetail: React.FC<Props> = ({
         />
       </TitleWrapper>
       <ContainerWrapper>
-        <>{cardInfo()}</>
+        {renderCardInfo()}
         <CardDetailSideBar
           onDelete={deleteCardHandler}
           todoHandler={addNewTodoHandler}

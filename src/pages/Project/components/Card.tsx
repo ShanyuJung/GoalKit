@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as descriptionIcon } from "../../../assets/text-description-svgrepo-com.svg";
 import { ReactComponent as todoIcon } from "../../../assets/checkbox-svgrepo-com.svg";
-import { Timestamp } from "firebase/firestore";
+import { CardInterface, MemberInterface } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -181,30 +181,10 @@ const TodoText = styled.div<{ $isAllDone: boolean }>`
   color: ${(props) => (props.$isAllDone ? "#008000" : "#828282")};
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   cardInfo: CardInterface;
   tags?: { id: string; colorCode: string; title: string }[];
-  members: Member[];
+  members: MemberInterface[];
   draggingCards: { cardID: string; displayName: string }[] | undefined;
 }
 
@@ -216,7 +196,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const time = () => {
+  const renderTime = () => {
     if (cardInfo.time?.start && cardInfo.time?.deadline) {
       const startDate = new Date(cardInfo.time.start);
       const startMonth = startDate.getMonth();
@@ -233,9 +213,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     }
   };
 
-  const tagsCollection = () => {
+  const renderTagsCollection = () => {
     if (!cardInfo.tagsIDs || cardInfo.tagsIDs.length === 0) {
-      return <></>;
+      return null;
     }
 
     return (
@@ -256,7 +236,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     );
   };
 
-  const ownerList = () => {
+  const renderOwnerList = () => {
     const displayOwner = cardInfo.owner
       ?.map((owner) => {
         const curOwner = members.find((member) => member.uid === owner);
@@ -292,9 +272,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
     );
   };
 
-  const todoList = () => {
+  const renderTodoList = () => {
     if (!cardInfo.todo || cardInfo.todo?.length === 0) {
-      return <></>;
+      return null;
     }
     const total = cardInfo.todo.length;
     let done = 0;
@@ -351,15 +331,15 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       }}
     >
       <Wrapper>
-        {cardInfo.tagsIDs && tags && tagsCollection()}
+        {cardInfo.tagsIDs && tags && renderTagsCollection()}
         <TitleWrapper>{cardInfo.title}</TitleWrapper>
         <ConditionWrapper>
           <ConditionGroupWrapper>
-            {cardInfo.time?.start && cardInfo.time?.deadline && time()}
+            {cardInfo.time?.start && cardInfo.time?.deadline && renderTime()}
             {cardInfo.description && <DescriptionIcon />}
-            {cardInfo.todo && todoList()}
+            {cardInfo.todo && renderTodoList()}
           </ConditionGroupWrapper>
-          {cardInfo.owner && ownerList()}
+          {cardInfo.owner && renderOwnerList()}
         </ConditionWrapper>
       </Wrapper>
     </Container>

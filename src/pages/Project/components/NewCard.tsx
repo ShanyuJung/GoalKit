@@ -7,20 +7,20 @@ const Wrapper = styled.div`
   width: 250px;
 `;
 
-const TextArea = styled.textarea<{ isShow: boolean }>`
+const TextArea = styled.textarea<{ isFocused: boolean }>`
   width: 100%;
   resize: none;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   padding: 5px 5px;
   font-size: 16px;
-  background-color: ${(props) => (props.isShow ? "#fff" : "transparent")};
+  background-color: ${(props) => (props.isFocused ? "#fff" : "transparent")};
   border-radius: 5px;
-  border-color: ${(props) => (props.isShow ? "#000" : "transparent")};
+  border-color: ${(props) => (props.isFocused ? "#000" : "transparent")};
   overflow: hidden;
 
   &:hover {
-    background-color: ${(props) => (props.isShow ? "#fff" : "#ccc")};
+    background-color: ${(props) => (props.isFocused ? "#fff" : "#ccc")};
   }
 `;
 
@@ -66,19 +66,17 @@ interface Props {
   parentID: string;
 }
 
-export type Ref = HTMLTextAreaElement;
-
 const NewCard = ({ onSubmit, parentID }: Props) => {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
 
   const focusHandler = () => {
-    setIsFocus(true);
+    setIsTextAreaFocus(true);
   };
 
   const clickOutsideHandler = () => {
-    setIsFocus(false);
+    setIsTextAreaFocus(false);
     textRef.current?.blur();
   };
 
@@ -97,11 +95,11 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
         <TextArea
           placeholder="&#43; Add new card"
           ref={textRef}
-          isShow={isFocus}
-          rows={isFocus ? 2 : 1}
+          isFocused={isTextAreaFocus}
+          rows={isTextAreaFocus ? 2 : 1}
           required
         />
-        <ButtonWrapper isShow={isFocus}>
+        <ButtonWrapper isShow={isTextAreaFocus}>
           <Button>Add new card</Button>
           <CloseButton onClick={clickOutsideHandler} />
         </ButtonWrapper>

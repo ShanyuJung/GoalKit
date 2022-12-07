@@ -18,6 +18,7 @@ import DashboardSidebar from "./components/DashboardSidebar";
 import Profile from "./components/Profile";
 import Swal from "sweetalert2";
 import ReactLoading from "react-loading";
+import { WorkspaceInterface } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   }
 `;
 
-const Workspace = styled.div`
+const WorkspaceCard = styled.div`
   position: relative;
   z-index: 1;
   width: 215px;
@@ -163,17 +164,9 @@ const Loading = styled(ReactLoading)`
   margin: auto;
 `;
 
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
-}
-
 const Dashboard = () => {
-  const [workspaces, setWorkspace] = useState<Workspace[] | never>([]);
-  const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[] | never>(
+  const [workspaces, setWorkspace] = useState<WorkspaceInterface[]>([]);
+  const [guestWorkspaces, setGuestWorkspace] = useState<WorkspaceInterface[]>(
     []
   );
   const [contentType, setContentType] = useState("workspace");
@@ -188,10 +181,10 @@ const Dashboard = () => {
     const workspaceRef = collection(db, "workspaces");
     const q = query(workspaceRef, where("owner", "==", userID));
     const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
+    const emptyArr: WorkspaceInterface[] = [];
     const newWorkspaces = produce(emptyArr, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
+        const docData = doc.data() as WorkspaceInterface;
         draftState.push(docData);
       });
     });
@@ -230,10 +223,10 @@ const Dashboard = () => {
       where("members", "array-contains-any", [userID])
     );
     const querySnapshot = await getDocs(q);
-    const emptyArr: Workspace[] = [];
+    const emptyArr: WorkspaceInterface[] = [];
     const newWorkspaces = produce(emptyArr, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const docData = doc.data() as Workspace;
+        const docData = doc.data() as WorkspaceInterface;
         if (docData.owner !== userID) {
           draftState.push(docData);
         }
@@ -249,10 +242,10 @@ const Dashboard = () => {
         setIsLoading(true);
         await getWorkspaceHandler();
         await getGuestWorkspaceHandler();
-      } catch (e) {
+      } catch {
         Swal.fire(
           "Failed to connect server!",
-          "Please check your internet is connected and try again later",
+          "Please check your internet connection and try again later",
           "warning"
         );
       }
@@ -262,7 +255,7 @@ const Dashboard = () => {
     getDataHandler();
   }, []);
 
-  const workspaceList = () => {
+  const renderWorkspaceList = () => {
     return (
       <>
         <WorkspaceSubBanner>My workspace</WorkspaceSubBanner>
@@ -275,14 +268,14 @@ const Dashboard = () => {
               {workspaces.length > 0 &&
                 workspaces.map((workspace) => {
                   return (
-                    <Workspace
+                    <WorkspaceCard
                       key={workspace.id}
                       onClick={() => {
                         navigate(`/workspace/${workspace.id}`);
                       }}
                     >
                       <Text>{workspace.title}</Text>
-                    </Workspace>
+                    </WorkspaceCard>
                   );
                 })}
             </>
@@ -296,14 +289,14 @@ const Dashboard = () => {
             guestWorkspaces.length > 0 &&
             guestWorkspaces.map((workspace) => {
               return (
-                <Workspace
+                <WorkspaceCard
                   key={workspace.id}
                   onClick={() => {
                     navigate(`/workspace/${workspace.id}`);
                   }}
                 >
                   <Text>{workspace.title}</Text>
-                </Workspace>
+                </WorkspaceCard>
               );
             })
           )}
@@ -323,7 +316,7 @@ const Dashboard = () => {
         <ShowSidebarButton
           isShowSidebar={isShowSidebar}
           onClick={() => {
-            setIsShowSidebar((prev) => !prev);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         >
           {isShowSidebar ? "<" : ">"}
@@ -332,9 +325,8 @@ const Dashboard = () => {
           {currentUser && (
             <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
           )}
-
-          {contentType === "workspace" ? workspaceList() : <></>}
-          {contentType === "profile" ? <Profile /> : <></>}
+          {contentType === "workspace" && renderWorkspaceList()}
+          {contentType === "profile" && <Profile />}
         </WorkspaceWrapper>
       </Wrapper>
     </PrivateRoute>

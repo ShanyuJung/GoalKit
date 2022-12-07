@@ -7,6 +7,7 @@ import { db } from "../../../../firebase";
 import { uuidv4 } from "@firebase/util";
 import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
 import Swal from "sweetalert2";
+import { ListInterface } from "../../../../types";
 
 const TagSelectorList = styled.div`
   display: flex;
@@ -244,23 +245,6 @@ const TAG_COLOR_LIST = [
   "#777777",
 ];
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
 interface Tag {
   id: string;
   colorCode: string;
@@ -280,8 +264,8 @@ const TagsEditor: React.FC<Props> = ({
   onChange,
   listsArray,
 }) => {
-  const newTagRef = useRef<HTMLInputElement | null>(null);
-  const editTagRef = useRef<HTMLInputElement | null>(null);
+  const newTagRef = useRef<HTMLInputElement>(null);
+  const editTagRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [selectTag, setSelectTag] = useState<Tag | undefined>(undefined);
@@ -297,7 +281,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to create tag!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -375,7 +359,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch {
       Swal.fire(
         "Fail to delete tag!",
-        "Please check your internet connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -416,7 +400,7 @@ const TagsEditor: React.FC<Props> = ({
     } catch (e) {
       Swal.fire(
         "Failed to update tag!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -442,7 +426,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  const tagSelector = () => {
+  const renderTagSelector = () => {
     return (
       <TagSelectorList>
         {tags &&
@@ -482,7 +466,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  const tagEditBoard = () => {
+  const renderTagEditBoard = () => {
     return (
       <TagEditBoardWrapper>
         <EditBoardTitleWrapper>
@@ -517,7 +501,7 @@ const TagsEditor: React.FC<Props> = ({
     );
   };
 
-  return <>{isEdit ? tagEditBoard() : tagSelector()}</>;
+  return <>{isEdit ? renderTagEditBoard() : renderTagSelector()}</>;
 };
 
 export default TagsEditor;

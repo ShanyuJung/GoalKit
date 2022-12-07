@@ -32,6 +32,7 @@ import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import Swal from "sweetalert2";
 import Message from "./components/Message";
+import { MemberInterface } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -303,7 +304,7 @@ const MemberButton = styled.button`
 
 const MemberWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   width: 60%;
   gap: 10px;
   padding: 20px;
@@ -316,6 +317,7 @@ const MemberWrapper = styled.div`
 
 const MemberName = styled.div`
   font-size: 22px;
+  line-height: 22px;
   width: 150px;
   color: #1d3240;
 `;
@@ -323,22 +325,15 @@ const MemberName = styled.div`
 const MemberEmail = styled.div`
   flex-grow: 1;
   font-size: 16px;
+  line-height: 22px;
   color: #658da6;
 `;
 
 const MemberType = styled.div`
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 22px;
   color: #1d3240;
 `;
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
 
 interface MessageInterface {
   userID: string;
@@ -369,7 +364,7 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
   } catch {
     Swal.fire(
       "Failed to connect server!",
-      "Please check your internet is connected and try again later",
+      "Please check your internet connection and try again later",
       "warning"
     );
   }
@@ -379,15 +374,15 @@ const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
-  const [membersInfo, setMembersInfo] = useState<Member[]>([]);
+  const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
   const [contentType, setContentType] = useState("project");
   const [ownerID, setOwnerID] = useState("");
   const [title, setTitle] = useState("");
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
-  const memberRef = useRef<HTMLInputElement | null>(null);
-  const messageRef = useRef<HTMLInputElement | null>(null);
+  const memberRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLInputElement>(null);
   const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -418,7 +413,7 @@ const Workspace = () => {
     } catch (e) {
       Swal.fire(
         "Failed to create project!",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -429,10 +424,10 @@ const Workspace = () => {
     const userRef = collection(db, "users");
     const q = query(userRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
-    const usersFormat: Member[] = [];
+    const usersFormat: MemberInterface[] = [];
     const userList = produce(usersFormat, (draftState) => {
       querySnapshot.forEach((doc) => {
-        const user = doc.data() as Member;
+        const user = doc.data() as MemberInterface;
         draftState.push(user);
       });
     });
@@ -470,7 +465,7 @@ const Workspace = () => {
     } catch (e) {
       Swal.fire(
         "Failed to add member",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -497,7 +492,7 @@ const Workspace = () => {
     } catch {
       Swal.fire(
         "Failed to send message",
-        "Please check your internet is connected and try again later",
+        "Please check your internet connection and try again later",
         "warning"
       );
     }
@@ -523,10 +518,10 @@ const Workspace = () => {
       const usersRef = collection(db, "users");
       const userQ = query(usersRef, where("uid", "in", memberIDs));
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });
@@ -644,7 +639,7 @@ const Workspace = () => {
   };
 
   const renderChatRoom = () => {
-    if (!isExist || membersInfo.length === 0) return <></>;
+    if (!isExist || membersInfo.length === 0) return null;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
@@ -702,7 +697,7 @@ const Workspace = () => {
         <ShowSidebarButton
           isShowSidebar={isShowSidebar}
           onClick={() => {
-            setIsShowSidebar((prev) => !prev);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         >
           {isShowSidebar ? "<" : ">"}
@@ -712,7 +707,7 @@ const Workspace = () => {
           {contentType === "project" && renderProjectList()}
           {contentType === "member" && renderMemberList()}
         </ProjectsWrapper>
-        <>{isShowChatRoom && renderChatRoom()}</>
+        {isShowChatRoom && renderChatRoom()}
       </Wrapper>
     </PrivateRoute>
   );

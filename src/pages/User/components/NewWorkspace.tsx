@@ -122,14 +122,14 @@ interface Props {
 }
 
 const NewWorkspace = ({ onSubmit }: Props) => {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
   const [isEdit, setIsEdit] = useState(false);
 
   useOnClickOutside(ref, () => setIsEdit(false));
 
   const editHandler = () => {
-    setIsEdit((prev) => !prev);
+    setIsEdit((prevEdit) => !prevEdit);
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {

@@ -88,14 +88,14 @@ const Message: React.FC<Props> = ({
     }/${newTime.getDate()} ${newTime.getHours()}:${newTime.getMinutes()}`;
   }
 
-  if (!currentUser) return <></>;
+  if (!currentUser) return null;
 
   return (
     <>
       <MessageWrapper
         isCurrentUser={currentUser.uid === messageUserID}
         onClick={() => {
-          setIsShowTime((prev) => !prev);
+          setIsShowTime((prevIsShowTime) => !prevIsShowTime);
         }}
       >
         {messagePhoto ? (
@@ -113,9 +113,7 @@ const Message: React.FC<Props> = ({
         <Time isCurrentUser={currentUser.uid === messageUserID}>
           {newTimeString}
         </Time>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 };

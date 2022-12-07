@@ -162,7 +162,7 @@ const DescriptionText = styled.div`
 `;
 
 const ForgotPassword = () => {
-  const emailRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   const { resetPassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);

@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { Timestamp } from "firebase/firestore";
 import ProgressPieChart from "./ProgressPieChart";
 import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
 import DurationChart from "./DurationChart";
+import { ListInterface, MemberInterface } from "../../../../types";
 
 const Container = styled.div`
   display: flex;
@@ -43,36 +43,10 @@ const ChartTitle = styled.div`
   text-align: center;
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   lists: ListInterface[];
   tags: { id: string; colorCode: string; title: string }[];
-  members: Member[];
+  members: MemberInterface[];
 }
 
 const ProgressChart: React.FC<Props> = ({ lists, tags, members }) => {

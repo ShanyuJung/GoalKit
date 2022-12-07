@@ -87,7 +87,7 @@ interface Props {
 }
 
 const Description: React.FC<Props> = ({ text, onSubmit }) => {
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [isEdit, setIsEdit] = useState(false);
 
   const submitHandler = (event: FormEvent) => {

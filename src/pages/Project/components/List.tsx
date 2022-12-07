@@ -7,9 +7,9 @@ import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.s
 import { ReactComponent as moveIcon } from "../../../assets/move-arrows-svgrepo-com.svg";
 import { useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "../../../utils/hooks";
-import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import DropdownButton from "../../../components/button/DropdownButton";
+import { CardInterface, ListInterface, MemberInterface } from "../../../types";
 
 interface IsDraggingProps {
   $isDragging: boolean;
@@ -195,39 +195,13 @@ const MoveAllButton = styled.button`
   }
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   title: string;
   cards: { title: string; id: string }[];
   id: string;
   tags?: { id: string; colorCode: string; title: string }[];
   newCardHandler: (newCardTitle: string, parentID: string) => void;
-  members: Member[];
+  members: MemberInterface[];
   draggingLists: { listID: string; displayName: string }[] | undefined;
   draggingCards: { cardID: string; displayName: string }[] | undefined;
   deleteList: (targetListID: string) => void;
@@ -343,7 +317,7 @@ const List = ({
             <LogoWrapper ref={ref}>
               <MoreIcon
                 onClick={() => {
-                  setIsShowModal((prev) => !prev);
+                  setIsShowModal((prevIsShowModal) => !prevIsShowModal);
                 }}
               />
               <ModalWrapper>

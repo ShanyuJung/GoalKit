@@ -10,29 +10,13 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
+import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
   padding: 20px;
   font-size: 16px;
 `;
-
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
 
 interface Props {
   lists: ListInterface[];
@@ -75,7 +59,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   }
 
   const tickFormatter = (value: string) => {
-    const limit = 8; // put your maximum character
+    const limit = 20; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;
   };

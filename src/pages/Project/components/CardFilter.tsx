@@ -190,7 +190,7 @@ const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
       <Wrapper
         $isToggle={isToggle}
         onClick={() => {
-          setIsToggle((prev) => !prev);
+          setIsToggle((prevToggle) => !prevToggle);
         }}
       >
         <FilterIcon />

@@ -58,7 +58,7 @@ const DropdownButton: React.FC<Props> = ({
   const ref = useRef(null);
 
   const toggleHandler = () => {
-    setIsToggle((prev) => !prev);
+    setIsToggle((prevToggle) => !prevToggle);
   };
 
   useOnClickOutside(ref, () => setIsToggle(false));
@@ -74,7 +74,7 @@ const DropdownButton: React.FC<Props> = ({
         {text}
       </CardFeatureButton>
       <DropdownWrapper isToggle={isToggle}>
-        {isToggle ? <DropdownMenuList>{children}</DropdownMenuList> : <></>}
+        {isToggle ? <DropdownMenuList>{children}</DropdownMenuList> : null}
       </DropdownWrapper>
     </ButtonListItem>
   );

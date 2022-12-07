@@ -151,7 +151,7 @@ const Todo: React.FC<Props> = ({ todo, onCheck, onDelete }) => {
   }, [todo]);
 
   if (todo.length === 0) {
-    return <></>;
+    return null;
   }
 
   return (

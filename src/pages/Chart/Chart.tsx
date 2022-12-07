@@ -8,7 +8,6 @@ import {
   getDocs,
   onSnapshot,
   query,
-  Timestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -17,6 +16,11 @@ import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
+import {
+  MemberInterface,
+  WorkspaceInterface,
+  ProjectInterface,
+} from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -69,55 +73,12 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   transition: left 0.3s;
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface ProjectInterface {
-  id: string;
-  title: string;
-  lists: ListInterface[];
-  tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: string[];
-  draggingCards?: string[];
-}
-
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { id, chartType } = useParams();
 
@@ -148,10 +109,10 @@ const Chart = () => {
         ])
       );
       const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: Workspace[] = [];
+      const emptyWorkspaceArr: WorkspaceInterface[] = [];
       const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
+          const docData = doc.data() as WorkspaceInterface;
           draftState.push(docData);
         });
       });
@@ -161,10 +122,10 @@ const Chart = () => {
         where("uid", "in", curWorkspaces[0].members)
       );
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });
@@ -197,7 +158,7 @@ const Chart = () => {
         <ShowSidebarButton
           isShowSidebar={isShowSidebar}
           onClick={() => {
-            setIsShowSidebar((prev) => !prev);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         >
           {isShowSidebar ? "<" : ">"}

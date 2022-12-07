@@ -19,7 +19,6 @@ import {
   getDocs,
   onSnapshot,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -39,6 +38,12 @@ import OnlineMembers from "./components/OnlineMembers";
 import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import CardFilter from "./components/CardFilter";
+import {
+  ListInterface,
+  MemberInterface,
+  ProjectInterface,
+  WorkspaceInterface,
+} from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -114,49 +119,6 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface ProjectInterface {
-  id: string;
-  title: string;
-  lists: ListInterface[];
-  tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: { listID: string; displayName: string }[];
-  draggingCards?: { cardID: string; displayName: string }[];
-}
-
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 export const firstRenderProjectHandler = async ({
   params,
 }: LoaderFunctionArgs) => {
@@ -173,7 +135,7 @@ export const firstRenderProjectHandler = async ({
   } catch (e) {
     Swal.fire(
       "Failed to connect server!",
-      "Please check your internet is connected and try again later",
+      "Please check your internet connection and try again later",
       "warning"
     );
   }
@@ -185,7 +147,7 @@ const Project = () => {
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberInterface[]>([]);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
@@ -194,7 +156,7 @@ const Project = () => {
   const response = useLoaderData() as ProjectInterface;
   const { currentUser } = useAuth();
   const [keyword, setKeyword] = useState("");
-  const [isFilter, setIsFilter] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
@@ -362,10 +324,10 @@ const Project = () => {
         ])
       );
       const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: Workspace[] = [];
+      const emptyWorkspaceArr: WorkspaceInterface[] = [];
       const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
         querySnapshot.forEach((doc) => {
-          const docData = doc.data() as Workspace;
+          const docData = doc.data() as WorkspaceInterface;
           draftState.push(docData);
         });
       });
@@ -375,10 +337,10 @@ const Project = () => {
         where("uid", "in", curWorkspaces[0].members)
       );
       const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: Member[] = [];
+      const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
         userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as Member;
+          const docData = doc.data() as MemberInterface;
           draftState.push(docData);
         });
       });
@@ -391,10 +353,10 @@ const Project = () => {
 
   useEffect(() => {
     if (!keyword.trim()) {
-      setIsFilter(false);
+      setIsFiltered(false);
       return;
     }
-    setIsFilter(true);
+    setIsFiltered(true);
   }, [keyword]);
 
   useEffect(() => {
@@ -444,7 +406,7 @@ const Project = () => {
                       draggableId={list.id}
                       index={index}
                       isDragDisabled={
-                        isFilter ||
+                        isFiltered ||
                         project?.draggingLists?.some(
                           (draggingList) => draggingList.listID === list.id
                         ) ||
@@ -473,7 +435,7 @@ const Project = () => {
                             deleteList={deleteListHandler}
                             lists={lists}
                             moveAllCardsHandler={moveAllCardsHandler}
-                            isFilter={isFilter}
+                            isFilter={isFiltered}
                             keyword={keyword}
                           />
                         </div>
@@ -511,7 +473,7 @@ const Project = () => {
           <ShowSidebarButton
             isShowSidebar={isShowSidebar}
             onClick={() => {
-              setIsShowSidebar((prev) => !prev);
+              setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
             }}
           >
             {isShowSidebar ? "<" : ">"}

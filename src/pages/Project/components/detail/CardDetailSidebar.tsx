@@ -8,8 +8,8 @@ import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.
 import DropdownButton from "../../../../components/button/DropdownButton";
 import { FormEvent, useRef } from "react";
 import TagsEditor from "./TagsEditor";
-import { Timestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
+import { ListInterface, MemberInterface } from "../../../../types";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -174,37 +174,11 @@ const TagsIcon = styled(tagsIcon)`
   }
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline?: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   onDelete: (targetCardID: string) => void;
   todoHandler: (titleText: string) => void;
   setIsEditDate: (value: boolean | ((prevVar: boolean) => boolean)) => void;
-  members: Member[];
+  members: MemberInterface[];
   addOwnerHandler(id: string): void;
   tagsIDs: string[] | undefined;
   tags: { id: string; colorCode: string; title: string }[] | undefined;
@@ -262,7 +236,7 @@ const CardDetailSideBar: React.FC<Props> = ({
         <ButtonListItem>
           <CardFeatureButton
             onClick={() => {
-              setIsEditDate((prev) => !prev);
+              setIsEditDate((prevIsEdit) => !prevIsEdit);
             }}
           >
             <DateIcon />

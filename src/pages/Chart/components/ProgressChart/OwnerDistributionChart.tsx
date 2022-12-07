@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import produce from "immer";
-import { Timestamp } from "firebase/firestore";
+import { ListInterface, MemberInterface } from "../../../../types";
 
 const ErrorText = styled.div`
   width: 480px;
@@ -18,35 +18,9 @@ const ErrorText = styled.div`
   font-size: 16px;
 `;
 
-interface CardInterface {
-  title: string;
-  id: string;
-  time?: { start?: number; deadline: number };
-  description?: string;
-  owner?: string[];
-  tagsIDs?: string[];
-  complete?: boolean;
-  todo?: { title: string; isDone: boolean; id: string }[];
-}
-
-interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
-}
-
-interface Member {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
-
 interface Props {
   lists: ListInterface[];
-  members: Member[];
+  members: MemberInterface[];
 }
 
 const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {

@@ -165,7 +165,7 @@ const WorkspaceSidebar: React.FC<Props> = ({
         </LinkWrapper>
         <LinkWrapper
           onClick={() => {
-            setIsShowChatRoom((prev) => !prev);
+            setIsShowChatRoom((prevIsShowChatRoom) => !prevIsShowChatRoom);
           }}
         >
           <ChatIcon />
