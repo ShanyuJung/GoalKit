@@ -137,8 +137,8 @@ const Time: React.FC<Props> = ({
   isEdit,
   setIsEdit,
 }) => {
-  const startTimeRef = useRef<HTMLInputElement | null>(null);
-  const deadlineRef = useRef<HTMLInputElement | null>(null);
+  const startTimeRef = useRef<HTMLInputElement>(null);
+  const deadlineRef = useRef<HTMLInputElement>(null);
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );

@@ -195,7 +195,7 @@ const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File | null>(null);
-  const nameRef = useRef<HTMLInputElement | null>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [message, setMessage] = useState("");
   const { currentUser, updatePhotoURL, updateUserDisplayName } = useAuth();

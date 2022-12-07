@@ -66,10 +66,8 @@ interface Props {
   parentID: string;
 }
 
-export type Ref = HTMLTextAreaElement;
-
 const NewCard = ({ onSubmit, parentID }: Props) => {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
   const [isFocus, setIsFocus] = useState(false);
 

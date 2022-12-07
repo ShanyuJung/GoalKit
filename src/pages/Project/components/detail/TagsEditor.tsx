@@ -264,8 +264,8 @@ const TagsEditor: React.FC<Props> = ({
   onChange,
   listsArray,
 }) => {
-  const newTagRef = useRef<HTMLInputElement | null>(null);
-  const editTagRef = useRef<HTMLInputElement | null>(null);
+  const newTagRef = useRef<HTMLInputElement>(null);
+  const editTagRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [selectTag, setSelectTag] = useState<Tag | undefined>(undefined);

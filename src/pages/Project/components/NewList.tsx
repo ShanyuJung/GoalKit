@@ -69,10 +69,8 @@ interface Props {
   onSubmit: (newListTitle: string) => void;
 }
 
-export type Ref = HTMLTextAreaElement;
-
 const NewList = ({ onSubmit }: Props) => {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
   const [isFocus, setIsFocus] = useState(false);
 
