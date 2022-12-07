@@ -304,7 +304,7 @@ const MemberButton = styled.button`
 
 const MemberWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   width: 60%;
   gap: 10px;
   padding: 20px;
@@ -317,6 +317,7 @@ const MemberWrapper = styled.div`
 
 const MemberName = styled.div`
   font-size: 22px;
+  line-height: 22px;
   width: 150px;
   color: #1d3240;
 `;
@@ -324,11 +325,13 @@ const MemberName = styled.div`
 const MemberEmail = styled.div`
   flex-grow: 1;
   font-size: 16px;
+  line-height: 22px;
   color: #658da6;
 `;
 
 const MemberType = styled.div`
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 22px;
   color: #1d3240;
 `;
 
