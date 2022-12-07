@@ -8,3 +8,11 @@ export interface Member {
   state?: string;
   photoURL?: string;
 }
+
+export interface Workspace {
+  id: string;
+  owner: string;
+  title: string;
+  projects: { id: string; title: string }[];
+  members: string[];
+}

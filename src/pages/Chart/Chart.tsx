@@ -16,7 +16,7 @@ import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
 import PrivateRoute from "../../components/route/PrivateRoute";
-import { Member } from "../../types";
+import { Member, Workspace } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -93,14 +93,6 @@ interface ProjectInterface {
   tags?: { id: string; colorCode: string; title: string }[];
   draggingLists?: string[];
   draggingCards?: string[];
-}
-
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
 }
 
 const Chart = () => {

@@ -7,7 +7,7 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, firebaseConfig } from "../firebase";
 import { initializeApp } from "firebase/app";
 import {
@@ -18,18 +18,10 @@ import {
   ref,
   onValue,
 } from "firebase/database";
-
-interface User {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
-}
+import { Member } from "../types";
 
 interface AuthContextInterface {
-  currentUser: User | null;
+  currentUser: Member | null;
   signup(email: string, password: string, displayName: string): void;
   login(email: string, password: string): void;
   logout(): void;
@@ -47,7 +39,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>({
+  const [currentUser, setCurrentUser] = useState<Member | null>({
     uid: "",
     email: "",
     displayName: "",
@@ -156,7 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoading(false);
-      const curUser = user as User;
+      const curUser = user as Member;
       setCurrentUser(curUser);
     });
 

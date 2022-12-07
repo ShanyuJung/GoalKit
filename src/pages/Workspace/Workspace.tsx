@@ -378,8 +378,8 @@ const Workspace = () => {
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
-  const memberRef = useRef<HTMLInputElement | null>(null);
-  const messageRef = useRef<HTMLInputElement | null>(null);
+  const memberRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLInputElement>(null);
   const chatRoomRef = useRef<null | HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);

@@ -18,6 +18,7 @@ import DashboardSidebar from "./components/DashboardSidebar";
 import Profile from "./components/Profile";
 import Swal from "sweetalert2";
 import ReactLoading from "react-loading";
+import { Workspace } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   }
 `;
 
-const Workspace = styled.div`
+const WorkspaceCard = styled.div`
   position: relative;
   z-index: 1;
   width: 215px;
@@ -163,19 +164,9 @@ const Loading = styled(ReactLoading)`
   margin: auto;
 `;
 
-interface Workspace {
-  id: string;
-  owner: string;
-  title: string;
-  projects: { id: string; title: string }[];
-  members: string[];
-}
-
 const Dashboard = () => {
-  const [workspaces, setWorkspace] = useState<Workspace[] | never>([]);
-  const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[] | never>(
-    []
-  );
+  const [workspaces, setWorkspace] = useState<Workspace[]>([]);
+  const [guestWorkspaces, setGuestWorkspace] = useState<Workspace[]>([]);
   const [contentType, setContentType] = useState("workspace");
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
@@ -249,7 +240,7 @@ const Dashboard = () => {
         setIsLoading(true);
         await getWorkspaceHandler();
         await getGuestWorkspaceHandler();
-      } catch (e) {
+      } catch {
         Swal.fire(
           "Failed to connect server!",
           "Please check your internet connection and try again later",
@@ -275,14 +266,14 @@ const Dashboard = () => {
               {workspaces.length > 0 &&
                 workspaces.map((workspace) => {
                   return (
-                    <Workspace
+                    <WorkspaceCard
                       key={workspace.id}
                       onClick={() => {
                         navigate(`/workspace/${workspace.id}`);
                       }}
                     >
                       <Text>{workspace.title}</Text>
-                    </Workspace>
+                    </WorkspaceCard>
                   );
                 })}
             </>
@@ -296,14 +287,14 @@ const Dashboard = () => {
             guestWorkspaces.length > 0 &&
             guestWorkspaces.map((workspace) => {
               return (
-                <Workspace
+                <WorkspaceCard
                   key={workspace.id}
                   onClick={() => {
                     navigate(`/workspace/${workspace.id}`);
                   }}
                 >
                   <Text>{workspace.title}</Text>
-                </Workspace>
+                </WorkspaceCard>
               );
             })
           )}
@@ -332,7 +323,6 @@ const Dashboard = () => {
           {currentUser && (
             <WorkspaceBanner>{`Welcome back, ${currentUser.displayName}!`}</WorkspaceBanner>
           )}
-
           {contentType === "workspace" && renderWorkspaceList()}
           {contentType === "profile" && <Profile />}
         </WorkspaceWrapper>
