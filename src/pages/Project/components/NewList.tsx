@@ -10,21 +10,21 @@ const Wrapper = styled.div`
   height: fit-content;
 `;
 
-const TextArea = styled.textarea<{ isShow: boolean }>`
+const TextArea = styled.textarea<{ isFocused: boolean }>`
   width: 100%;
   resize: none;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   padding: 5px 5px;
   font-size: 16px;
-  height: ${(props) => (props.isShow ? "" : "36px")};
-  background-color: ${(props) => (props.isShow ? "#fff" : "#ddd")};
+  height: ${(props) => (props.isFocused ? "" : "36px")};
+  background-color: ${(props) => (props.isFocused ? "#fff" : "#ddd")};
   border-radius: 5px;
-  border-color: ${(props) => (props.isShow ? "#000" : "transparent")};
+  border-color: ${(props) => (props.isFocused ? "#000" : "transparent")};
   overflow: hidden;
 
   &:hover {
-    background-color: ${(props) => (props.isShow ? "#fff" : "#ccc")};
+    background-color: ${(props) => (props.isFocused ? "#fff" : "#ccc")};
   }
 `;
 
@@ -72,14 +72,14 @@ interface Props {
 const NewList = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
 
   const focusHandler = () => {
-    setIsFocus(true);
+    setIsTextAreaFocus(true);
   };
 
   const clickOutsideHandler = () => {
-    setIsFocus(false);
+    setIsTextAreaFocus(false);
     textRef.current?.blur();
   };
 
@@ -98,10 +98,10 @@ const NewList = ({ onSubmit }: Props) => {
         <TextArea
           placeholder="&#43; Add new list"
           ref={textRef}
-          isShow={isFocus}
+          isFocused={isTextAreaFocus}
           required
         />
-        <ButtonWrapper isShow={isFocus}>
+        <ButtonWrapper isShow={isTextAreaFocus}>
           <Button>Add new list</Button>
           <CloseButton onClick={clickOutsideHandler} />
         </ButtonWrapper>

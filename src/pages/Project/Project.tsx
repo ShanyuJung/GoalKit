@@ -156,7 +156,7 @@ const Project = () => {
   const response = useLoaderData() as ProjectInterface;
   const { currentUser } = useAuth();
   const [keyword, setKeyword] = useState("");
-  const [isFilter, setIsFilter] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!id || isLoading) return;
@@ -353,10 +353,10 @@ const Project = () => {
 
   useEffect(() => {
     if (!keyword.trim()) {
-      setIsFilter(false);
+      setIsFiltered(false);
       return;
     }
-    setIsFilter(true);
+    setIsFiltered(true);
   }, [keyword]);
 
   useEffect(() => {
@@ -406,7 +406,7 @@ const Project = () => {
                       draggableId={list.id}
                       index={index}
                       isDragDisabled={
-                        isFilter ||
+                        isFiltered ||
                         project?.draggingLists?.some(
                           (draggingList) => draggingList.listID === list.id
                         ) ||
@@ -435,7 +435,7 @@ const Project = () => {
                             deleteList={deleteListHandler}
                             lists={lists}
                             moveAllCardsHandler={moveAllCardsHandler}
-                            isFilter={isFilter}
+                            isFilter={isFiltered}
                             keyword={keyword}
                           />
                         </div>
