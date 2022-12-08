@@ -400,6 +400,7 @@ const Workspace = () => {
         id: setRef.id,
         lists: [],
         title: projectTitle,
+        workspaceID: id,
       };
       await setDoc(setRef, newProject);
       const docRef = doc(db, "workspaces", id);

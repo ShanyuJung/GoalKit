@@ -21,6 +21,7 @@ export interface ProjectInterface {
   id: string;
   title: string;
   lists: ListInterface[];
+  workspaceID: string;
   tags?: { id: string; colorCode: string; title: string }[];
   draggingLists?: { listID: string; displayName: string }[];
   draggingCards?: { cardID: string; displayName: string }[];
