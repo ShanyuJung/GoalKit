@@ -36,7 +36,8 @@ const ChartArea = styled.div<{ isShowSidebar: boolean }>`
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
-  width: ${(props) => (props.isShowSidebar ? "calc(100vw - 260px)" : "100%")};
+  width: ${(props) =>
+    props.isShowSidebar ? "calc(100vw - 260px)" : "calc(100% - 15px)"};
   height: 40px;
   padding: 0px 40px;
   display: flex;

@@ -13,8 +13,8 @@ import produce from "immer";
 import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`
-  width: 480px;
-  padding: 20px;
+  width: 460px;
+  padding: 20px 30px;
   font-size: 16px;
 `;
 
