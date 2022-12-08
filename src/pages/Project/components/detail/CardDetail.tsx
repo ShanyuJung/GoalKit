@@ -31,6 +31,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   flex-grow: 1;
   padding-right: 10px;
+  max-width: 400px;
 `;
 
 const TitleWrapper = styled.div`
@@ -179,13 +180,13 @@ const CardDetail: React.FC<Props> = ({
   const [isEditDate, setIsEditDate] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const { id, cardId } = useParams();
+  const { projectID, cardID } = useParams();
 
   const updateDataHandler = async (newList: ListInterface[]) => {
-    if (!id || isLoading || !isExist) return;
+    if (!projectID || isLoading || !isExist) return;
     try {
       setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
+      const projectRef = doc(db, "projects", projectID);
       await updateDoc(projectRef, { lists: newList });
     } catch (e) {
       Swal.fire(
@@ -201,11 +202,11 @@ const CardDetail: React.FC<Props> = ({
     const newLists = produce(listsArray, (draftState) => {
       const listIndex = draftState.findIndex((list) => {
         return list.cards.some((card) => {
-          return card.id === cardId;
+          return card.id === cardID;
         });
       });
       const cardIndex = draftState[listIndex].cards.findIndex((card) => {
-        return card.id === cardId;
+        return card.id === cardID;
       });
       if (listIndex === -1 || cardIndex == -1 || !newCard) return draftState;
       draftState[listIndex].cards[cardIndex] = newCard;
@@ -381,10 +382,10 @@ const CardDetail: React.FC<Props> = ({
 
   useEffect(() => {
     const curCardHandler = () => {
-      if (!cardId || listsArray.length === 0) return;
+      if (!cardID || listsArray.length === 0) return;
       const [newList] = listsArray.filter((list) => {
         return list.cards.some((card) => {
-          return card.id === cardId;
+          return card.id === cardID;
         });
       });
       if (!newList) {
@@ -393,13 +394,13 @@ const CardDetail: React.FC<Props> = ({
       }
       setIsExist(true);
       const [newCard] = newList.cards.filter((card) => {
-        return card.id === cardId;
+        return card.id === cardID;
       });
       dispatch({ type: "INITIAL_STATE", payload: newCard });
     };
 
     curCardHandler();
-  }, [listsArray, cardId]);
+  }, [listsArray, cardID]);
 
   useEffect(() => {
     const setOwnerInfoHandler = () => {

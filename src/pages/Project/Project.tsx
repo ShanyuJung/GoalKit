@@ -123,9 +123,9 @@ const ErrorText = styled.div`
 export const firstRenderProjectHandler = async ({
   params,
 }: LoaderFunctionArgs) => {
-  if (!params.id) return null;
+  if (!params.projectID) return null;
   try {
-    const projectRef = doc(db, "projects", params.id);
+    const projectRef = doc(db, "projects", params.projectID);
     const docSnap = await getDoc(projectRef);
     if (docSnap.exists()) {
       const response = docSnap.data();
@@ -153,18 +153,18 @@ const Project = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
-  const { id, cardId } = useParams();
+  const { workspaceID, projectID, cardID } = useParams();
   const response = useLoaderData() as ProjectInterface;
   const { currentUser } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
-    if (!id || isLoading) return;
+    if (!projectID || isLoading) return;
 
     try {
       setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
+      const projectRef = doc(db, "projects", projectID);
       await updateDoc(projectRef, { lists: newList });
     } catch {
       Swal.fire("Something went wrong!", "Please try again later", "warning");
@@ -173,8 +173,8 @@ const Project = () => {
   };
 
   const isDraggingHandler = async ({ draggableId, type }: DragStart) => {
-    if (!id || isLoading || !currentUser) return;
-    const projectRef = doc(db, "projects", id);
+    if (!projectID || isLoading || !currentUser) return;
+    const projectRef = doc(db, "projects", projectID);
     if (type === "BOARD") {
       const draggingObj = {
         listID: draggableId,
@@ -192,8 +192,8 @@ const Project = () => {
   };
 
   const isDroppedHandler = async (draggableId: string, type: string) => {
-    if (!id || isLoading || !currentUser) return;
-    const projectRef = doc(db, "projects", id);
+    if (!projectID || isLoading || !currentUser) return;
+    const projectRef = doc(db, "projects", projectID);
     if (type === "BOARD") {
       const draggingObj = {
         listID: draggableId,
@@ -311,7 +311,7 @@ const Project = () => {
   };
 
   const onCloseHandler = () => {
-    navigate(`/project/${id}`);
+    navigate(`/workspace/${workspaceID}/project/${projectID}`);
   };
 
   useEffect(() => {
@@ -321,7 +321,7 @@ const Project = () => {
       const q = query(
         workspaceRef,
         where("projects", "array-contains-any", [
-          { id: id, title: project?.title },
+          { id: projectID, title: project?.title },
         ])
       );
       const querySnapshot = await getDocs(q);
@@ -371,8 +371,8 @@ const Project = () => {
   }, [response]);
 
   useEffect(() => {
-    if (!id) return;
-    const projectRef = doc(db, "projects", id);
+    if (!projectID) return;
+    const projectRef = doc(db, "projects", projectID);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
       if (snapshot.data()) {
         setIsExist(true);
@@ -392,7 +392,7 @@ const Project = () => {
   const renderProjectBoard = () => {
     return (
       <Droppable
-        droppableId={id || "default"}
+        droppableId={projectID || "default"}
         direction="horizontal"
         type="BOARD"
       >
@@ -456,7 +456,7 @@ const Project = () => {
   return (
     <PrivateRoute>
       <>
-        {cardId !== undefined && (
+        {cardID !== undefined && (
           <Modal onClose={onCloseHandler}>
             {lists.length > 0 ? (
               <CardDetail
@@ -470,7 +470,7 @@ const Project = () => {
           </Modal>
         )}
         <Container>
-          <ProjectSidebar title={project?.title} isShow={isShowSidebar} />
+          <ProjectSidebar isShow={isShowSidebar} />
           <ShowSidebarButton
             isShowSidebar={isShowSidebar}
             onClick={() => {

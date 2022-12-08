@@ -105,25 +105,34 @@ interface Props {
 }
 
 const ChartSidebar: React.FC<Props> = ({ isShow }) => {
-  const { id, chartType } = useParams();
+  const { workspaceID, projectID, chartType } = useParams();
 
   return (
     <SidebarWrapper isShow={isShow}>
       <LinkList isShow={isShow}>
         <LinkWrapper>
-          <StyledLink to={`/project/${id}/`} relative="path">
+          <StyledLink
+            to={`/workspace/${workspaceID}/project/${projectID}/`}
+            relative="path"
+          >
             <ProjectLogo />
             <LinkText>Back to Board</LinkText>
           </StyledLink>
         </LinkWrapper>
         <LinkWrapper $selected={chartType === "gantt"}>
-          <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
+          <StyledLink
+            to={`/workspace/${workspaceID}/project/${projectID}/chart/gantt`}
+            relative="path"
+          >
             <GanttLogo />
             <LinkText>Gantt Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
         <LinkWrapper $selected={chartType === "progress"}>
-          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
+          <StyledLink
+            to={`/workspace/${workspaceID}/project/${projectID}/chart/progress`}
+            relative="path"
+          >
             <PieChartLogo />
             <LinkText>Progress Chart</LinkText>
           </StyledLink>

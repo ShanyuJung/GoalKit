@@ -30,21 +30,24 @@ const router = createBrowserRouter(
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="dashboard" element={<Dashboard />} />
       <Route
-        path="workspace/:id"
+        path="workspace/:workspaceID"
         element={<Workspace />}
         loader={getProjectsHandler}
       />
       <Route
-        path="project/:id"
+        path="workspace/:workspaceID/project/:projectID"
         element={<Project />}
         loader={firstRenderProjectHandler}
       />
       <Route
-        path="project/:id/card/:cardId"
+        path="workspace/:workspaceID/project/:projectID/card/:cardID"
         element={<Project />}
         loader={firstRenderProjectHandler}
       />
-      <Route path="project/:id/chart/:chartType" element={<Chart />} />
+      <Route
+        path="workspace/:workspaceID/project/:projectID/chart/:chartType"
+        element={<Chart />}
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   )

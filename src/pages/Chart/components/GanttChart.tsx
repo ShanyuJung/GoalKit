@@ -121,7 +121,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
   const [view, setView] = useState(ViewMode.Day);
   const [columnWidth, setColumnWidth] = useState(45);
   const [isHeader, setIsHeader] = useState(true);
-  const { id } = useParams();
+  const { projectID } = useParams();
 
   const viewModeHandler = (modeType: string) => {
     if (modeType === "Half Day") {
@@ -240,18 +240,18 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
             </ViewModeSelect>
           </ViewModeSelectWrapper>
           <TogglePillWrapper>
-            <TogglePillText htmlFor={`${id}-gantt-checkbox`}>
+            <TogglePillText htmlFor={`${projectID}-gantt-checkbox`}>
               Show Header :
             </TogglePillText>
             <TogglePill>
               <ToggleInput
                 type="checkbox"
-                id={`${id}-gantt-checkbox`}
+                id={`${projectID}-gantt-checkbox`}
                 checked={isHeader}
                 onChange={showHeaderHandler}
               />
               <TogglePillLabel
-                htmlFor={`${id}-gantt-checkbox`}
+                htmlFor={`${projectID}-gantt-checkbox`}
               ></TogglePillLabel>
             </TogglePill>
           </TogglePillWrapper>

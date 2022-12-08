@@ -81,11 +81,11 @@ const Chart = () => {
   );
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
-  const { id, chartType } = useParams();
+  const { projectID, chartType } = useParams();
 
   useEffect(() => {
-    if (!id) return;
-    const projectRef = doc(db, "projects", id);
+    if (!projectID) return;
+    const projectRef = doc(db, "projects", projectID);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
       if (snapshot.data()) {
         setIsExist(true);
@@ -106,7 +106,7 @@ const Chart = () => {
       const q = query(
         workspaceRef,
         where("projects", "array-contains-any", [
-          { id: id, title: project?.title },
+          { id: projectID, title: project?.title },
         ])
       );
       const querySnapshot = await getDocs(q);

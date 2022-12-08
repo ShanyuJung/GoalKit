@@ -351,9 +351,9 @@ interface Response {
 }
 
 export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
-  if (!params.id) return null;
+  if (!params.workspaceID) return null;
   try {
-    const workspaceRef = doc(db, "workspaces", params.id);
+    const workspaceRef = doc(db, "workspaces", params.workspaceID);
     const docSnap = await getDoc(workspaceRef);
     if (docSnap.exists()) {
       const response = docSnap.data();
@@ -387,12 +387,12 @@ const Workspace = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { workspaceID } = useParams();
   const { currentUser } = useAuth();
   const response = useLoaderData() as Response | null;
 
   const newProjectHandler = async (projectTitle: string) => {
-    if (!id || isLoading) return;
+    if (!workspaceID || isLoading) return;
     try {
       setIsLoading(true);
       const setRef = doc(collection(db, "projects"));
@@ -400,17 +400,17 @@ const Workspace = () => {
         id: setRef.id,
         lists: [],
         title: projectTitle,
-        workspaceID: id,
+        workspaceID: workspaceID,
       };
       await setDoc(setRef, newProject);
-      const docRef = doc(db, "workspaces", id);
+      const docRef = doc(db, "workspaces", workspaceID);
       const newObj = {
         id: setRef.id,
         title: projectTitle,
       };
       await updateDoc(docRef, { projects: arrayUnion(newObj) });
       Swal.fire("Succeed!", "Build new project succeed!", "success");
-      navigate(`/workspace/${id}`);
+      navigate(`/workspace/${workspaceID}`);
     } catch (e) {
       Swal.fire(
         "Failed to create project!",
@@ -436,14 +436,14 @@ const Workspace = () => {
   };
 
   const updateMemberHandler = async (userID: string) => {
-    if (!id) return;
-    const workspaceRef = doc(db, "workspaces", id);
+    if (!workspaceID) return;
+    const workspaceRef = doc(db, "workspaces", workspaceID);
     await updateDoc(workspaceRef, { members: arrayUnion(userID) });
   };
 
   const addMemberHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!id || !memberRef.current?.value.trim() || isLoading) return;
+    if (!workspaceID || !memberRef.current?.value.trim() || isLoading) return;
 
     try {
       setIsLoading(true);
@@ -456,7 +456,7 @@ const Workspace = () => {
       }
       const searchedUser = [...userList][0];
       await updateMemberHandler(searchedUser.uid);
-      const workspaceRef = doc(db, "workspaces", id);
+      const workspaceRef = doc(db, "workspaces", workspaceID);
       const docSnap = await getDoc(workspaceRef);
       if (docSnap.exists()) {
         setMemberIDs(docSnap.data().members);
@@ -476,14 +476,25 @@ const Workspace = () => {
 
   const sendMessageHandler = async (event: FormEvent) => {
     event.preventDefault();
-    if (!currentUser || !messageRef.current?.value.trim() || !id || isSending) {
+    if (
+      !currentUser ||
+      !messageRef.current?.value.trim() ||
+      !workspaceID ||
+      isSending
+    ) {
       return;
     }
     try {
       setIsSending(true);
       const newMessage = messageRef.current?.value.trim();
       const newId = uuidv4();
-      const newMessageRef = doc(db, "chatRooms", id, "messages", newId);
+      const newMessageRef = doc(
+        db,
+        "chatRooms",
+        workspaceID,
+        "messages",
+        newId
+      );
       await setDoc(newMessageRef, {
         message: newMessage,
         userID: currentUser.uid,
@@ -533,9 +544,9 @@ const Workspace = () => {
   }, [memberIDs]);
 
   useEffect(() => {
-    if (!id) return;
+    if (!workspaceID) return;
     const chatRoomRef = query(
-      collection(db, "chatRooms", id, "messages"),
+      collection(db, "chatRooms", workspaceID, "messages"),
       orderBy("time", "asc")
     );
     const unsubscribe = onSnapshot(chatRoomRef, (querySnapshot) => {
@@ -585,7 +596,7 @@ const Workspace = () => {
                 <ProjectCard
                   key={project.id}
                   onClick={() => {
-                    navigate(`/project/${project.id}`);
+                    navigate(`/workspace/${workspaceID}/project/${project.id}`);
                   }}
                 >
                   <ProjectCardTitle>{project.title}</ProjectCardTitle>

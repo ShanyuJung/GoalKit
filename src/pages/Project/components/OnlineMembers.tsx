@@ -37,10 +37,10 @@ interface Props {
 
 const OnlineMembers: React.FC<Props> = ({ memberIDs }) => {
   const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
-  const { id } = useParams();
+  const { projectID } = useParams();
 
   useEffect(() => {
-    if (!id || memberIDs.length < 1) return;
+    if (!projectID || memberIDs.length < 1) return;
     const colRef = collection(db, "users");
     const q = query(colRef, where("uid", "in", memberIDs));
     const unsubscribe = onSnapshot(q, (snapshot) => {
