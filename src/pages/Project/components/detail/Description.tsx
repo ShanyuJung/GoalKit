@@ -37,6 +37,8 @@ const DescriptionText = styled.div<{
   border-radius: 5px;
   display: ${(props) => (props.isEdit ? "none" : "block")};
   word-wrap: break-word;
+  white-space: pre-wrap;
+  hyphens: auto;
 `;
 
 const TextAreaLabel = styled.label`

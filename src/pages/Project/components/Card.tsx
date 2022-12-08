@@ -48,6 +48,8 @@ const TitleWrapper = styled.div`
   margin: 5px 0px;
   font-size: 16px;
   font-weight: 600;
+  word-wrap: break-word;
+  hyphens: auto;
 `;
 
 const DescriptionIcon = styled(descriptionIcon)`
