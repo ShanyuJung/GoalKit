@@ -27,6 +27,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   const [tagsData, setTagsData] = useState<
     { name: string; total: number; id: string }[]
   >([]);
+  const [barChartWidth, setBarChartWidth] = useState(460);
 
   useEffect(() => {
     const tagsDataHandler = () => {
@@ -48,15 +49,10 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     };
 
     tagsDataHandler();
+    if (tags.length > 5) {
+      setBarChartWidth(tags.length * 92);
+    }
   }, [lists, tags]);
-
-  if (tagsData.length == 0) {
-    return (
-      <ErrorText>
-        There is no tag in this project, add new tag to generate chart.
-      </ErrorText>
-    );
-  }
 
   const tickFormatter = (value: string) => {
     const limit = 20; // put your maximum character
@@ -64,9 +60,12 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     return `${value.substring(0, limit)}...`;
   };
 
-  let barChartWidth = 460;
-  if (tagsData.length > 5) {
-    barChartWidth = tagsData.length * 92;
+  if (tagsData.length == 0) {
+    return (
+      <ErrorText>
+        There is no tag in this project, add new tag to generate chart.
+      </ErrorText>
+    );
   }
 
   return (

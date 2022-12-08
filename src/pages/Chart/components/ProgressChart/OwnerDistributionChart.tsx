@@ -31,6 +31,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       id: string;
     }[]
   >([]);
+  const [barChartWidth, setBarChartWidth] = useState(460);
 
   useEffect(() => {
     const ownerDataHandler = () => {
@@ -52,21 +53,19 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
     };
 
     ownerDataHandler();
+    if (members.length > 5) {
+      setBarChartWidth(members.length * 92);
+    }
   }, [lists, members]);
 
-  if (ownerData.length == 0) {
-    return <ErrorText>Members are not found.</ErrorText>;
-  }
-
   const tickFormatter = (value: string) => {
-    const limit = 8; // put your maximum character
+    const limit = 20; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;
   };
 
-  let barChartWidth = 460;
-  if (ownerData.length > 5) {
-    barChartWidth = ownerData.length * 92;
+  if (ownerData.length == 0) {
+    return <ErrorText>Members are not found.</ErrorText>;
   }
 
   return (
