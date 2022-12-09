@@ -361,10 +361,20 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
     }
     Swal.fire("Error", "Workspace is not exist!", "warning");
     return null;
-  } catch {
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.message === "Missing or insufficient permissions.") {
+        Swal.fire(
+          "Authentication Error!",
+          "Please login before start your work.",
+          "warning"
+        );
+        return;
+      }
+    }
     Swal.fire(
       "Failed to connect server!",
-      "Please check your internet connection and try again later",
+      "Please check your internet connection and try again later.",
       "warning"
     );
   }
