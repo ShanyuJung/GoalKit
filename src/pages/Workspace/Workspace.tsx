@@ -383,6 +383,7 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [isPermission, setIsPermission] = useState(false);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
   const [contentType, setContentType] = useState("project");
@@ -525,13 +526,24 @@ const Workspace = () => {
   useEffect(() => {
     if (!response) {
       setIsExist(false);
+      setIsPermission(false);
       return;
     }
-    setIsExist(true);
-    setProjects(response.projects);
-    setTitle(response.title);
-    setMemberIDs(response.members);
-    setOwnerID(response.owner);
+
+    if (currentUser && !response.members.includes(currentUser?.uid)) {
+      setIsExist(true);
+      setIsPermission(false);
+      return;
+    }
+
+    if (currentUser && response.members.includes(currentUser?.uid)) {
+      setIsExist(true);
+      setIsPermission(true);
+      setProjects(response.projects);
+      setTitle(response.title);
+      setMemberIDs(response.members);
+      setOwnerID(response.owner);
+    }
   }, [response]);
 
   useEffect(() => {
@@ -597,7 +609,7 @@ const Workspace = () => {
   const renderProjectList = () => {
     return (
       <>
-        {isExist && (
+        {isExist && isPermission && (
           <ProjectCardWrapper>
             <NewProject onSubmit={newProjectHandler} />
 
@@ -616,6 +628,11 @@ const Workspace = () => {
           </ProjectCardWrapper>
         )}
         {isExist === false && <ErrorText>workspace is not exist.</ErrorText>}
+        {isExist && !isPermission && (
+          <ErrorText>
+            You do not have permission to enter this workspace.
+          </ErrorText>
+        )}
       </>
     );
   };
@@ -629,7 +646,7 @@ const Workspace = () => {
 
     return (
       <>
-        {isExist && (
+        {isExist && isPermission && (
           <>
             <MemberContainer>
               <MemberForm onSubmit={addMemberHandler}>
@@ -656,12 +673,17 @@ const Workspace = () => {
           </>
         )}
         {isExist === false && <ErrorText>workspace is not exist.</ErrorText>}
+        {isExist && !isPermission && (
+          <ErrorText>
+            You do not have permission to enter this workspace.
+          </ErrorText>
+        )}
       </>
     );
   };
 
   const renderChatRoom = () => {
-    if (!isExist || membersInfo.length === 0) return null;
+    if (!isExist || membersInfo.length === 0 || !isPermission) return null;
     return (
       <ChatRoomWrapper>
         <ChatRoomHeader>{`Chatroom of ${title}`}</ChatRoomHeader>
@@ -725,7 +747,7 @@ const Workspace = () => {
           {isShowSidebar ? "<" : ">"}
         </ShowSidebarButton>
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
-          <WorkspaceBanner>{title}</WorkspaceBanner>
+          {isPermission && <WorkspaceBanner>{title}</WorkspaceBanner>}
           {contentType === "project" && renderProjectList()}
           {contentType === "member" && renderMemberList()}
         </ProjectsWrapper>

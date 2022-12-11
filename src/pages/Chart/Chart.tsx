@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { LoaderFunctionArgs, useLoaderData, useParams } from "react-router-dom";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -21,6 +22,8 @@ import {
   WorkspaceInterface,
   ProjectInterface,
 } from "../../types";
+import { useAuth } from "../../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 const Container = styled.div`
   display: flex;
@@ -74,63 +77,112 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   transition: left 0.3s;
 `;
 
+const ErrorText = styled.div`
+  margin-top: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+`;
+
+export const getWorkspaceHandler = async ({ params }: LoaderFunctionArgs) => {
+  if (!params.workspaceID) return null;
+  try {
+    const workspaceRef = doc(db, "workspaces", params.workspaceID);
+    const docSnap = await getDoc(workspaceRef);
+    if (docSnap.exists()) {
+      const response = docSnap.data() as WorkspaceInterface;
+      const membersResponse = response.members;
+      return membersResponse;
+    }
+    Swal.fire("Error", "Workspace is not exist!", "warning");
+    return null;
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.message === "Missing or insufficient permissions.") {
+        Swal.fire(
+          "Authentication Error!",
+          "Please login before start your work.",
+          "warning"
+        );
+        return;
+      }
+    }
+    Swal.fire(
+      "Failed to connect server!",
+      "Please check your internet connection and try again later.",
+      "warning"
+    );
+  }
+};
+
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [isPermission, setIsPermission] = useState(false);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
   );
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
-  const { projectID, chartType } = useParams();
+  const { workspaceID, projectID, chartType } = useParams();
+  const response = useLoaderData() as string[] | null;
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!projectID) return;
+    if (!projectID || !workspaceID || !currentUser) return;
+
+    if (!response) {
+      setIsExist(false);
+      setIsPermission(false);
+      return;
+    }
+
+    if (currentUser && !response.includes(currentUser?.uid)) {
+      setIsExist(true);
+      setIsPermission(false);
+      return;
+    }
+
     const projectRef = doc(db, "projects", projectID);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
-      if (snapshot.data()) {
+      if (snapshot.exists()) {
         setIsExist(true);
+        setIsPermission(true);
         const newProject = snapshot.data() as ProjectInterface;
         setProject(newProject);
-      } else setIsExist(false);
+      } else {
+        setIsExist(false);
+        setIsPermission(false);
+      }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [response]);
 
   useEffect(() => {
     const getMembersHandler = async () => {
-      if (!project) return;
-      const workspaceRef = collection(db, "workspaces");
-      const q = query(
-        workspaceRef,
-        where("projects", "array-contains-any", [
-          { id: projectID, title: project?.title },
-        ])
-      );
-      const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: WorkspaceInterface[] = [];
-      const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data() as WorkspaceInterface;
-          draftState.push(docData);
+      if (!project || !workspaceID) return;
+      const workspaceRef = doc(db, "workspaces", workspaceID);
+      const workspaceDocSnap = await getDoc(workspaceRef);
+      if (workspaceDocSnap.exists()) {
+        const workspaceResponse = workspaceDocSnap.data() as WorkspaceInterface;
+        const usersRef = collection(db, "users");
+        const userQ = query(
+          usersRef,
+          where("uid", "in", workspaceResponse.members)
+        );
+        const userQuerySnapshot = await getDocs(userQ);
+        const emptyMemberArr: MemberInterface[] = [];
+        const curMembers = produce(emptyMemberArr, (draftState) => {
+          userQuerySnapshot.forEach((doc) => {
+            const docData = doc.data() as MemberInterface;
+            draftState.push(docData);
+          });
         });
-      });
-      const usersRef = collection(db, "users");
-      const userQ = query(
-        usersRef,
-        where("uid", "in", curWorkspaces[0].members)
-      );
-      const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: MemberInterface[] = [];
-      const curMembers = produce(emptyMemberArr, (draftState) => {
-        userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as MemberInterface;
-          draftState.push(docData);
-        });
-      });
-      setMembers(curMembers);
+        setMembers(curMembers);
+      }
     };
 
     getMembersHandler();
@@ -170,7 +222,13 @@ const Chart = () => {
               {isExist ? project?.title : "Project is not exist"}
             </ProjectTitle>
           </SubNavbar>
-          {isExist && renderDisplayChart()}
+          {isExist && isPermission && renderDisplayChart()}
+          {isExist === false && <ErrorText>Project is not exist.</ErrorText>}
+          {isExist && !isPermission && (
+            <ErrorText>
+              You do not have permission to enter this workspace.
+            </ErrorText>
+          )}
         </ChartArea>
       </Container>
     </PrivateRoute>

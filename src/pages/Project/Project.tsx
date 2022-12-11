@@ -123,15 +123,23 @@ const ErrorText = styled.div`
 export const firstRenderProjectHandler = async ({
   params,
 }: LoaderFunctionArgs) => {
-  if (!params.projectID) return null;
+  if (!params.workspaceID || !params.projectID) return null;
   try {
+    const workspaceRef = doc(db, "workspaces", params.workspaceID);
+    const workspaceDocSnap = await getDoc(workspaceRef);
     const projectRef = doc(db, "projects", params.projectID);
     const docSnap = await getDoc(projectRef);
-    if (docSnap.exists()) {
-      const response = docSnap.data();
+    if (workspaceDocSnap.exists() && docSnap.exists()) {
+      const workspaceResponse = workspaceDocSnap.data() as WorkspaceInterface;
+      const projectResponse = docSnap.data() as ProjectInterface;
+      const response = {
+        members: workspaceResponse.members,
+        project: projectResponse,
+      };
       return response;
     }
-    Swal.fire("Error", "Workspace is not exist!", "warning");
+
+    Swal.fire("Error", "Project is not exist!", "warning");
     return null;
   } catch (e) {
     if (e instanceof Error) {
@@ -154,6 +162,7 @@ export const firstRenderProjectHandler = async ({
 
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
+  const [isPermission, setIsPermission] = useState(false);
   const [lists, setLists] = useState<ListInterface[]>([]);
   const [project, setProject] = useState<ProjectInterface | undefined>(
     undefined
@@ -164,7 +173,10 @@ const Project = () => {
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
   const { workspaceID, projectID, cardID } = useParams();
-  const response = useLoaderData() as ProjectInterface;
+  const response = useLoaderData() as {
+    members: string[];
+    project: ProjectInterface;
+  } | null;
   const { currentUser } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
@@ -326,27 +338,9 @@ const Project = () => {
 
   useEffect(() => {
     const getMembersHandler = async () => {
-      if (!project) return;
-      const workspaceRef = collection(db, "workspaces");
-      const q = query(
-        workspaceRef,
-        where("projects", "array-contains-any", [
-          { id: projectID, title: project?.title },
-        ])
-      );
-      const querySnapshot = await getDocs(q);
-      const emptyWorkspaceArr: WorkspaceInterface[] = [];
-      const curWorkspaces = produce(emptyWorkspaceArr, (draftState) => {
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data() as WorkspaceInterface;
-          draftState.push(docData);
-        });
-      });
+      if (!project || memberIDs.length === 0) return;
       const usersRef = collection(db, "users");
-      const userQ = query(
-        usersRef,
-        where("uid", "in", curWorkspaces[0].members)
-      );
+      const userQ = query(usersRef, where("uid", "in", memberIDs));
       const userQuerySnapshot = await getDocs(userQ);
       const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
@@ -355,7 +349,7 @@ const Project = () => {
           draftState.push(docData);
         });
       });
-      setMemberIDs(curWorkspaces[0].members);
+
       setMembers(curMembers);
     };
 
@@ -373,11 +367,23 @@ const Project = () => {
   useEffect(() => {
     if (!response) {
       setIsExist(false);
+      setIsPermission(false);
       return;
     }
-    setIsExist(true);
-    setProject(response);
-    setLists(response.lists);
+
+    if (currentUser && !response.members.includes(currentUser?.uid)) {
+      setIsExist(true);
+      setIsPermission(false);
+      return;
+    }
+
+    if (currentUser && response.members.includes(currentUser?.uid)) {
+      setIsExist(true);
+      setIsPermission(true);
+      setMemberIDs(response.members);
+      setProject(response.project);
+      setLists(response.project.lists);
+    }
   }, [response]);
 
   useEffect(() => {
@@ -492,7 +498,7 @@ const Project = () => {
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
               <TitleWrapper>
-                {project !== undefined && project.title}
+                {project !== undefined && isPermission && project.title}
               </TitleWrapper>
               <CardFilter keyword={keyword} setKeyword={setKeyword} />
               <OnlineMembers memberIDs={memberIDs} />
@@ -501,9 +507,14 @@ const Project = () => {
               onDragEnd={onDragEndHandler}
               onDragStart={isDraggingHandler}
             >
-              {isExist && renderProjectBoard()}
+              {isExist && isPermission && renderProjectBoard()}
               {isExist === false && (
                 <ErrorText>Project is not exist.</ErrorText>
+              )}
+              {isExist && !isPermission && (
+                <ErrorText>
+                  You do not have permission to enter this workspace.
+                </ErrorText>
               )}
             </DragDropContext>
           </BorderWrapper>
