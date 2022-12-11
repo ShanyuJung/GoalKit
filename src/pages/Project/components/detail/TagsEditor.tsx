@@ -270,13 +270,13 @@ const TagsEditor: React.FC<Props> = ({
   const [isEdit, setIsEdit] = useState(false);
   const [selectTag, setSelectTag] = useState<Tag | undefined>(undefined);
   const [selectColor, setSelectColor] = useState("#7BC86C");
-  const { id } = useParams();
+  const { projectID } = useParams();
 
   const createTagHandler = async (newTag: Tag) => {
-    if (!id || isLoading) return;
+    if (!projectID || isLoading) return;
     try {
       setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
+      const projectRef = doc(db, "projects", projectID);
       await updateDoc(projectRef, { tags: arrayUnion(newTag) });
     } catch (e) {
       Swal.fire(
@@ -339,10 +339,10 @@ const TagsEditor: React.FC<Props> = ({
   };
 
   const deleteTagHandler = async () => {
-    if (!id || isLoading || !selectTag) return;
+    if (!projectID || isLoading || !selectTag) return;
     try {
       setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
+      const projectRef = doc(db, "projects", projectID);
       await updateDoc(projectRef, { tags: arrayRemove(selectTag) });
       const newLists = produce(listsArray, (draftState) => {
         draftState.forEach((list) =>
@@ -368,7 +368,7 @@ const TagsEditor: React.FC<Props> = ({
 
   const updateTagHandler = async () => {
     if (
-      !id ||
+      !projectID ||
       isLoading ||
       !selectTag ||
       !tags ||
@@ -386,7 +386,7 @@ const TagsEditor: React.FC<Props> = ({
 
     try {
       setIsLoading(true);
-      const projectRef = doc(db, "projects", id);
+      const projectRef = doc(db, "projects", projectID);
       const newTags = produce(tags, (draftState) => {
         draftState.forEach((tag) => {
           if (tag.id === selectTag.id && editTagRef.current?.value.trim()) {

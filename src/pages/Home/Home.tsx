@@ -9,7 +9,7 @@ const Wrapper = styled.div<{ $url: string | null }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: scroll;
+  overflow: auto;
   gap: 15px;
   height: calc(100vh - 70px);
 

@@ -48,6 +48,8 @@ const TitleWrapper = styled.div`
   margin: 5px 0px;
   font-size: 16px;
   font-weight: 600;
+  word-wrap: break-word;
+  hyphens: auto;
 `;
 
 const DescriptionIcon = styled(descriptionIcon)`
@@ -194,7 +196,7 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
   );
   const [draggingUser, setDraggingUser] = useState("");
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { workspaceID, projectID } = useParams();
 
   const renderTime = () => {
     if (cardInfo.time?.start && cardInfo.time?.deadline) {
@@ -327,7 +329,9 @@ const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
       }
       $draggingUser={draggingUser}
       onClick={() => {
-        navigate(`/project/${id}/card/${cardInfo.id}`);
+        navigate(
+          `/workspace/${workspaceID}/project/${projectID}/card/${cardInfo.id}`
+        );
       }}
     >
       <Wrapper>

@@ -39,7 +39,7 @@ const LandingWrapper = styled.div<{ $url: string | null }>`
 `;
 
 const CardWrapper = styled.div`
-  overflow-y: scroll;
+  overflow-y: auto;
   padding-top: 50px;
   flex-shrink: 0;
   display: flex;

@@ -8,7 +8,7 @@ const Container = styled.div`
   height: 40px;
 `;
 
-const Wrapper = styled.div<{ $isToggle: boolean }>`
+const Wrapper = styled.div<{ $isToggle: boolean; $keyword: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,7 +16,8 @@ const Wrapper = styled.div<{ $isToggle: boolean }>`
   height: 30px;
   border-radius: 5px;
   margin-top: 5px;
-  background-color: ${(props) => (props.$isToggle ? "#ddd" : "transparent")};
+  background-color: ${(props) =>
+    props.$isToggle || props.$keyword ? "#ddd" : "transparent"};
 
   &:hover {
     background-color: #ddd;
@@ -37,7 +38,7 @@ const FilterTitle = styled.div`
 
 const DropdownWrapper = styled.div<{ $isToggle: boolean }>`
   max-height: ${(props) => (props.$isToggle ? "450px" : "0px")};
-  overflow: scroll;
+  overflow: auto;
   transition: max-height 0.3s ease-in;
   margin-top: 5px;
 `;
@@ -102,7 +103,7 @@ const CloseButton = styled(closeIcon)`
 
 const ClearKeywordButton = styled(closeIcon)`
   position: absolute;
-  top: 57px;
+  top: 60px;
   right: 10px;
   width: 20px;
   height: 20px;
@@ -189,6 +190,7 @@ const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
     <Container ref={ref}>
       <Wrapper
         $isToggle={isToggle}
+        $keyword={keyword}
         onClick={() => {
           setIsToggle((prevToggle) => !prevToggle);
         }}

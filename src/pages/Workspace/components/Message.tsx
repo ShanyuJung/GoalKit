@@ -30,6 +30,8 @@ const MessageText = styled.div<{ isCurrentUser: boolean }>`
   font-size: 16px;
   word-break: break-all;
   word-wrap: break-word;
+  hyphens: auto;
+  white-space: pre-wrap;
   border-radius: 5px;
 
   &::before {

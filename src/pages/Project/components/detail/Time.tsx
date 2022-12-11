@@ -65,7 +65,7 @@ const TimeEditAreaWrapper = styled.div<{ isEdit: boolean }>`
   max-height: ${(props) => (props.isEdit ? "500px" : "0px")};
   background-color: #ddd;
   border-radius: 5px;
-  overflow: scroll;
+  overflow: auto;
   transition: max-height 0.3s;
 `;
 
@@ -142,7 +142,7 @@ const Time: React.FC<Props> = ({
   const [timeCheckboxColor, setTimeCheckboxColor] = useState(
     "rgba(253, 216, 53, 0.9)"
   );
-  const { cardId } = useParams();
+  const { cardID } = useParams();
 
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
@@ -217,13 +217,13 @@ const Time: React.FC<Props> = ({
         <TimeCheckboxWrapper>
           <TimeCheckbox
             type="checkbox"
-            id={`time-checkbox-${cardId}`}
+            id={`time-checkbox-${cardID}`}
             checked={isComplete}
             onChange={onCheckHandler}
           />
           <TimeLabelWrapper colorCode={timeCheckboxColor}>
             <TimeLogo />
-            <TimeCheckboxLabel htmlFor={`time-checkbox-${cardId}`}>
+            <TimeCheckboxLabel htmlFor={`time-checkbox-${cardID}`}>
               {`${new Date(curStart).toLocaleDateString()} - ${new Date(
                 curDeadline
               ).toLocaleDateString()}`}

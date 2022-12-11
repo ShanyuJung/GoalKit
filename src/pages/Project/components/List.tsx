@@ -41,7 +41,7 @@ const Container = styled.div<IsDraggingProps>`
 
 const Wrapper = styled.div`
   /* max-height: calc(100vh - 180px); */
-  /* overflow-y: scroll; */
+  /* overflow-y: auto; */
   position: relative;
   z-index: 5;
 

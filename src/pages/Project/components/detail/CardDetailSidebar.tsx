@@ -199,7 +199,7 @@ const CardDetailSideBar: React.FC<Props> = ({
 }) => {
   const todoRef = useRef<HTMLInputElement | null>(null);
 
-  const { id, cardId } = useParams();
+  const { workspaceID, projectID, cardID } = useParams();
   const navigate = useNavigate();
 
   const addTodoListHandler = (event: FormEvent) => {
@@ -211,7 +211,7 @@ const CardDetailSideBar: React.FC<Props> = ({
   };
 
   const checkDeleteCardHandler = () => {
-    if (!cardId) return;
+    if (!cardID) return;
     Swal.fire({
       title: "Confirm to delete selected card",
       text: "You won't be able to revert this!",
@@ -222,8 +222,8 @@ const CardDetailSideBar: React.FC<Props> = ({
       confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
-        onDelete(cardId);
-        navigate(`/project/${id}`);
+        onDelete(cardID);
+        navigate(`/workspace/${workspaceID}/project/${projectID}`);
         Swal.fire("Deleted!", "Selected card has been deleted.", "success");
       }
     });

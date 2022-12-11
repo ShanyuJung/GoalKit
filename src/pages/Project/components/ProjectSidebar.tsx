@@ -1,12 +1,7 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import produce from "immer";
-import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import styled from "styled-components";
-import { db } from "../../../firebase";
 import { ReactComponent as ganttIcon } from "../../../assets/chart-gantt-svgrepo-com.svg";
 import { ReactComponent as pieChartIcon } from "../../../assets/pie-chart-svgrepo-com.svg";
-import { WorkspaceInterface } from "../../../types";
 
 interface StylesProps {
   isShow: boolean;
@@ -118,37 +113,12 @@ const PieChartIcon = styled(pieChartIcon)`
 `;
 
 interface Props {
-  title: string | undefined;
   isShow: boolean;
 }
 
-const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
-  const [workspaceId, setWorkspaceId] = useState("");
-  const { id } = useParams();
+const ProjectSidebar: React.FC<Props> = ({ isShow }) => {
+  const { workspaceID, projectID } = useParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!title) return;
-    const getWorkspaceHandler = async () => {
-      const workspaceRef = collection(db, "workspaces");
-      const q = query(
-        workspaceRef,
-        where("projects", "array-contains-any", [{ id: id, title: title }])
-      );
-      const querySnapshot = await getDocs(q);
-      const emptyArr: WorkspaceInterface[] = [];
-      const [newWorkspaces] = produce(emptyArr, (draftState) => {
-        querySnapshot.forEach((doc) => {
-          const docData = doc.data() as WorkspaceInterface;
-          draftState.push(docData);
-        });
-      });
-
-      setWorkspaceId(newWorkspaces.id);
-    };
-
-    getWorkspaceHandler();
-  }, [title, id]);
 
   return (
     <SidebarWrapper isShow={isShow}>
@@ -156,7 +126,7 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
         <WorkspaceTitle
           isShow={isShow}
           onClick={() => {
-            navigate(`/workspace/${workspaceId}`);
+            navigate(`/workspace/${workspaceID}`);
           }}
         >
           Back to Workspace
@@ -164,13 +134,19 @@ const ProjectSidebar: React.FC<Props> = ({ title, isShow }) => {
       </WorkspaceTitleWrapper>
       <LinkList isShow={isShow}>
         <LinkWrapper>
-          <StyledLink to={`/project/${id}/chart/gantt`} relative="path">
+          <StyledLink
+            to={`/workspace/${workspaceID}/project/${projectID}/chart/gantt`}
+            relative="path"
+          >
             <GanttIcon />
             <LinkText>Gantt Chart</LinkText>
           </StyledLink>
         </LinkWrapper>
         <LinkWrapper>
-          <StyledLink to={`/project/${id}/chart/progress`} relative="path">
+          <StyledLink
+            to={`/workspace/${workspaceID}/project/${projectID}/chart/progress`}
+            relative="path"
+          >
             <PieChartIcon />
             <LinkText>Progress Chart</LinkText>
           </StyledLink>

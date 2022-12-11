@@ -15,7 +15,7 @@ import Login from "./pages/Login/Login";
 import Dashboard from "./pages/User/Dashboard";
 import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
 import Project, { firstRenderProjectHandler } from "./pages/Project/Project";
-import Chart from "./pages/Chart/Chart";
+import Chart, { getWorkspaceHandler } from "./pages/Chart/Chart";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
 const root = ReactDOM.createRoot(
@@ -30,21 +30,25 @@ const router = createBrowserRouter(
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="dashboard" element={<Dashboard />} />
       <Route
-        path="workspace/:id"
+        path="workspace/:workspaceID"
         element={<Workspace />}
         loader={getProjectsHandler}
       />
       <Route
-        path="project/:id"
+        path="workspace/:workspaceID/project/:projectID"
         element={<Project />}
         loader={firstRenderProjectHandler}
       />
       <Route
-        path="project/:id/card/:cardId"
+        path="workspace/:workspaceID/project/:projectID/card/:cardID"
         element={<Project />}
         loader={firstRenderProjectHandler}
       />
-      <Route path="project/:id/chart/:chartType" element={<Chart />} />
+      <Route
+        path="workspace/:workspaceID/project/:projectID/chart/:chartType"
+        element={<Chart />}
+        loader={getWorkspaceHandler}
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   )
