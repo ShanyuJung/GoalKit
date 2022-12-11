@@ -9,7 +9,7 @@ import { ListInterface, MemberInterface } from "../../../../types";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+  overflow: auto;
   width: 100%;
   align-items: center;
   flex-wrap: wrap;

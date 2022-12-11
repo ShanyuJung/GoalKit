@@ -24,7 +24,7 @@ const ModalOverlay = styled.div`
   z-index: 30;
   animation: slide-down 300ms ease-out forwards;
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   @media (min-width: 768px) {
     .modal {

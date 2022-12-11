@@ -30,7 +30,7 @@ const CardFeatureButton = styled.button<{
 
 const DropdownWrapper = styled.div<{ isToggle: boolean }>`
   max-height: ${(props) => (props.isToggle ? "450px" : "0px")};
-  overflow: scroll;
+  overflow: auto;
   transition: max-height 0.3s ease-in;
   margin-top: 5px;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);

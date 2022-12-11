@@ -65,7 +65,7 @@ const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   flex-direction: column;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "55px")};
   transition: padding 0.3s;
-  overflow: scroll;
+  overflow: auto;
 
   @media (max-width: 550px) {
     padding-left: 15px;
@@ -202,7 +202,7 @@ const ChatRoomHeader = styled.div`
 `;
 
 const MessageArea = styled.div`
-  overflow-y: scroll;
+  overflow-y: auto;
   flex-grow: 1;
   padding: 5px 10px;
 `;

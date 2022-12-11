@@ -30,7 +30,7 @@ const Container = styled.div`
 `;
 
 const ChartArea = styled.div<{ isShowSidebar: boolean }>`
-  overflow: scroll;
+  overflow: auto;
   width: 100%;
   display: flex;
   flex-direction: column;

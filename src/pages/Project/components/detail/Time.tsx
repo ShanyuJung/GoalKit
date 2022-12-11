@@ -65,7 +65,7 @@ const TimeEditAreaWrapper = styled.div<{ isEdit: boolean }>`
   max-height: ${(props) => (props.isEdit ? "500px" : "0px")};
   background-color: #ddd;
   border-radius: 5px;
-  overflow: scroll;
+  overflow: auto;
   transition: max-height 0.3s;
 `;
 

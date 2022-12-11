@@ -30,7 +30,7 @@ const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 70px);
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   @media (max-width: 550px) {
     padding-left: 15px;

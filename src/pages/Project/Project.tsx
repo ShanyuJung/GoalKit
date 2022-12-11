@@ -88,7 +88,7 @@ const ListWrapper = styled.div`
   padding: 10px 20px 10px 20px;
   display: flex;
   /* width: fit-content; */
-  overflow: scroll;
+  overflow: auto;
   height: calc(100vh - 70px - 40px);
 `;
 
