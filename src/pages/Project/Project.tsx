@@ -120,37 +120,40 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-export const firstRenderProjectHandler = async ({
+export const checkPermissionHandler = async ({
   params,
 }: LoaderFunctionArgs) => {
   if (!params.workspaceID || !params.projectID) return null;
   try {
     const workspaceRef = doc(db, "workspaces", params.workspaceID);
     const workspaceDocSnap = await getDoc(workspaceRef);
-    const projectRef = doc(db, "projects", params.projectID);
-    const docSnap = await getDoc(projectRef);
-    if (workspaceDocSnap.exists() && docSnap.exists()) {
-      const workspaceResponse = workspaceDocSnap.data() as WorkspaceInterface;
-      const projectResponse = docSnap.data() as ProjectInterface;
-      const response = {
-        members: workspaceResponse.members,
-        project: projectResponse,
-      };
-      return response;
+    if (!workspaceDocSnap.exists()) {
+      Swal.fire("Error", "Workspace is not exist!", "warning");
+      return null;
+    }
+    const workspaceResponse = workspaceDocSnap.data() as WorkspaceInterface;
+    const projectIDs = workspaceResponse.projects.map((project) => {
+      return project.id;
+    });
+
+    if (!projectIDs.includes(params.projectID)) {
+      Swal.fire("Error", "Project is not exist!", "warning");
+      return null;
     }
 
-    Swal.fire("Error", "Project is not exist!", "warning");
-    return null;
+    const response = workspaceResponse;
+    return response;
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === "Missing or insufficient permissions.") {
-        Swal.fire(
-          "Authentication Error!",
-          "Please login before start your work.",
-          "warning"
-        );
-        return;
-      }
+    if (
+      e instanceof Error &&
+      e.message === "Missing or insufficient permissions."
+    ) {
+      Swal.fire(
+        "Authentication Error!",
+        "Please login before start your work.",
+        "warning"
+      );
+      return;
     }
     Swal.fire(
       "Failed to connect server!",
@@ -164,19 +167,15 @@ const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [isPermission, setIsPermission] = useState(false);
   const [lists, setLists] = useState<ListInterface[]>([]);
-  const [project, setProject] = useState<ProjectInterface | undefined>(
-    undefined
-  );
+  const [project, setProject] =
+    useState<ProjectInterface | undefined>(undefined);
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const navigate = useNavigate();
   const { workspaceID, projectID, cardID } = useParams();
-  const response = useLoaderData() as {
-    members: string[];
-    project: ProjectInterface;
-  } | null;
+  const response = useLoaderData() as WorkspaceInterface | null;
   const { currentUser } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
@@ -337,10 +336,18 @@ const Project = () => {
   };
 
   useEffect(() => {
-    const getMembersHandler = async () => {
-      if (!project || memberIDs.length === 0) return;
+    if (!keyword.trim()) {
+      setIsFiltered(false);
+      return;
+    }
+    setIsFiltered(true);
+  }, [keyword]);
+
+  useEffect(() => {
+    const getMembersHandler = async (members: string[]) => {
+      if (members.length === 0) return;
       const usersRef = collection(db, "users");
-      const userQ = query(usersRef, where("uid", "in", memberIDs));
+      const userQ = query(usersRef, where("uid", "in", members));
       const userQuerySnapshot = await getDocs(userQ);
       const emptyMemberArr: MemberInterface[] = [];
       const curMembers = produce(emptyMemberArr, (draftState) => {
@@ -353,41 +360,44 @@ const Project = () => {
       setMembers(curMembers);
     };
 
-    getMembersHandler();
-  }, [project]);
+    const projectsHandler = async () => {
+      if (isLoading) return;
+      if (!response) {
+        setIsExist(false);
+        setIsPermission(false);
+        return;
+      }
 
-  useEffect(() => {
-    if (!keyword.trim()) {
-      setIsFiltered(false);
-      return;
-    }
-    setIsFiltered(true);
-  }, [keyword]);
+      if (currentUser && !response.members.includes(currentUser?.uid)) {
+        setIsExist(true);
+        setIsPermission(false);
+        return;
+      }
 
-  useEffect(() => {
-    if (!response) {
-      setIsExist(false);
-      setIsPermission(false);
-      return;
-    }
+      if (currentUser && response.members.includes(currentUser?.uid)) {
+        try {
+          setIsLoading(true);
+          setIsExist(true);
+          setIsPermission(true);
+          setMemberIDs(response.members);
+          await getMembersHandler(response.members);
+        } catch {
+          setIsLoading(false);
+          Swal.fire(
+            "Failed to fetch data",
+            "Please check your internet connection and try again later",
+            "warning"
+          );
+        }
+        setIsLoading(false);
+      }
+    };
 
-    if (currentUser && !response.members.includes(currentUser?.uid)) {
-      setIsExist(true);
-      setIsPermission(false);
-      return;
-    }
-
-    if (currentUser && response.members.includes(currentUser?.uid)) {
-      setIsExist(true);
-      setIsPermission(true);
-      setMemberIDs(response.members);
-      setProject(response.project);
-      setLists(response.project.lists);
-    }
+    projectsHandler();
   }, [response]);
 
   useEffect(() => {
-    if (!projectID) return;
+    if (!projectID || !isPermission) return;
     const projectRef = doc(db, "projects", projectID);
     const unsubscribe = onSnapshot(projectRef, (snapshot) => {
       if (snapshot.data()) {
@@ -403,7 +413,7 @@ const Project = () => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [isPermission]);
 
   const renderProjectBoard = () => {
     return (

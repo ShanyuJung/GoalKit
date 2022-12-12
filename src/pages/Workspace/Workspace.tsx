@@ -32,7 +32,7 @@ import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import Swal from "sweetalert2";
 import Message from "./components/Message";
-import { MemberInterface } from "../../types";
+import { MemberInterface, WorkspaceInterface } from "../../types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -384,7 +384,6 @@ const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [isPermission, setIsPermission] = useState(false);
-  const [memberIDs, setMemberIDs] = useState<string[]>([]);
   const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
   const [contentType, setContentType] = useState("project");
   const [ownerID, setOwnerID] = useState("");
@@ -452,6 +451,21 @@ const Workspace = () => {
     await updateDoc(workspaceRef, { members: arrayUnion(userID) });
   };
 
+  const getMemberInfo = async (members: string[]) => {
+    if (members.length === 0) return;
+    const usersRef = collection(db, "users");
+    const userQ = query(usersRef, where("uid", "in", members));
+    const userQuerySnapshot = await getDocs(userQ);
+    const emptyMemberArr: MemberInterface[] = [];
+    const curMembers = produce(emptyMemberArr, (draftState) => {
+      userQuerySnapshot.forEach((doc) => {
+        const docData = doc.data() as MemberInterface;
+        draftState.push(docData);
+      });
+    });
+    setMembersInfo(curMembers);
+  };
+
   const addMemberHandler = async (event: FormEvent) => {
     event.preventDefault();
     if (!workspaceID || !memberRef.current?.value.trim() || isLoading) return;
@@ -470,7 +484,8 @@ const Workspace = () => {
       const workspaceRef = doc(db, "workspaces", workspaceID);
       const docSnap = await getDoc(workspaceRef);
       if (docSnap.exists()) {
-        setMemberIDs(docSnap.data().members);
+        const response = docSnap.data() as WorkspaceInterface;
+        getMemberInfo(response.members);
       }
       memberRef.current.value = "";
       Swal.fire("Succeed!", "Add User to workspace.", "success");
@@ -524,49 +539,46 @@ const Workspace = () => {
   };
 
   useEffect(() => {
-    if (!response) {
-      setIsExist(false);
-      setIsPermission(false);
-      return;
-    }
+    const projectsHandler = async () => {
+      if (isLoading) return;
+      if (!response) {
+        setIsExist(false);
+        setIsPermission(false);
+        return;
+      }
 
-    if (currentUser && !response.members.includes(currentUser?.uid)) {
-      setIsExist(true);
-      setIsPermission(false);
-      return;
-    }
+      if (currentUser && !response.members.includes(currentUser?.uid)) {
+        setIsExist(true);
+        setIsPermission(false);
+        return;
+      }
 
-    if (currentUser && response.members.includes(currentUser?.uid)) {
-      setIsExist(true);
-      setIsPermission(true);
-      setProjects(response.projects);
-      setTitle(response.title);
-      setMemberIDs(response.members);
-      setOwnerID(response.owner);
-    }
+      if (currentUser && response.members.includes(currentUser?.uid)) {
+        try {
+          setIsLoading(true);
+          setIsExist(true);
+          setIsPermission(true);
+          setProjects(response.projects);
+          setTitle(response.title);
+          setOwnerID(response.owner);
+          await getMemberInfo(response.members);
+        } catch {
+          setIsLoading(false);
+          Swal.fire(
+            "Failed to fetch data",
+            "Please check your internet connection and try again later",
+            "warning"
+          );
+        }
+        setIsLoading(false);
+      }
+    };
+
+    projectsHandler();
   }, [response]);
 
   useEffect(() => {
-    const getMemberInfo = async () => {
-      if (memberIDs.length === 0) return;
-      const usersRef = collection(db, "users");
-      const userQ = query(usersRef, where("uid", "in", memberIDs));
-      const userQuerySnapshot = await getDocs(userQ);
-      const emptyMemberArr: MemberInterface[] = [];
-      const curMembers = produce(emptyMemberArr, (draftState) => {
-        userQuerySnapshot.forEach((doc) => {
-          const docData = doc.data() as MemberInterface;
-          draftState.push(docData);
-        });
-      });
-      setMembersInfo(curMembers);
-    };
-
-    getMemberInfo();
-  }, [memberIDs]);
-
-  useEffect(() => {
-    if (!workspaceID) return;
+    if (!workspaceID || !isPermission) return;
     const chatRoomRef = query(
       collection(db, "chatRooms", workspaceID, "messages"),
       orderBy("time", "asc")
@@ -585,7 +597,7 @@ const Workspace = () => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [isPermission, workspaceID]);
 
   useEffect(() => {
     const scrollToBottomHandler = () => {
@@ -599,7 +611,6 @@ const Workspace = () => {
   useEffect(() => {
     const scrollToBottomHandler = () => {
       if (!chatRoomRef.current) return;
-
       chatRoomRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
@@ -612,19 +623,21 @@ const Workspace = () => {
         {isExist && isPermission && (
           <ProjectCardWrapper>
             <NewProject onSubmit={newProjectHandler} />
-
-            {projects.map((project) => {
-              return (
-                <ProjectCard
-                  key={project.id}
-                  onClick={() => {
-                    navigate(`/workspace/${workspaceID}/project/${project.id}`);
-                  }}
-                >
-                  <ProjectCardTitle>{project.title}</ProjectCardTitle>
-                </ProjectCard>
-              );
-            })}
+            {projects.length > 0 &&
+              projects.map((project) => {
+                return (
+                  <ProjectCard
+                    key={project.id}
+                    onClick={() => {
+                      navigate(
+                        `/workspace/${workspaceID}/project/${project.id}`
+                      );
+                    }}
+                  >
+                    <ProjectCardTitle>{project.title}</ProjectCardTitle>
+                  </ProjectCard>
+                );
+              })}
           </ProjectCardWrapper>
         )}
         {isExist === false && <ErrorText>workspace is not exist.</ErrorText>}
