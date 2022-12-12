@@ -1,0 +1,8 @@
+build/*
+public/*
+src/react-app-env.d.ts
+src/serviceWorker.ts
+src/reportWebVitals.ts
+src/setupTests.ts
+src/App.test.tsx
+functions/*
