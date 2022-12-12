@@ -80,6 +80,9 @@ const TodoLabel = styled.label`
   padding-left: 10px;
   font-size: 16px;
   flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const CloseButton = styled(closeIcon)`
