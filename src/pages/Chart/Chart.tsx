@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import {
   collection,
   doc,
@@ -23,7 +23,6 @@ import {
   ProjectInterface,
 } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
-import Swal from "sweetalert2";
 
 const Container = styled.div`
   display: flex;
@@ -85,47 +84,15 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-export const getWorkspaceHandler = async ({ params }: LoaderFunctionArgs) => {
-  if (!params.workspaceID) return null;
-  try {
-    const workspaceRef = doc(db, "workspaces", params.workspaceID);
-    const docSnap = await getDoc(workspaceRef);
-    if (docSnap.exists()) {
-      const response = docSnap.data() as WorkspaceInterface;
-      const membersResponse = response.members;
-      return membersResponse;
-    }
-    Swal.fire("Error", "Workspace is not exist!", "warning");
-    return null;
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === "Missing or insufficient permissions.") {
-        Swal.fire(
-          "Authentication Error!",
-          "Please login before start your work.",
-          "warning"
-        );
-        return;
-      }
-    }
-    Swal.fire(
-      "Failed to connect server!",
-      "Please check your internet connection and try again later.",
-      "warning"
-    );
-  }
-};
-
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [isPermission, setIsPermission] = useState(false);
-  const [project, setProject] = useState<ProjectInterface | undefined>(
-    undefined
-  );
+  const [project, setProject] =
+    useState<ProjectInterface | undefined>(undefined);
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { workspaceID, projectID, chartType } = useParams();
-  const response = useLoaderData() as string[] | null;
+  const response = useLoaderData() as WorkspaceInterface | null;
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -137,7 +104,7 @@ const Chart = () => {
       return;
     }
 
-    if (currentUser && !response.includes(currentUser?.uid)) {
+    if (currentUser && !response.members.includes(currentUser?.uid)) {
       setIsExist(true);
       setIsPermission(false);
       return;
