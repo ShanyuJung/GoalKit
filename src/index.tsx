@@ -14,13 +14,14 @@ import Signup from "./pages/Signup/Signup";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/User/Dashboard";
 import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
-import Project, { firstRenderProjectHandler } from "./pages/Project/Project";
+import Project, { checkPermissionHandler } from "./pages/Project/Project";
 import Chart, { getWorkspaceHandler } from "./pages/Chart/Chart";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -37,12 +38,12 @@ const router = createBrowserRouter(
       <Route
         path="workspace/:workspaceID/project/:projectID"
         element={<Project />}
-        loader={firstRenderProjectHandler}
+        loader={checkPermissionHandler}
       />
       <Route
         path="workspace/:workspaceID/project/:projectID/card/:cardID"
         element={<Project />}
-        loader={firstRenderProjectHandler}
+        loader={checkPermissionHandler}
       />
       <Route
         path="workspace/:workspaceID/project/:projectID/chart/:chartType"

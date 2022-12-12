@@ -540,6 +540,7 @@ const Workspace = () => {
 
   useEffect(() => {
     const projectsHandler = async () => {
+      if (isLoading) return;
       if (!response) {
         setIsExist(false);
         setIsPermission(false);
