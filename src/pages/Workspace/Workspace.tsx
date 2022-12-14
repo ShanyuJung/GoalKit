@@ -33,29 +33,10 @@ import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg"
 import Swal from "sweetalert2";
 import Message from "./components/Message";
 import { MemberInterface, WorkspaceInterface } from "../../types";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Wrapper = styled.div`
   display: flex;
-`;
-
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 900;
-  color: #658da6;
-  top: 80px;
-  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
-  height: 30px;
-  width: 30px;
-  background-color: #f2f2f2;
-  border-color: #658da6;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12;
-  transition: left 0.3s;
 `;
 
 const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
@@ -67,8 +48,8 @@ const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   transition: padding 0.3s;
   overflow: auto;
 
-  @media (max-width: 550px) {
-    padding-left: 15px;
+  @media (max-width: 808px) {
+    padding-left: 0px;
   }
 `;
 
@@ -84,6 +65,13 @@ const WorkspaceBanner = styled.div`
   border-bottom: 1px solid #658da6;
   margin: 0px 2%;
   padding: 0px 20px;
+  word-wrap: break-word;
+  hyphens: auto;
+
+  @media (max-width: 808px) {
+    font-size: 28px;
+    min-height: 80px;
+  }
 `;
 
 const ProjectCardWrapper = styled.div`
@@ -104,7 +92,7 @@ const ProjectCardWrapper = styled.div`
     max-width: 550px;
   }
 
-  @media (max-width: 809px) {
+  @media (max-width: 549px) {
     justify-content: center;
   }
 `;
@@ -750,15 +738,14 @@ const Workspace = () => {
           contentType={contentType}
           setContentType={setContentType}
           setIsShowChatRoom={setIsShowChatRoom}
-        />
-        <ShowSidebarButton
-          isShowSidebar={isShowSidebar}
-          onClick={() => {
-            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
+          onClose={() => {
+            setIsShowSidebar(false);
           }}
-        >
-          {isShowSidebar ? "<" : ">"}
-        </ShowSidebarButton>
+        />
+        <SidebarButton
+          isShowSidebar={isShowSidebar}
+          setIsShowSidebar={setIsShowSidebar}
+        />
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
           {isPermission && <WorkspaceBanner>{title}</WorkspaceBanner>}
           {contentType === "project" && renderProjectList()}

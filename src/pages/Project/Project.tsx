@@ -44,6 +44,7 @@ import {
   ProjectInterface,
   WorkspaceInterface,
 } from "../../types";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Container = styled.div`
   display: flex;
@@ -56,6 +57,10 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: margin 0.3s;
   overflow: hidden;
+
+  @media (max-width: 808px) {
+    margin-left: 0px;
+  }
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
@@ -71,6 +76,11 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   z-index: 9;
   transition: width 0.3s;
   gap: 20px;
+
+  @media (max-width: 808px) {
+    width: 100vw;
+    min-width: 400px;
+  }
 `;
 
 const TitleWrapper = styled.div`
@@ -90,26 +100,6 @@ const ListWrapper = styled.div`
   /* width: fit-content; */
   overflow: auto;
   height: calc(100vh - 70px - 40px);
-`;
-
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 900;
-  color: #658da6;
-  top: 80px;
-  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
-  height: 30px;
-  width: 30px;
-  background-color: #f2f2f2;
-  border-color: #658da6;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12;
-  transition: left 0.3s;
 `;
 
 const ErrorText = styled.div`
@@ -496,15 +486,16 @@ const Project = () => {
           </Modal>
         )}
         <Container>
-          <ProjectSidebar isShow={isShowSidebar} />
-          <ShowSidebarButton
-            isShowSidebar={isShowSidebar}
-            onClick={() => {
-              setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
+          <ProjectSidebar
+            isShow={isShowSidebar}
+            onClose={() => {
+              setIsShowSidebar(false);
             }}
-          >
-            {isShowSidebar ? "<" : ">"}
-          </ShowSidebarButton>
+          />
+          <SidebarButton
+            isShowSidebar={isShowSidebar}
+            setIsShowSidebar={setIsShowSidebar}
+          />
           <BorderWrapper isShowSidebar={isShowSidebar}>
             <SubNavbar isShowSidebar={isShowSidebar}>
               <TitleWrapper>

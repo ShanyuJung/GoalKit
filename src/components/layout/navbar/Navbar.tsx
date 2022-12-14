@@ -16,6 +16,10 @@ const Wrapper = styled.div`
   display: flex;
   padding: 0px 30px;
   align-items: center;
+
+  @media (max-width: 808px) {
+    padding-left: 70px;
+  }
 `;
 
 const NavGroup = styled.div`
