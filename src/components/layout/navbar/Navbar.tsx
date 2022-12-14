@@ -6,6 +6,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 
 const Wrapper = styled.div`
   width: 100vw;
+  min-width: 360px;
   height: 70px;
   position: fixed;
   top: 0;
