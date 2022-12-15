@@ -34,6 +34,10 @@ const FilterTitle = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin: 0px 5px;
+
+  @media (max-width: 808px) {
+    display: none;
+  }
 `;
 
 const DropdownWrapper = styled.div<{ $isToggle: boolean }>`

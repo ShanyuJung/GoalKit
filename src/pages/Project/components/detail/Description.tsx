@@ -20,6 +20,7 @@ const DescriptionIcon = styled(descriptionIcon)`
   height: 20px;
   width: 20px;
   margin-right: 6px;
+  flex-shrink: 0;
 
   path {
     fill: #000;

@@ -23,6 +23,7 @@ import {
   ProjectInterface,
 } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,10 @@ const ChartArea = styled.div<{ isShowSidebar: boolean }>`
   flex-direction: column;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
+
+  @media (max-width: 808px) {
+    padding-left: 0px;
+  }
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
@@ -49,31 +54,16 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   background-color: #fff;
   z-index: 9;
   transition: width 0.3s;
+
+  @media (max-width: 808px) {
+    width: 100%;
+  }
 `;
 
 const ProjectTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
-`;
-
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 900;
-  color: #658da6;
-  top: 80px;
-  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
-  height: 30px;
-  width: 30px;
-  background-color: #f2f2f2;
-  border-color: #658da6;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12;
-  transition: left 0.3s;
+  min-width: 360px;
 `;
 
 const ErrorText = styled.div`
@@ -174,15 +164,16 @@ const Chart = () => {
   return (
     <PrivateRoute>
       <Container>
-        <ChartSidebar isShow={isShowSidebar} />
-        <ShowSidebarButton
-          isShowSidebar={isShowSidebar}
-          onClick={() => {
-            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
+        <ChartSidebar
+          isShow={isShowSidebar}
+          onClose={() => {
+            setIsShowSidebar(false);
           }}
-        >
-          {isShowSidebar ? "<" : ">"}
-        </ShowSidebarButton>
+        />
+        <SidebarButton
+          isShowSidebar={isShowSidebar}
+          setIsShowSidebar={setIsShowSidebar}
+        />
         <ChartArea isShowSidebar={isShowSidebar}>
           <SubNavbar isShowSidebar={isShowSidebar}>
             <ProjectTitle>

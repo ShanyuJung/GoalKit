@@ -15,7 +15,7 @@ const Backdrop = styled.div`
 const ModalOverlay = styled.div`
   position: fixed;
   top: 15vh;
-  left: calc(50vw - 250px);
+  left: calc(50vw - 350px);
   width: 700px;
   background-color: #eee;
   padding: 20px;
@@ -26,11 +26,9 @@ const ModalOverlay = styled.div`
   max-height: 80vh;
   overflow-y: auto;
 
-  @media (min-width: 768px) {
-    .modal {
-      width: 40rem;
-      left: calc(50% - 20rem);
-    }
+  @media (max-width: 808px) {
+    width: 100%;
+    left: 0;
   }
   @keyframes slide-down {
     from {

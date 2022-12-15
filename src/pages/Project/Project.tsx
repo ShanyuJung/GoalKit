@@ -76,10 +76,10 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   z-index: 9;
   transition: width 0.3s;
   gap: 20px;
+  min-width: 360px;
 
   @media (max-width: 808px) {
-    width: 100vw;
-    min-width: 400px;
+    width: 100%;
   }
 `;
 
