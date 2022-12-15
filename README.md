@@ -1,46 +1,68 @@
-# Getting Started with Create React App
+# GoalKit
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was built project with [`Create React App`](https://create-react-app.dev/) and [`TypeScript`](https://www.typescriptlang.org/)
 
-## Available Scripts
+**An online project management tool that makes users work more collaboratively and get more done**. GoalKit provides multiple types of tools including boards, lists, cards and charts that enable users to organize and prioritize their projects in an efficient, flexible and rewarding way.
 
-In the project directory, you can run:
+## Demo link
 
-### `npm start`
+> ### [Demo](https://goalkit-phi.vercel.app/)
+>
+> Demo account: demo@email.com\
+> Demo password: qqqqqq
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- [x] Instant co-editing
+- [x] Instant massaging
+- [x] Drag and drop
+- [x] Updated multiple different types of information
+- [x] Visualized data as chart
+- [x] Online status
+- [x] Authentication and private router
+- [x] Handled nested and immutable data
+- [x] Styled-Components
 
-### `npm test`
+### `Instant co-editing`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Fulfilled instant co-editing with [`onSnapshot API`](https://firebase.google.com/docs/firestore/query-data/listen) and solved conflict problems of instant co-editing
 
-### `npm run build`
+### `Instant massaging`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Fulfilled instant messaging feature between multiple users
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `Drag and drop`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Implemented creating lists and cards feature, allowed users to edit position and order by `drag and drop` with [`React Beautiful DnD`](https://www.npmjs.com/package/react-beautiful-dnd)
 
-### `npm run eject`
+### `Updated multiple different types of information`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Handled updating multiple different types of information about task cards including date, tags, owners, todo lists and progress status by `useReducer`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `Visualized data as chart`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Visualized task card information data as `Gantt charts`, `progress pie charts` and `distribution bar charts` with third-party libraries ([`gantt-task-react`](https://www.npmjs.com/package/gantt-task-react) , [`recharts`](https://www.npmjs.com/package/recharts))
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### `Online status`
 
-## Learn More
+Used [`Realtime Database`](https://firebase.google.com/docs/database) and [`Cloud Functions`](https://firebase.google.com/docs/functions) for user online status management
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `Authentication and private router`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Applied React and [`React Router`](https://reactrouter.com/en/main) for SPA and private route, and used [Firestore](https://firebase.google.com/docs/firestore) for data management
+
+### `Handled nested and immutable data`
+
+Handled nested and immutable data by [`immer`](https://immerjs.github.io/immer/)
+
+### `Styled-Components`
+
+Implemented layout with [`Styled-Components`](https://styled-components.com/)
+
+## Funciton Map
+
+<img width="1786" alt="GoalKit" src="https://user-images.githubusercontent.com/96833101/207826943-ea6315c8-37a3-464f-aa76-01c526e2376d.png">
+
+## Structure Diagram
+
+<img width="800" alt="Structure Diagram" src="https://user-images.githubusercontent.com/96833101/207832175-7dd42700-2ed4-49f4-b97c-66240ea2f41c.png">
