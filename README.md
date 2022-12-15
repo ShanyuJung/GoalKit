@@ -59,7 +59,7 @@ Handled nested and immutable data by [`immer`](https://immerjs.github.io/immer/)
 
 Implemented layout with [`Styled-Components`](https://styled-components.com/)
 
-## Funciton Map
+## Function Map
 
 <img width="1786" alt="GoalKit" src="https://user-images.githubusercontent.com/96833101/207826943-ea6315c8-37a3-464f-aa76-01c526e2376d.png">
 
