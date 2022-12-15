@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 `;
 
 const Card = styled.div`
-  width: 450px;
+  min-width: 450px;
   padding: 20px;
   border: 1px #658da647 solid;
   border-radius: 10px;
