@@ -9,7 +9,14 @@ import { useProgressiveImage } from "../../utils/hooks";
 
 const Wrapper = styled.div`
   display: flex;
-  height: calc(100vh - 70px);
+  min-height: calc(100vh - 70px);
+  min-width: 360px;
+  overflow: auto;
+
+  @media (max-width: 799px) {
+    padding-bottom: 20px;
+    justify-content: center;
+  }
 `;
 
 const LandingWrapper = styled.div<{ $url: string | null }>`
@@ -22,6 +29,14 @@ const LandingWrapper = styled.div<{ $url: string | null }>`
   opacity: 0.9;
   background-repeat: no-repeat;
   animation: image-loading 1s;
+
+  @media (max-width: 799px) {
+    position: fixed;
+    width: 100vw;
+    height: calc(100vh - 70px);
+    z-index: -1;
+    min-width: 360px;
+  }
 
   @keyframes image-loading {
     0% {
@@ -48,6 +63,10 @@ const CardWrapper = styled.div`
   align-items: center;
   animation: card-loading 1s;
 
+  @media (max-width: 600px) {
+    min-width: auto;
+  }
+
   @keyframes card-loading {
     0% {
       transform: translateY(-30px);
@@ -68,6 +87,10 @@ const CardTitle = styled.div`
   color: #1d3240;
   font-weight: 600;
   margin-bottom: 5px;
+
+  @media (max-width: 600px) {
+    font-size: 30px;
+  }
 `;
 
 const Card = styled.div`
@@ -79,6 +102,11 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #f2f2f2;
+
+  @media (max-width: 600px) {
+    width: 90vw;
+  }
 `;
 
 const Form = styled.form`
@@ -105,10 +133,14 @@ const SubmitButton = styled.button`
   &:hover {
     filter: brightness(110%);
   }
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 `;
 
-const StyledLink = styled(Link)<{ $fontWeight?: number }>`
-  color: #658da6;
+const StyledLink = styled(Link)<{ $fontWeight?: number; $color?: string }>`
+  color: ${(props) => (props.$color ? props.$color : "#658da6")};
   font-size: 14px;
   text-decoration: none;
   font-weight: ${(props) => (props.$fontWeight ? props.$fontWeight : 400)};
@@ -131,6 +163,10 @@ const DescriptionText = styled.div`
   font-size: 16px;
   color: #658da6;
   margin-bottom: 5px;
+
+  @media (max-width: 600px) {
+    font-size: 14px;
+  }
 `;
 
 const ErrorMessageWrapper = styled.div`
@@ -198,16 +234,22 @@ const Login = () => {
               />
               <SubmitButton disabled={isLoading}>Login</SubmitButton>
             </Form>
-            <StyledLink to="/forgot-password">
-              Forgot your Password ?
-            </StyledLink>
+            {errorMessage && (
+              <StyledLink
+                to="/forgot-password"
+                $color="#e74c3c"
+                $fontWeight={600}
+              >
+                Forgot your Password ?
+              </StyledLink>
+            )}
+            <Text>
+              {"Don't have an account ? "}
+              <StyledLink to="/signup" $fontWeight={600}>
+                Signup
+              </StyledLink>
+            </Text>
           </Card>
-          <Text>
-            {"Don't have an account ? "}
-            <StyledLink to="/signup" $fontWeight={600}>
-              Signup
-            </StyledLink>
-          </Text>
         </CardWrapper>
       </Wrapper>
     </LoginRoute>
