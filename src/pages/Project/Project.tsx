@@ -481,6 +481,8 @@ const Project = () => {
                 members={members}
                 onDelete={deleteCardHandler}
                 onClose={onCloseHandler}
+                draggingLists={project?.draggingLists}
+                draggingCards={project?.draggingCards}
               />
             ) : null}
           </Modal>
