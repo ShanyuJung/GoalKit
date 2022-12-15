@@ -218,7 +218,7 @@ const Home = () => {
       </LandingText>
       <LandingDescription>
         Boards, lists, cards and charts enable you to organize and prioritize
-        your projects in a efficient, flexible and rewarding way.
+        your projects in an efficient, flexible and rewarding way.
       </LandingDescription>
       <LandingButton onClick={redirectHandler}>Get Started</LandingButton>
     </Wrapper>
