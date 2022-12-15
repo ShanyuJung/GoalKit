@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 360px;
 `;
 
 const Card = styled.div`
@@ -28,6 +29,10 @@ const Card = styled.div`
   justify-content: center;
   align-items: center;
   gap: 5px;
+
+  @media (max-width: 500px) {
+    width: 90%;
+  }
 `;
 
 const Form = styled.form`
@@ -53,6 +58,10 @@ const SubmitButton = styled.button`
 
   &:hover {
     filter: brightness(110%);
+  }
+
+  @media (max-width: 500px) {
+    font-size: 16px;
   }
 `;
 
@@ -91,8 +100,13 @@ const ProfileTextWrapper = styled.div`
   display: flex;
   width: 80%;
   align-items: flex-end;
-  height: 35px;
+  min-height: 35px;
   overflow: hidden;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const EditTitle = styled.div`
@@ -100,6 +114,10 @@ const EditTitle = styled.div`
   font-size: 30px;
   font-weight: 600;
   margin-bottom: 5px;
+
+  @media (max-width: 500px) {
+    font-size: 24px;
+  }
 `;
 
 const ProfileTitle = styled.div`
@@ -109,6 +127,10 @@ const ProfileTitle = styled.div`
   flex-shrink: 0;
   color: #2c4859;
   line-height: 27px;
+
+  @media (max-width: 500px) {
+    font-size: 16px;
+  }
 `;
 
 const ProfileText = styled.div`
@@ -116,6 +138,15 @@ const ProfileText = styled.div`
   color: #1d3240;
   line-height: 30px;
   font-weight: 600;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  @media (max-width: 500px) {
+    font-size: 18px;
+    padding-left: 30px;
+  }
 `;
 
 const EndEdit = styled.div`

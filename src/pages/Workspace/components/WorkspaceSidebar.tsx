@@ -18,6 +18,12 @@ const SidebarWrapper = styled.div<StylesProps>`
   position: fixed;
   z-index: 10;
   filter: brightness(115%);
+
+  @media (max-width: 808px) {
+    background-color: ${() => "#658DA6"};
+    width: ${(props) => (props.isShow ? "260px" : "0px")};
+    overflow: hidden;
+  }
 `;
 
 const WorkspaceTitleWrapper = styled.div<StylesProps>`
@@ -117,11 +123,28 @@ const ChatIcon = styled(chatIcon)`
   }
 `;
 
+const MobileBackDrop = styled.div<StylesProps>`
+  display: none;
+
+  @media (max-width: 808px) {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    opacity: ${(props) => (props.isShow ? "0.5" : "0")};
+    width: 100vw;
+    transition: opacity 0.3s ease-in;
+    min-height: calc(100vh - 70px);
+    background-color: #000;
+    pointer-events: ${(props) => (props.isShow ? "auto" : "none")};
+  }
+`;
+
 interface Props {
   isShow: boolean;
   contentType: string;
   setContentType: (value: string) => void;
   setIsShowChatRoom: (value: boolean | ((prevVar: boolean) => boolean)) => void;
+  onClose: () => void;
 }
 
 const WorkspaceSidebar: React.FC<Props> = ({
@@ -129,50 +152,54 @@ const WorkspaceSidebar: React.FC<Props> = ({
   contentType,
   setContentType,
   setIsShowChatRoom,
+  onClose,
 }) => {
   const navigate = useNavigate();
 
   return (
-    <SidebarWrapper isShow={isShow}>
-      <WorkspaceTitleWrapper isShow={isShow}>
-        <WorkspaceTitle
-          isShow={isShow}
-          onClick={() => {
-            navigate("/dashboard");
-          }}
-        >
-          Back to DashBoard
-        </WorkspaceTitle>
-      </WorkspaceTitleWrapper>
-      <LinkList isShow={isShow}>
-        <LinkWrapper
-          $selected={contentType === "project"}
-          onClick={() => {
-            setContentType("project");
-          }}
-        >
-          <ProjectIcon />
-          <LinkText>Project Boards</LinkText>
-        </LinkWrapper>
-        <LinkWrapper
-          $selected={contentType === "member"}
-          onClick={() => {
-            setContentType("member");
-          }}
-        >
-          <MemberIcon />
-          <LinkText>Members</LinkText>
-        </LinkWrapper>
-        <LinkWrapper
-          onClick={() => {
-            setIsShowChatRoom((prevIsShowChatRoom) => !prevIsShowChatRoom);
-          }}
-        >
-          <ChatIcon />
-          <LinkText>Chat Room</LinkText>
-        </LinkWrapper>
-      </LinkList>
-    </SidebarWrapper>
+    <>
+      <SidebarWrapper isShow={isShow}>
+        <WorkspaceTitleWrapper isShow={isShow}>
+          <WorkspaceTitle
+            isShow={isShow}
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+          >
+            Back to DashBoard
+          </WorkspaceTitle>
+        </WorkspaceTitleWrapper>
+        <LinkList isShow={isShow}>
+          <LinkWrapper
+            $selected={contentType === "project"}
+            onClick={() => {
+              setContentType("project");
+            }}
+          >
+            <ProjectIcon />
+            <LinkText>Project Boards</LinkText>
+          </LinkWrapper>
+          <LinkWrapper
+            $selected={contentType === "member"}
+            onClick={() => {
+              setContentType("member");
+            }}
+          >
+            <MemberIcon />
+            <LinkText>Members</LinkText>
+          </LinkWrapper>
+          <LinkWrapper
+            onClick={() => {
+              setIsShowChatRoom((prevIsShowChatRoom) => !prevIsShowChatRoom);
+            }}
+          >
+            <ChatIcon />
+            <LinkText>Chat Room</LinkText>
+          </LinkWrapper>
+        </LinkList>
+      </SidebarWrapper>
+      <MobileBackDrop isShow={isShow} onClick={onClose} />
+    </>
   );
 };
 

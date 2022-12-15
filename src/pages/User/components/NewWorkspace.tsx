@@ -29,10 +29,6 @@ const Wrapper = styled.div<{ $isEdit: boolean }>`
     color: #1d3240;
     background-color: rgba(9, 30, 66, 0.1);
   }
-
-  @media (max-width: 809px) {
-    flex-grow: 1;
-  }
 `;
 
 const Text = styled.div`

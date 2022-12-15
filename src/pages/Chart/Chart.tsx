@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import {
   collection,
   doc,
@@ -23,7 +23,7 @@ import {
   ProjectInterface,
 } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
-import Swal from "sweetalert2";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Container = styled.div`
   display: flex;
@@ -36,6 +36,10 @@ const ChartArea = styled.div<{ isShowSidebar: boolean }>`
   flex-direction: column;
   padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
   transition: padding 0.3s;
+
+  @media (max-width: 808px) {
+    padding-left: 0px;
+  }
 `;
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
@@ -50,31 +54,16 @@ const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   background-color: #fff;
   z-index: 9;
   transition: width 0.3s;
+
+  @media (max-width: 808px) {
+    width: 100%;
+  }
 `;
 
 const ProjectTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
-`;
-
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 900;
-  color: #658da6;
-  top: 80px;
-  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
-  height: 30px;
-  width: 30px;
-  background-color: #f2f2f2;
-  border-color: #658da6;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12;
-  transition: left 0.3s;
+  min-width: 360px;
 `;
 
 const ErrorText = styled.div`
@@ -85,47 +74,15 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-export const getWorkspaceHandler = async ({ params }: LoaderFunctionArgs) => {
-  if (!params.workspaceID) return null;
-  try {
-    const workspaceRef = doc(db, "workspaces", params.workspaceID);
-    const docSnap = await getDoc(workspaceRef);
-    if (docSnap.exists()) {
-      const response = docSnap.data() as WorkspaceInterface;
-      const membersResponse = response.members;
-      return membersResponse;
-    }
-    Swal.fire("Error", "Workspace is not exist!", "warning");
-    return null;
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === "Missing or insufficient permissions.") {
-        Swal.fire(
-          "Authentication Error!",
-          "Please login before start your work.",
-          "warning"
-        );
-        return;
-      }
-    }
-    Swal.fire(
-      "Failed to connect server!",
-      "Please check your internet connection and try again later.",
-      "warning"
-    );
-  }
-};
-
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
   const [isPermission, setIsPermission] = useState(false);
-  const [project, setProject] = useState<ProjectInterface | undefined>(
-    undefined
-  );
+  const [project, setProject] =
+    useState<ProjectInterface | undefined>(undefined);
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [isShowSidebar, setIsShowSidebar] = useState(true);
   const { workspaceID, projectID, chartType } = useParams();
-  const response = useLoaderData() as string[] | null;
+  const response = useLoaderData() as WorkspaceInterface | null;
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -137,7 +94,7 @@ const Chart = () => {
       return;
     }
 
-    if (currentUser && !response.includes(currentUser?.uid)) {
+    if (currentUser && !response.members.includes(currentUser?.uid)) {
       setIsExist(true);
       setIsPermission(false);
       return;
@@ -207,15 +164,16 @@ const Chart = () => {
   return (
     <PrivateRoute>
       <Container>
-        <ChartSidebar isShow={isShowSidebar} />
-        <ShowSidebarButton
-          isShowSidebar={isShowSidebar}
-          onClick={() => {
-            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
+        <ChartSidebar
+          isShow={isShowSidebar}
+          onClose={() => {
+            setIsShowSidebar(false);
           }}
-        >
-          {isShowSidebar ? "<" : ">"}
-        </ShowSidebarButton>
+        />
+        <SidebarButton
+          isShowSidebar={isShowSidebar}
+          setIsShowSidebar={setIsShowSidebar}
+        />
         <ChartArea isShowSidebar={isShowSidebar}>
           <SubNavbar isShowSidebar={isShowSidebar}>
             <ProjectTitle>

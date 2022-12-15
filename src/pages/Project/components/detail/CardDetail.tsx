@@ -32,6 +32,10 @@ const Wrapper = styled.div`
   flex-grow: 1;
   padding-right: 10px;
   max-width: 400px;
+
+  @media (max-width: 920px) {
+    min-height: auto;
+  }
 `;
 
 const TitleWrapper = styled.div`
@@ -43,6 +47,10 @@ const TitleWrapper = styled.div`
 `;
 
 const CardLogo = styled(cardIcon)`
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
   path {
     fill: #828282;
   }
@@ -50,6 +58,10 @@ const CardLogo = styled(cardIcon)`
 
 const ContainerWrapper = styled.div`
   display: flex;
+
+  @media (max-width: 808px) {
+    overflow-x: auto;
+  }
 `;
 
 const TitleInput = styled.input`
