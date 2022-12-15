@@ -37,6 +37,7 @@ import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Wrapper = styled.div`
   display: flex;
+  min-width: 360px;
 `;
 
 const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
@@ -258,7 +259,16 @@ const MemberForm = styled.form`
   display: flex;
   gap: 10px;
   margin: 15px;
-  width: 60%;
+  width: 80%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const MemberInput = styled.input`
@@ -270,6 +280,10 @@ const MemberInput = styled.input`
   padding: 0px 20px;
   border: 1px solid #ccc;
   flex-grow: 1;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 const MemberButton = styled.button`
@@ -283,23 +297,37 @@ const MemberButton = styled.button`
   margin: 0;
   padding: 5px;
   font-weight: 600;
+  flex-shrink: 0;
   cursor: pointer;
 
   &:hover {
     filter: brightness(110%);
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
   }
 `;
 
 const MemberWrapper = styled.div`
   display: flex;
   align-items: flex-end;
-  width: 60%;
+  width: 80%;
   gap: 10px;
   padding: 20px;
   border-bottom: 1px #658da6 solid;
 
   &:hover {
     background-color: #eee;
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 0px;
   }
 `;
 
@@ -308,6 +336,10 @@ const MemberName = styled.div`
   line-height: 22px;
   width: 150px;
   color: #1d3240;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 const MemberEmail = styled.div`
@@ -315,12 +347,20 @@ const MemberEmail = styled.div`
   font-size: 16px;
   line-height: 22px;
   color: #658da6;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 const MemberType = styled.div`
   font-size: 16px;
   line-height: 22px;
   color: #1d3240;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 interface MessageInterface {
