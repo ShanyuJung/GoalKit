@@ -16,8 +16,14 @@ const SidebarWrapper = styled.div<StylesProps>`
   height: calc(100vh - 70px);
   transition: width 0.3s;
   position: fixed;
-  z-index: 10;
+  z-index: 20;
   filter: brightness(115%);
+
+  @media (max-width: 808px) {
+    background-color: ${() => "#658DA6"};
+    width: ${(props) => (props.isShow ? "260px" : "0px")};
+    overflow: hidden;
+  }
 `;
 
 const LinkList = styled.div<StylesProps>`
@@ -100,45 +106,65 @@ const PieChartLogo = styled(pieChartIcon)`
   }
 `;
 
+const MobileBackDrop = styled.div<StylesProps>`
+  display: none;
+
+  @media (max-width: 808px) {
+    display: block;
+    position: absolute;
+    z-index: 15;
+    opacity: ${(props) => (props.isShow ? "0.5" : "0")};
+    width: 100vw;
+    transition: opacity 0.3s ease-in;
+    min-height: calc(100vh - 70px);
+    background-color: #000;
+    pointer-events: ${(props) => (props.isShow ? "auto" : "none")};
+  }
+`;
+
 interface Props {
   isShow: boolean;
+  onClose: () => void;
 }
 
-const ChartSidebar: React.FC<Props> = ({ isShow }) => {
+const ChartSidebar: React.FC<Props> = ({ isShow, onClose }) => {
   const { workspaceID, projectID, chartType } = useParams();
 
   return (
-    <SidebarWrapper isShow={isShow}>
-      <LinkList isShow={isShow}>
-        <LinkWrapper>
-          <StyledLink
-            to={`/workspace/${workspaceID}/project/${projectID}/`}
-            relative="path"
-          >
-            <ProjectLogo />
-            <LinkText>Back to Board</LinkText>
-          </StyledLink>
-        </LinkWrapper>
-        <LinkWrapper $selected={chartType === "gantt"}>
-          <StyledLink
-            to={`/workspace/${workspaceID}/project/${projectID}/chart/gantt`}
-            relative="path"
-          >
-            <GanttLogo />
-            <LinkText>Gantt Chart</LinkText>
-          </StyledLink>
-        </LinkWrapper>
-        <LinkWrapper $selected={chartType === "progress"}>
-          <StyledLink
-            to={`/workspace/${workspaceID}/project/${projectID}/chart/progress`}
-            relative="path"
-          >
-            <PieChartLogo />
-            <LinkText>Progress Chart</LinkText>
-          </StyledLink>
-        </LinkWrapper>
-      </LinkList>
-    </SidebarWrapper>
+    <>
+      <SidebarWrapper isShow={isShow}>
+        <LinkList isShow={isShow}>
+          <LinkWrapper>
+            <StyledLink
+              to={`/workspace/${workspaceID}/project/${projectID}/`}
+              relative="path"
+            >
+              <ProjectLogo />
+              <LinkText>Back to Board</LinkText>
+            </StyledLink>
+          </LinkWrapper>
+          <LinkWrapper $selected={chartType === "gantt"}>
+            <StyledLink
+              to={`/workspace/${workspaceID}/project/${projectID}/chart/gantt`}
+              relative="path"
+            >
+              <GanttLogo />
+              <LinkText>Gantt Chart</LinkText>
+            </StyledLink>
+          </LinkWrapper>
+          <LinkWrapper $selected={chartType === "progress"}>
+            <StyledLink
+              to={`/workspace/${workspaceID}/project/${projectID}/chart/progress`}
+              relative="path"
+            >
+              <PieChartLogo />
+              <LinkText>Progress Chart</LinkText>
+            </StyledLink>
+          </LinkWrapper>
+        </LinkList>
+      </SidebarWrapper>
+      <MobileBackDrop isShow={isShow} onClick={onClose} />
+    </>
   );
 };
 

@@ -24,6 +24,10 @@ const InputLabel = styled.label`
   margin-left: 10px;
   position: relative;
   width: fit-content;
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
 `;
 
 const StyledInput = styled.input`
@@ -34,6 +38,12 @@ const StyledInput = styled.input`
   border-radius: 20px;
   padding: 0px 20px;
   border: 1px solid #ccc;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+    line-height: 28px;
+    height: 28px;
+  }
 `;
 
 const AuthInput = forwardRef<Ref, Props>((props, ref) => {

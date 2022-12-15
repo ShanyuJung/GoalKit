@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   width: 100%;
   padding: 20px;
   padding-top: 60px;
+  min-width: 360px;
 `;
 
 const ChartWrapper = styled.div`
@@ -40,6 +41,11 @@ const ViewModeSelect = styled.select`
     outline: none;
     box-shadow: none;
   }
+
+  @media (max-width: 808px) {
+    font-size: 0.8rem;
+    padding: 6px 12px 6px 8px;
+  }
 `;
 
 const ChartDashboardWrapper = styled.div`
@@ -56,6 +62,10 @@ const TogglePillWrapper = styled.div`
   border-radius: 4px;
   padding: 0px 10px 0px 10px;
   height: 35px;
+
+  @media (max-width: 808px) {
+    height: 29px;
+  }
 `;
 
 const TogglePill = styled.div`
@@ -76,6 +86,12 @@ const ToggleInput = styled.input`
     left: 1.6em;
     -webkit-transform: rotate(295deg);
     transform: rotate(295deg);
+  }
+
+  @media (max-width: 808px) {
+    &:checked + label:before {
+      left: 1em;
+    }
   }
 `;
 
@@ -105,11 +121,25 @@ const TogglePillLabel = styled.label`
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
   }
+
+  @media (max-width: 808px) {
+    width: 2em;
+    height: 1.2em;
+
+    &::before {
+      width: 0.8em;
+      height: 0.8em;
+    }
+  }
 `;
 
 const TogglePillText = styled.label`
   font-size: 16px;
   font-weight: 400;
+
+  @media (max-width: 808px) {
+    font-size: 0.8rem;
+  }
 `;
 
 interface Props {

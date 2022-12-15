@@ -27,6 +27,13 @@ const MemberWrapper = styled.div<{ colorCode: string; $background?: string }>`
   margin-right: -5px;
   outline: 2px solid #fff;
   cursor: default;
+
+  @media (max-width: 808px) {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 24px;
+  }
 `;
 
 const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];

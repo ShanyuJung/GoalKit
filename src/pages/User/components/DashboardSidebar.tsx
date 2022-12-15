@@ -19,6 +19,12 @@ const SidebarWrapper = styled.div<StylesProps>`
   position: fixed;
   z-index: 10;
   filter: brightness(115%);
+
+  @media (max-width: 808px) {
+    background-color: ${() => "#658DA6"};
+    width: ${(props) => (props.isShow ? "260px" : "0px")};
+    overflow: hidden;
+  }
 `;
 
 const LinkList = styled.div<StylesProps>`
@@ -91,16 +97,34 @@ const LogoutIcon = styled(logoutIcon)`
   }
 `;
 
+const MobileBackDrop = styled.div<StylesProps>`
+  display: none;
+
+  @media (max-width: 808px) {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    opacity: ${(props) => (props.isShow ? "0.5" : "0")};
+    width: 100vw;
+    transition: opacity 0.3s ease-in;
+    min-height: calc(100vh - 70px);
+    background-color: #000;
+    pointer-events: ${(props) => (props.isShow ? "auto" : "none")};
+  }
+`;
+
 interface Props {
   isShow: boolean;
   contentType: string;
   setContentType: (value: string) => void;
+  onClose: () => void;
 }
 
 const DashboardSidebar: React.FC<Props> = ({
   isShow,
   contentType,
   setContentType,
+  onClose,
 }) => {
   const { logout } = useAuth();
 
@@ -120,32 +144,35 @@ const DashboardSidebar: React.FC<Props> = ({
   };
 
   return (
-    <SidebarWrapper isShow={isShow}>
-      <LinkList isShow={isShow}>
-        <LinkWrapper
-          $selected={contentType === "workspace"}
-          onClick={() => {
-            setContentType("workspace");
-          }}
-        >
-          <ProjectIcon />
-          <LinkText>Workspace</LinkText>
-        </LinkWrapper>
-        <LinkWrapper
-          $selected={contentType === "profile"}
-          onClick={() => {
-            setContentType("profile");
-          }}
-        >
-          <UserIcon />
-          <LinkText>Profile</LinkText>
-        </LinkWrapper>
-        <LinkWrapper onClick={logoutHandler}>
-          <LogoutIcon />
-          <LinkText>Logout</LinkText>
-        </LinkWrapper>
-      </LinkList>
-    </SidebarWrapper>
+    <>
+      <SidebarWrapper isShow={isShow}>
+        <LinkList isShow={isShow}>
+          <LinkWrapper
+            $selected={contentType === "workspace"}
+            onClick={() => {
+              setContentType("workspace");
+            }}
+          >
+            <ProjectIcon />
+            <LinkText>Workspace</LinkText>
+          </LinkWrapper>
+          <LinkWrapper
+            $selected={contentType === "profile"}
+            onClick={() => {
+              setContentType("profile");
+            }}
+          >
+            <UserIcon />
+            <LinkText>Profile</LinkText>
+          </LinkWrapper>
+          <LinkWrapper onClick={logoutHandler}>
+            <LogoutIcon />
+            <LinkText>Logout</LinkText>
+          </LinkWrapper>
+        </LinkList>
+      </SidebarWrapper>
+      <MobileBackDrop isShow={isShow} onClick={onClose} />
+    </>
   );
 };
 

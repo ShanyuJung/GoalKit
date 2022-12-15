@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 `;
 
 const ListTitle = styled.div`

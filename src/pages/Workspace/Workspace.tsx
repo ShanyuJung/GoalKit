@@ -33,29 +33,11 @@ import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg"
 import Swal from "sweetalert2";
 import Message from "./components/Message";
 import { MemberInterface, WorkspaceInterface } from "../../types";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Wrapper = styled.div`
   display: flex;
-`;
-
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 900;
-  color: #658da6;
-  top: 80px;
-  left: ${(props) => (props.isShowSidebar ? "245px" : "0px")};
-  height: 30px;
-  width: 30px;
-  background-color: #f2f2f2;
-  border-color: #658da6;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 12;
-  transition: left 0.3s;
+  min-width: 360px;
 `;
 
 const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
@@ -67,8 +49,8 @@ const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   transition: padding 0.3s;
   overflow: auto;
 
-  @media (max-width: 550px) {
-    padding-left: 15px;
+  @media (max-width: 808px) {
+    padding-left: 0px;
   }
 `;
 
@@ -84,6 +66,13 @@ const WorkspaceBanner = styled.div`
   border-bottom: 1px solid #658da6;
   margin: 0px 2%;
   padding: 0px 20px;
+  word-wrap: break-word;
+  hyphens: auto;
+
+  @media (max-width: 808px) {
+    font-size: 28px;
+    min-height: 80px;
+  }
 `;
 
 const ProjectCardWrapper = styled.div`
@@ -104,7 +93,7 @@ const ProjectCardWrapper = styled.div`
     max-width: 550px;
   }
 
-  @media (max-width: 809px) {
+  @media (max-width: 549px) {
     justify-content: center;
   }
 `;
@@ -270,7 +259,16 @@ const MemberForm = styled.form`
   display: flex;
   gap: 10px;
   margin: 15px;
-  width: 60%;
+  width: 80%;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const MemberInput = styled.input`
@@ -282,6 +280,10 @@ const MemberInput = styled.input`
   padding: 0px 20px;
   border: 1px solid #ccc;
   flex-grow: 1;
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 const MemberButton = styled.button`
@@ -295,23 +297,37 @@ const MemberButton = styled.button`
   margin: 0;
   padding: 5px;
   font-weight: 600;
+  flex-shrink: 0;
   cursor: pointer;
 
   &:hover {
     filter: brightness(110%);
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
   }
 `;
 
 const MemberWrapper = styled.div`
   display: flex;
   align-items: flex-end;
-  width: 60%;
+  width: 80%;
   gap: 10px;
   padding: 20px;
   border-bottom: 1px #658da6 solid;
 
   &:hover {
     background-color: #eee;
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 0px;
   }
 `;
 
@@ -320,6 +336,10 @@ const MemberName = styled.div`
   line-height: 22px;
   width: 150px;
   color: #1d3240;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 const MemberEmail = styled.div`
@@ -327,12 +347,20 @@ const MemberEmail = styled.div`
   font-size: 16px;
   line-height: 22px;
   color: #658da6;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 const MemberType = styled.div`
   font-size: 16px;
   line-height: 22px;
   color: #1d3240;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 interface MessageInterface {
@@ -750,15 +778,14 @@ const Workspace = () => {
           contentType={contentType}
           setContentType={setContentType}
           setIsShowChatRoom={setIsShowChatRoom}
-        />
-        <ShowSidebarButton
-          isShowSidebar={isShowSidebar}
-          onClick={() => {
-            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
+          onClose={() => {
+            setIsShowSidebar(false);
           }}
-        >
-          {isShowSidebar ? "<" : ">"}
-        </ShowSidebarButton>
+        />
+        <SidebarButton
+          isShowSidebar={isShowSidebar}
+          setIsShowSidebar={setIsShowSidebar}
+        />
         <ProjectsWrapper isShowSidebar={isShowSidebar}>
           {isPermission && <WorkspaceBanner>{title}</WorkspaceBanner>}
           {contentType === "project" && renderProjectList()}
