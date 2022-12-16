@@ -23,6 +23,7 @@ import {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 `;
 
 const Wrapper = styled.div`
@@ -44,6 +45,7 @@ const TitleWrapper = styled.div`
   padding: 0px 10px;
   height: 36px;
   width: 100%;
+  margin-top: 20px;
 `;
 
 const CardLogo = styled(cardIcon)`
@@ -108,6 +110,8 @@ interface Props {
   members?: MemberInterface[];
   onDelete: (targetCardID: string) => void;
   onClose: (value: boolean | ((prevVar: boolean) => boolean)) => void;
+  draggingLists?: { listID: string; displayName: string }[] | undefined;
+  draggingCards?: { cardID: string; displayName: string }[] | undefined;
 }
 
 const initialState = {
@@ -185,6 +189,7 @@ const CardDetail: React.FC<Props> = ({
   members,
   onDelete,
   onClose,
+  draggingCards,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
@@ -388,8 +393,28 @@ const CardDetail: React.FC<Props> = ({
   };
 
   const deleteCardHandler = (targetCardID: string) => {
+    const checkIsDraggingHandler = () => {
+      if (!draggingCards) return false;
+
+      const draggingCardsID = draggingCards?.map((cards) => cards.cardID);
+      if (draggingCardsID.includes(targetCardID)) {
+        Swal.fire(
+          "Warning!",
+          "Selected card is dragging by other user, deleting failed.",
+          "warning"
+        );
+        return true;
+      }
+
+      return false;
+    };
+
+    const isDeleteValid = checkIsDraggingHandler();
+    if (isDeleteValid) return;
+
     setIsDelete(true);
     onDelete(targetCardID);
+    Swal.fire("Deleted!", "Selected card has been deleted.", "success");
   };
 
   useEffect(() => {

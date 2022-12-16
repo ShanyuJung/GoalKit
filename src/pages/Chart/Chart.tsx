@@ -167,7 +167,7 @@ const Chart = () => {
         <ChartSidebar
           isShow={isShowSidebar}
           onClose={() => {
-            setIsShowSidebar(false);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         />
         <SidebarButton

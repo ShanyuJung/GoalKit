@@ -226,11 +226,17 @@ const Login = () => {
               <ErrorMessageWrapper>{errorMessage}</ErrorMessageWrapper>
             )}
             <Form onSubmit={submitHandler}>
-              <AuthInput labelText="Email" type="email" ref={emailRef} />
+              <AuthInput
+                labelText="Email"
+                type="email"
+                ref={emailRef}
+                defaultValue="demo@email.com"
+              />
               <AuthInput
                 labelText="Password"
                 type="password"
                 ref={passwordRef}
+                defaultValue="qqqqqq"
               />
               <SubmitButton disabled={isLoading}>Login</SubmitButton>
             </Form>

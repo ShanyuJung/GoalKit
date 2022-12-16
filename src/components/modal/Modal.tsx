@@ -8,7 +8,7 @@ const Backdrop = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: 20;
+  z-index: 80;
   background-color: rgba(0, 0, 0, 0.75);
 `;
 
@@ -21,7 +21,7 @@ const ModalOverlay = styled.div`
   padding: 20px;
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  z-index: 30;
+  z-index: 90;
   animation: slide-down 300ms ease-out forwards;
   max-height: 80vh;
   overflow-y: auto;

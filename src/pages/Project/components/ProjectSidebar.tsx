@@ -20,7 +20,7 @@ const SidebarWrapper = styled.div<StylesProps>`
 
   @media (max-width: 808px) {
     background-color: ${() => "#658DA6"};
-    width: ${(props) => (props.isShow ? "260px" : "0px")};
+    width: ${(props) => (props.isShow ? "0px" : "260px")};
     overflow: hidden;
   }
 `;
@@ -37,6 +37,11 @@ const WorkspaceTitleWrapper = styled.div<StylesProps>`
   &:hover {
     filter: brightness(90%);
   }
+
+  @media (max-width: 808px) {
+    border-bottom: ${(props) => (props.isShow ? "none" : "2px #f2f2f2 solid")};
+    display: ${(props) => (props.isShow ? "none" : "flex")};
+  }
 `;
 
 const WorkspaceTitle = styled.div<StylesProps>`
@@ -50,12 +55,20 @@ const WorkspaceTitle = styled.div<StylesProps>`
   cursor: pointer;
   transition: border-bottom-color 0.3s ease-out;
   font-weight: 900;
+
+  @media (max-width: 808px) {
+    display: ${(props) => (props.isShow ? "none" : "block")};
+  }
 `;
 
 const LinkList = styled.div<StylesProps>`
   display: ${(props) => (props.isShow ? "flex" : "none")};
   flex-direction: column;
   width: 100%;
+
+  @media (max-width: 808px) {
+    display: ${(props) => (props.isShow ? "none" : "flex")};
+  }
 `;
 
 const LinkWrapper = styled.div`
@@ -125,12 +138,12 @@ const MobileBackDrop = styled.div<StylesProps>`
     display: block;
     position: absolute;
     z-index: 20;
-    opacity: ${(props) => (props.isShow ? "0.5" : "0")};
+    opacity: ${(props) => (props.isShow ? "0" : "0.5")};
     width: 100vw;
     transition: opacity 0.3s ease-in;
     min-height: calc(100vh - 70px);
     background-color: #000;
-    pointer-events: ${(props) => (props.isShow ? "auto" : "none")};
+    pointer-events: ${(props) => (props.isShow ? "none" : "auto")};
   }
 `;
 
