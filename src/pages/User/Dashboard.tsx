@@ -308,7 +308,7 @@ const Dashboard = () => {
           contentType={contentType}
           setContentType={setContentType}
           onClose={() => {
-            setIsShowSidebar(false);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         />
         <SidebarButton

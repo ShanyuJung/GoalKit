@@ -23,6 +23,7 @@ import {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 `;
 
 const Wrapper = styled.div`
@@ -44,6 +45,7 @@ const TitleWrapper = styled.div`
   padding: 0px 10px;
   height: 36px;
   width: 100%;
+  margin-top: 20px;
 `;
 
 const CardLogo = styled(cardIcon)`

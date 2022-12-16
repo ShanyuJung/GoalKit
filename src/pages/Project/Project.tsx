@@ -491,7 +491,7 @@ const Project = () => {
           <ProjectSidebar
             isShow={isShowSidebar}
             onClose={() => {
-              setIsShowSidebar(false);
+              setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
             }}
           />
           <SidebarButton
