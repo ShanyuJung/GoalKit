@@ -59,6 +59,8 @@ Handled nested and immutable data by [`immer`](https://immerjs.github.io/immer/)
 
 Implemented layout with [`Styled-Components`](https://styled-components.com/)
 
+![GoalKit_DnD_demo](https://user-images.githubusercontent.com/96833101/208070909-7be399cb-f6ce-42ea-a66d-5fa9079b04f9.gif)
+
 ## Function Map
 
 <img width="1786" alt="GoalKit" src="https://user-images.githubusercontent.com/96833101/207826943-ea6315c8-37a3-464f-aa76-01c526e2376d.png">
