@@ -48,7 +48,7 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
     &::before {
       content: "";
       background-color: ${(props) =>
-        props.isShowSidebar ? "#658da6" : "#2c4859"};
+        props.isShowSidebar ? "#2c4859" : "#658da6"};
       width: 40px;
       height: 40px;
       position: absolute;

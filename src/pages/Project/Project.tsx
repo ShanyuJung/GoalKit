@@ -481,6 +481,8 @@ const Project = () => {
                 members={members}
                 onDelete={deleteCardHandler}
                 onClose={onCloseHandler}
+                draggingLists={project?.draggingLists}
+                draggingCards={project?.draggingCards}
               />
             ) : null}
           </Modal>
@@ -489,7 +491,7 @@ const Project = () => {
           <ProjectSidebar
             isShow={isShowSidebar}
             onClose={() => {
-              setIsShowSidebar(false);
+              setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
             }}
           />
           <SidebarButton

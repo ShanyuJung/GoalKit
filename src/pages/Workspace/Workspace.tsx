@@ -779,7 +779,7 @@ const Workspace = () => {
           setContentType={setContentType}
           setIsShowChatRoom={setIsShowChatRoom}
           onClose={() => {
-            setIsShowSidebar(false);
+            setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
           }}
         />
         <SidebarButton

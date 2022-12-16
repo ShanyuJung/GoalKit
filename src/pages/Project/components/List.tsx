@@ -259,6 +259,40 @@ const List = ({
       confirmButtonColor: "#e74d3ce3",
     }).then((result) => {
       if (result.value === true) {
+        const checkIsDraggingHandler = () => {
+          if (!draggingLists && !draggingCards) return false;
+
+          const draggingListsID = draggingLists?.map((list) => list.listID);
+          if (draggingListsID && draggingListsID.includes(id)) {
+            Swal.fire(
+              "Warning!",
+              "Selected list is dragging by other user, deleting failed.",
+              "warning"
+            );
+            return true;
+          }
+
+          const draggingCardsID = draggingCards?.map((cards) => cards.cardID);
+          const cardsID = displayCards.map((card) => card.id);
+          if (!draggingCardsID) return false;
+
+          const isChildDragging = cardsID.some(
+            (r) => draggingCardsID.indexOf(r) >= 0
+          );
+          if (isChildDragging) {
+            Swal.fire(
+              "Warning!",
+              "Child of selected list is dragging by other user, deleting failed.",
+              "warning"
+            );
+
+            return true;
+          }
+          return false;
+        };
+
+        const isDeleteValid = checkIsDraggingHandler();
+        if (isDeleteValid) return;
         deleteList(id);
         Swal.fire("Deleted!", "Selected list has been deleted.", "success");
       }

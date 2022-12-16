@@ -225,7 +225,6 @@ const CardDetailSideBar: React.FC<Props> = ({
       if (result.value === true) {
         onDelete(cardID);
         navigate(`/workspace/${workspaceID}/project/${projectID}`);
-        Swal.fire("Deleted!", "Selected card has been deleted.", "success");
       }
     });
   };
