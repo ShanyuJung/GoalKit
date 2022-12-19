@@ -67,6 +67,10 @@ const CardWrapper = styled.div`
     min-width: auto;
   }
 
+  @media (min-width: 1280px) {
+    min-width: calc(100vw / 1280 * 550);
+  }
+
   @keyframes card-loading {
     0% {
       transform: translateY(-30px);
@@ -106,6 +110,11 @@ const Card = styled.div`
 
   @media (max-width: 600px) {
     width: 90vw;
+  }
+
+  @media (min-width: 1280px) {
+    width: 36vw;
+    max-width: 600px;
   }
 `;
 
@@ -208,7 +217,7 @@ const Login = () => {
   };
 
   const loaded = useProgressiveImage(
-    "https://source.unsplash.com/MChSQHxGZrQ/1920x2878"
+    "https://source.unsplash.com/QckxruozjRg/2400x1600"
   );
 
   return (
