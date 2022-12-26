@@ -100,7 +100,7 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
           required
         />
         <ButtonWrapper isShow={isTextAreaFocus}>
-          <Button>Add new card</Button>
+          <Button>Add New card</Button>
           <CloseButton onClick={clickOutsideHandler} />
         </ButtonWrapper>
       </form>

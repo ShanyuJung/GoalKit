@@ -72,6 +72,7 @@ const TextArea = styled.textarea`
   resize: none;
   font-size: 14px;
   padding: 5px;
+  border-radius: 5px;
   font-family: "Poppins", sans-serif;
   cursor: text;
 `;
@@ -148,7 +149,7 @@ const NewProject = ({ onSubmit }: Props) => {
               }}
             />
             <TextArea placeholder="  Type project name ..." ref={textRef} />
-            <Button>Add new project</Button>
+            <Button>Add New project</Button>
           </Form>
         ) : null}
       </FormWrapper>

@@ -102,7 +102,7 @@ const NewList = ({ onSubmit }: Props) => {
           required
         />
         <ButtonWrapper isShow={isTextAreaFocus}>
-          <Button>Add new list</Button>
+          <Button>Add New list</Button>
           <CloseButton onClick={clickOutsideHandler} />
         </ButtonWrapper>
       </form>

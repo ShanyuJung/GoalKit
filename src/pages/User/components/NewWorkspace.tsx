@@ -71,6 +71,7 @@ const TextArea = styled.textarea`
   width: 100%;
   resize: none;
   font-size: 14px;
+  border-radius: 5px;
   padding: 5px;
   font-family: "Poppins", sans-serif;
   cursor: text;
@@ -148,7 +149,7 @@ const NewWorkspace = ({ onSubmit }: Props) => {
               }}
             />
             <TextArea placeholder=" Type workspace name ..." ref={textRef} />
-            <Button>Add new Workspace</Button>
+            <Button>Add New Workspace</Button>
           </Form>
         ) : null}
       </FormWrapper>
