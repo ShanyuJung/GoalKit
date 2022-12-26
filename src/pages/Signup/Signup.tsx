@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import AuthInput from "../../components/input/AuthInput";
 import LoginRoute from "../../components/route/LoginRoute";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -193,34 +192,258 @@ const ErrorMessageWrapper = styled.div`
   filter: brightness(110%);
 `;
 
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: 5px 0px;
+`;
+
+const InputLabel = styled.label`
+  font-size: 14px;
+  padding: 0px 5px;
+  margin-bottom: 5px;
+  color: #1d3240;
+  margin-left: 10px;
+  position: relative;
+  width: fit-content;
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
+`;
+
+const StyledInput = styled.input<{ $isValid: boolean }>`
+  margin: 0;
+  font-size: 24px;
+  line-height: 40px;
+  height: 40px;
+  border-radius: 20px;
+  padding: 0px 20px;
+  border: 1px solid #ccc;
+  outline: ${(props) => (props.$isValid ? "none" : "1px #e74c3c solid")};
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+    line-height: 28px;
+    height: 28px;
+  }
+`;
+
+const InputErrorText = styled.div`
+  font-size: 14px;
+  color: #e74c3c;
+  padding-top: 5px;
+  padding-left: 15px;
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
+`;
+
+const DEFAULT_ERROR_MESSAGE = {
+  message: "",
+  nameValid: true,
+  nameError: "",
+  emailValid: true,
+  emailError: "",
+  passwordValid: true,
+  passwordError: "",
+  passwordConfirmValid: true,
+  passwordConfirmError: "",
+};
+
 const Signup = () => {
-  const nameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const passwordConfirmRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(DEFAULT_ERROR_MESSAGE);
 
-  const submitHandler = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
+  const nameValidHandler = () => {
+    if (!name) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          nameValid: false,
+          nameError: "Name can not be empty.",
+        };
+      });
+      return false;
+    }
+
+    setErrorMessage((prevErrorMessage) => {
+      return {
+        ...prevErrorMessage,
+        nameValid: true,
+        nameError: "",
+      };
+    });
+    return true;
+  };
+
+  const emailValidHandler = () => {
+    if (!email) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          emailValid: false,
+          emailError: "Email can not be empty.",
+        };
+      });
+      return false;
+    }
+    const emailRule =
+      /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+
+    if (!emailRule.test(email)) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          emailValid: false,
+          emailError: "Invalid email format.",
+        };
+      });
+      return false;
+    }
+
+    setErrorMessage((prevErrorMessage) => {
+      return {
+        ...prevErrorMessage,
+        emailValid: true,
+        emailError: "",
+      };
+    });
+    return true;
+  };
+
+  const passwordValidHandler = () => {
+    if (!password) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          passwordValid: false,
+          passwordError: "Password can not be empty.",
+        };
+      });
+      return false;
+    }
+
+    if (!/^([A-Za-z]|[0-9])+$/.test(password)) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          passwordValid: false,
+          passwordError: "Password only allow a-z, A-Z and numbers.",
+        };
+      });
+      return false;
+    }
+
+    if (password.length < 6 || password.length > 20) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          passwordValid: false,
+          passwordError:
+            "Minimum 6 characters in length, Maximum 20 characters.",
+        };
+      });
+      return false;
+    }
+    setErrorMessage((prevErrorMessage) => {
+      return {
+        ...prevErrorMessage,
+        passwordValid: true,
+        passwordError: "",
+      };
+    });
+
+    return true;
+  };
+
+  const passwordConfirmValidHandler = () => {
+    if (!passwordConfirm) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          passwordConfirmValid: false,
+          passwordConfirmError: "Password confirm can not be empty.",
+        };
+      });
+
+      return false;
+    }
+
+    if (password !== passwordConfirm) {
+      setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          passwordConfirmValid: false,
+          passwordConfirmError: "Passwords didn't match.",
+        };
+      });
+      return false;
+    }
+    setErrorMessage((prevErrorMessage) => {
+      return {
+        ...prevErrorMessage,
+        passwordConfirmValid: true,
+        passwordConfirmError: "",
+      };
+    });
+    return true;
+  };
+
+  const submitHandler = async () => {
     if (isLoading) return;
+    setErrorMessage({ ...DEFAULT_ERROR_MESSAGE });
 
-    const name = nameRef.current?.value || "";
-    const email = emailRef.current?.value || "";
-    const password = passwordRef.current?.value || "";
-    const passwordConfirm = passwordConfirmRef.current?.value || "";
+    const isNameValid = nameValidHandler();
+    const isEmailValid = emailValidHandler();
+    const isPasswordValid = passwordValidHandler();
+    const isPasswordConfirmValid = passwordConfirmValidHandler();
 
-    if (password === "" || password !== passwordConfirm) {
-      return setErrorMessage("Passwords didn't match.");
+    if (
+      !isNameValid ||
+      !isEmailValid ||
+      !isPasswordValid ||
+      !isPasswordConfirmValid
+    ) {
+      return setErrorMessage((prevErrorMessage) => {
+        return {
+          ...prevErrorMessage,
+          message: "Failed to create an account.",
+        };
+      });
     }
 
     try {
-      setErrorMessage("");
       setIsLoading(true);
       await signup(email, password, name);
-    } catch {
-      setErrorMessage("Fail to create an account.");
+    } catch (e) {
+      if (
+        e instanceof Error &&
+        e.message === "Firebase: Error (auth/invalid-email)."
+      ) {
+        setErrorMessage((prevErrorMessage) => {
+          return {
+            ...prevErrorMessage,
+            emailValid: false,
+            emailError: "Invalid email",
+            message: "Failed to create an account.",
+          };
+        });
+      } else {
+        setErrorMessage((prevErrorMessage) => {
+          return {
+            ...prevErrorMessage,
+            message: "Failed to create an account.",
+          };
+        });
+      }
     }
     setIsLoading(false);
   };
@@ -228,6 +451,22 @@ const Signup = () => {
   const loaded = useProgressiveImage(
     "https://source.unsplash.com/5QgIuuBxKwM/1920x1280"
   );
+  // console.log(errorMessage);
+
+  useEffect(() => {
+    if (!errorMessage.nameValid) {
+      nameValidHandler();
+    }
+    if (!errorMessage.emailValid) {
+      emailValidHandler();
+    }
+    if (!errorMessage.passwordValid) {
+      passwordValidHandler();
+    }
+    if (!errorMessage.passwordConfirmValid) {
+      passwordConfirmValidHandler();
+    }
+  }, [name, email, password, passwordConfirm]);
 
   return (
     <LoginRoute>
@@ -236,25 +475,81 @@ const Signup = () => {
         <CardWrapper>
           <Card>
             <CardTitle>Signup</CardTitle>
-            {errorMessage === "" ? (
+            {errorMessage.message === "" ? (
               <DescriptionText>Signup to join GoalKit for free</DescriptionText>
             ) : (
-              <ErrorMessageWrapper>{errorMessage}</ErrorMessageWrapper>
+              <ErrorMessageWrapper>{errorMessage.message}</ErrorMessageWrapper>
             )}
-            <Form onSubmit={submitHandler}>
-              <AuthInput labelText="Name" type="text" ref={nameRef} />
-              <AuthInput labelText="Email" type="email" ref={emailRef} />
-              <AuthInput
-                labelText="Password"
-                type="password"
-                ref={passwordRef}
-              />
-              <AuthInput
-                labelText="Password Confirm"
-                type="password"
-                ref={passwordConfirmRef}
-              />
-              <SubmitButton disabled={isLoading}>Signup</SubmitButton>
+            <Form>
+              <InputWrapper>
+                <InputLabel>Name</InputLabel>
+                <StyledInput
+                  type="text"
+                  required
+                  autoComplete="off"
+                  $isValid={errorMessage.nameValid}
+                  onChange={(e) => {
+                    setName(e.target.value.trim());
+                  }}
+                />
+                {errorMessage.nameError && (
+                  <InputErrorText>{errorMessage.nameError}</InputErrorText>
+                )}
+              </InputWrapper>
+              <InputWrapper>
+                <InputLabel>Email</InputLabel>
+                <StyledInput
+                  type="email"
+                  required
+                  autoComplete="off"
+                  $isValid={errorMessage.emailValid}
+                  onChange={(e) => {
+                    setEmail(e.target.value.trim());
+                  }}
+                />
+                {errorMessage.emailError && (
+                  <InputErrorText>{errorMessage.emailError}</InputErrorText>
+                )}
+              </InputWrapper>
+              <InputWrapper>
+                <InputLabel>Password</InputLabel>
+                <StyledInput
+                  type="password"
+                  required
+                  autoComplete="off"
+                  $isValid={errorMessage.passwordValid}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+                {errorMessage.passwordError && (
+                  <InputErrorText>{errorMessage.passwordError}</InputErrorText>
+                )}
+              </InputWrapper>
+              <InputWrapper>
+                <InputLabel>Password Confirm</InputLabel>
+                <StyledInput
+                  type="password"
+                  required
+                  autoComplete="off"
+                  $isValid={errorMessage.passwordConfirmValid}
+                  onChange={(e) => {
+                    setPasswordConfirm(e.target.value);
+                  }}
+                />
+                {errorMessage.passwordConfirmError && (
+                  <InputErrorText>
+                    {errorMessage.passwordConfirmError}
+                  </InputErrorText>
+                )}
+              </InputWrapper>
+              <SubmitButton
+                type="button"
+                disabled={isLoading}
+                onClick={submitHandler}
+              >
+                Signup
+              </SubmitButton>
             </Form>
             <Text>
               {"Already have an account? "}
