@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   display: flex;
   min-height: calc(100vh - 70px);
   min-width: 360px;
-  overflow: auto;
+  overflow-y: auto;
 
   @media (max-width: 799px) {
     padding-bottom: 20px;
@@ -29,6 +29,19 @@ const LandingWrapper = styled.div<{ $url: string | null }>`
   opacity: 0.9;
   background-repeat: no-repeat;
   animation: image-loading 1s;
+
+  &::before {
+    content: "";
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #2c4859;
+    background: linear-gradient(#1d3240, #658da6, #000);
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
 
   @media (max-width: 799px) {
     position: fixed;
@@ -60,6 +73,7 @@ const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 550px;
+  justify-content: center;
   align-items: center;
   animation: card-loading 1s;
 
@@ -107,6 +121,7 @@ const Card = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #f2f2f2;
+  margin-top: -70px;
 
   @media (max-width: 600px) {
     width: 90vw;
@@ -192,6 +207,101 @@ const ErrorMessageWrapper = styled.div`
   filter: brightness(110%);
 `;
 
+const LandingTextWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 799px) {
+    display: none;
+  }
+`;
+
+const LandingText = styled.div`
+  margin-top: -100px;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 5.5rem;
+  color: #f2f2f2;
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+  margin-bottom: 15px;
+  animation: text-loading 1s;
+  position: relative;
+  z-index: 20;
+  text-shadow: #1d3240 1px 0 5px;
+
+  @media (max-width: 1200px) {
+    width: 70%;
+    font-size: 3rem;
+    line-height: 3.5rem;
+  }
+
+  @media (max-width: 950px) {
+    width: 80%;
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  @keyframes text-loading {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
+`;
+
+const LandingDescription = styled.div`
+  font-size: 2.5rem;
+  line-height: 3.3rem;
+  font-weight: 600;
+  color: #f2dac4;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: text-description-loading 1s;
+  position: relative;
+  z-index: 20;
+
+  @media (max-width: 1200px) {
+    width: 70%;
+    font-size: 1.8rem;
+    line-height: 2.5rem;
+  }
+
+  @media (max-width: 950px) {
+    width: 70%;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  @keyframes text-description-loading {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    30% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+  }
+`;
+
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -223,7 +333,16 @@ const Login = () => {
   return (
     <LoginRoute>
       <Wrapper>
-        <LandingWrapper $url={loaded} />
+        <LandingWrapper $url={loaded}>
+          <LandingTextWrapper>
+            <LandingText>
+              Trello brings all your tasks, teammates, and tools together
+            </LandingText>
+            <LandingDescription>
+              Keep everything in the same place—even if your team isn’t.
+            </LandingDescription>
+          </LandingTextWrapper>
+        </LandingWrapper>
         <CardWrapper>
           <Card>
             <CardTitle>Login</CardTitle>
