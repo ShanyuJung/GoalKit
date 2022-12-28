@@ -21,6 +21,7 @@ import {
   serverTimestamp,
   Timestamp,
   orderBy,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import NewProject from "./components/NewProject";
@@ -30,6 +31,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
 import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
+import { ReactComponent as deleteIcon } from "../../assets/remove-user-svgrepo-com.svg";
 import Swal from "sweetalert2";
 import Message from "./components/Message";
 import { MemberInterface, WorkspaceInterface } from "../../types";
@@ -311,7 +313,7 @@ const MemberButton = styled.button`
 
 const MemberWrapper = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   width: 80%;
   gap: 10px;
   padding: 20px;
@@ -361,6 +363,34 @@ const MemberType = styled.div`
   @media (max-width: 600px) {
     width: 100%;
   }
+`;
+
+const DeleteIcon = styled(deleteIcon)`
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+
+  ellipse {
+    fill: #ccc;
+  }
+
+  path {
+    fill: #ccc;
+  }
+
+  &:hover {
+    ellipse {
+      fill: #555;
+    }
+    path {
+      fill: #555;
+    }
+  }
+`;
+
+const PlaceholderBlock = styled.div`
+  width: 16px;
+  height: 16px;
 `;
 
 interface MessageInterface {
@@ -526,6 +556,47 @@ const Workspace = () => {
     }
 
     setIsLoading(false);
+  };
+
+  const removeMemberHandler = async (userID: string) => {
+    if (!workspaceID || isLoading || !userID) return;
+
+    try {
+      setIsLoading(true);
+      const workspaceRef = doc(db, "workspaces", workspaceID);
+      await updateDoc(workspaceRef, { members: arrayRemove(userID) });
+      const docSnap = await getDoc(workspaceRef);
+      if (docSnap.exists()) {
+        const response = docSnap.data() as WorkspaceInterface;
+        getMemberInfo(response.members);
+      }
+      Swal.fire("Succeed!", "Remove User to workspace.", "success");
+    } catch {
+      Swal.fire(
+        "Failed to remove member",
+        "Please check your internet connection and try again later",
+        "warning"
+      );
+    }
+    setIsLoading(false);
+  };
+
+  const checkRemoveMemberHandler = (
+    userDisplayName: string,
+    userID: string
+  ) => {
+    Swal.fire({
+      title: `Confirm to remove ${userDisplayName} from workspace`,
+      type: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#658da6b4",
+      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#e74d3ce3",
+    }).then((result) => {
+      if (result.value === true) {
+        removeMemberHandler(userID);
+      }
+    });
   };
 
   const sendMessageHandler = async (event: FormEvent) => {
@@ -707,6 +778,18 @@ const Workspace = () => {
                     <MemberType>
                       {member?.uid === ownerID ? "Owner" : "Member"}
                     </MemberType>
+                    {currentUser?.uid === ownerID && member?.uid !== ownerID ? (
+                      <DeleteIcon
+                        onClick={() => {
+                          checkRemoveMemberHandler(
+                            member?.displayName,
+                            member?.uid
+                          );
+                        }}
+                      />
+                    ) : (
+                      <PlaceholderBlock />
+                    )}
                   </MemberWrapper>
                 );
               })}
