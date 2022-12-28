@@ -269,7 +269,6 @@ const LandingTextWrapper = styled.div`
 `;
 
 const LandingText = styled.div`
-  margin-top: -100px;
   font-size: 5rem;
   font-weight: 700;
   line-height: 5.5rem;
@@ -583,7 +582,7 @@ const Signup = () => {
         <LandingWrapper $url={loaded}>
           <LandingTextWrapper>
             <LandingText>
-              Trello brings all your tasks, teammates, and tools together
+              GoalKit brings all your tasks, teammates, and tools together
             </LandingText>
             <LandingDescription>
               Keep everything in the same place—even if your team isn’t.
