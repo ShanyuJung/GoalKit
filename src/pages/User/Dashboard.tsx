@@ -29,7 +29,7 @@ const WorkspaceWrapper = styled.div<{ isShowSidebar: boolean }>`
   background-color: aliceblue;
   flex-grow: 1;
   height: calc(100vh - 70px);
-  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "30px")};
   transition: padding 0.3s;
   overflow-y: auto;
 

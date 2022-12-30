@@ -11,9 +11,10 @@ interface StylesProps {
 const SidebarWrapper = styled.div<StylesProps>`
   background-color: ${(props) =>
     props.isShow ? "#658DA6" : "rgba(25,118,210,0.2)"};
-  width: ${(props) => (props.isShow ? "260px" : "15px")};
+  width: ${(props) => (props.isShow ? "260px" : "30px")};
   flex-shrink: 0;
-  height: calc(100vh - 70px);
+  height: ${(props) =>
+    props.isShow ? "calc(100vh - 70px - 50px)" : "calc(100vh - 70px)"};
   transition: width 0.3s;
   position: fixed;
   z-index: 20;
@@ -21,6 +22,7 @@ const SidebarWrapper = styled.div<StylesProps>`
 
   @media (max-width: 808px) {
     background-color: ${() => "#658DA6"};
+    height: calc(100vh - 70px);
     width: ${(props) => (props.isShow ? "0px" : "260px")};
     overflow: hidden;
   }

@@ -47,7 +47,7 @@ const ProjectsWrapper = styled.div<{ isShowSidebar: boolean }>`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "55px")};
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "30px")};
   transition: padding 0.3s;
   overflow: auto;
 
