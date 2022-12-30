@@ -461,6 +461,16 @@ const Workspace = () => {
 
   const newProjectHandler = async (projectTitle: string) => {
     if (!workspaceID || isLoading) return;
+    if (currentUser?.uid !== ownerID) {
+      Swal.fire(
+        "Permission Error!",
+        "Only workspace owner can create new project.",
+        "warning"
+      );
+
+      return;
+    }
+
     try {
       setIsLoading(true);
       const setRef = doc(collection(db, "projects"));
