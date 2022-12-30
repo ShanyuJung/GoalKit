@@ -134,6 +134,7 @@ const NewProject = ({ onSubmit }: Props) => {
     if (!textRef.current?.value) return;
     onSubmit(textRef.current?.value || "");
     textRef.current.value = "";
+    setIsEdit(false);
   };
 
   return (

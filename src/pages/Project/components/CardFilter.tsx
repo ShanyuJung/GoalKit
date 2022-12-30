@@ -51,6 +51,10 @@ const DropdownMenuList = styled.div`
   position: absolute;
   z-index: 10;
   background-color: red;
+
+  @media (max-width: 808px) {
+    right: 0;
+  }
 `;
 
 const DropdownChildrenWrapper = styled.div`

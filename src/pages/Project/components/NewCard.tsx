@@ -76,8 +76,10 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
   };
 
   const clickOutsideHandler = () => {
+    if (!textRef.current) return;
     setIsTextAreaFocus(false);
     textRef.current?.blur();
+    textRef.current.value = "";
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {

@@ -323,6 +323,7 @@ const List = ({
                 key={`move-all-${list.id}`}
                 onClick={() => {
                   moveAllCardsHandler(id, list.id);
+                  setIsShowModal(false);
                 }}
               >
                 {list.title}
@@ -365,6 +366,7 @@ const List = ({
                       logo={<MoveIcon />}
                       text={"Move all cards"}
                       fontSize={12}
+                      isDisabled={cards.length > 0 ? false : true}
                     >
                       {listGroup()}
                     </DropdownButton>
