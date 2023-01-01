@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   width: 250px;
@@ -84,8 +85,23 @@ const NewCard = ({ onSubmit, parentID }: Props) => {
 
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!textRef.current?.value) return;
-    onSubmit(textRef.current?.value || "", parentID);
+    if (!textRef.current?.value.trim()) {
+      Swal.fire(
+        "Invalid card name",
+        "Card name must contain at least one characters.",
+        "warning"
+      );
+      return;
+    }
+    if (textRef.current.value.trim().length > 50) {
+      Swal.fire(
+        "Invalid card name",
+        "Card name must not contain over 50 characters.",
+        "warning"
+      );
+      return;
+    }
+    onSubmit(textRef.current?.value.trim() || "", parentID);
     textRef.current.value = "";
   };
 

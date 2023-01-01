@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div<{ $isEdit: boolean }>`
   position: relative;
@@ -131,8 +132,23 @@ const NewProject = ({ onSubmit }: Props) => {
 
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!textRef.current?.value) return;
-    onSubmit(textRef.current?.value || "");
+    if (!textRef.current?.value.trim()) {
+      Swal.fire(
+        "Invalid Project name",
+        "Project name must contain at least one characters.",
+        "warning"
+      );
+      return;
+    }
+    if (textRef.current.value.trim().length > 30) {
+      Swal.fire(
+        "Invalid project name",
+        "Project name must not contain over 30 characters.",
+        "warning"
+      );
+      return;
+    }
+    onSubmit(textRef.current?.value.trim() || "");
     textRef.current.value = "";
     setIsEdit(false);
   };
