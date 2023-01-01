@@ -292,6 +292,14 @@ const CardDetail: React.FC<Props> = ({
 
       return;
     }
+    if (titleRef.current.value.trim().length > 50) {
+      Swal.fire(
+        "Invalid card name",
+        "Card name must not contain over 50 characters.",
+        "warning"
+      );
+      return;
+    }
     if (titleRef.current?.value.trim() === state.title) {
       return;
     }
