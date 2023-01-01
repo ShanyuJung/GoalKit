@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import styled from "styled-components";
+import Swal from "sweetalert2";
 import { ReactComponent as descriptionIcon } from "../../../../assets/text-description-svgrepo-com.svg";
 
 const TextAreaWrapper = styled.div`
@@ -104,6 +105,14 @@ const Description: React.FC<Props> = ({ text, onSubmit }) => {
       return;
     }
     const newDescription = descriptionRef.current.value.trim();
+    if (newDescription.length > 500) {
+      Swal.fire(
+        "Invalid card name",
+        "Card name must not contain over 500 characters.",
+        "warning"
+      );
+      return;
+    }
 
     onSubmit(newDescription);
     setIsEdit(false);

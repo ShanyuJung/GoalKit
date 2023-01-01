@@ -19,7 +19,7 @@ const CardFeatureButton = styled.button<{
   border: none;
   color: ${(props) => (props.isToggle ? "#111" : "#666")};
   background-color: ${(props) => (props.isToggle ? "#ccc" : "#ddd")};
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   font-weight: 600;
 
   &:hover {
@@ -46,6 +46,7 @@ interface Props {
   text: string;
   children: React.ReactNode;
   fontSize?: number;
+  isDisabled?: boolean;
 }
 
 const DropdownButton: React.FC<Props> = ({
@@ -53,6 +54,7 @@ const DropdownButton: React.FC<Props> = ({
   text,
   children,
   fontSize,
+  isDisabled,
 }) => {
   const [isToggle, setIsToggle] = useState(false);
   const ref = useRef(null);
@@ -69,6 +71,7 @@ const DropdownButton: React.FC<Props> = ({
         onClick={toggleHandler}
         isToggle={isToggle}
         $fontSize={fontSize}
+        disabled={isDisabled}
       >
         {logo}
         {text}

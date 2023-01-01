@@ -34,7 +34,7 @@ const ChartArea = styled.div<{ isShowSidebar: boolean }>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  padding-left: ${(props) => (props.isShowSidebar ? "260px" : "30px")};
   transition: padding 0.3s;
 
   @media (max-width: 808px) {
@@ -44,7 +44,7 @@ const ChartArea = styled.div<{ isShowSidebar: boolean }>`
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   width: ${(props) =>
-    props.isShowSidebar ? "calc(100vw - 260px)" : "calc(100% - 15px)"};
+    props.isShowSidebar ? "calc(100vw - 260px)" : "calc(100% - 30px)"};
   height: 40px;
   padding: 0px 40px;
   display: flex;
