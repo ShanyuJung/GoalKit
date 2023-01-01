@@ -18,19 +18,19 @@ const MenuIcon = styled(menuIcon)`
   }
 `;
 
-const CollapseIcon = styled(collapseIcon)<{ isShowSidebar: boolean }>`
+const CollapseIcon = styled(collapseIcon)<{ $isShowSidebar: boolean }>`
   width: 30px;
   height: 30px;
   position: relative;
   z-index: 30;
-  transform: ${(props) => (props.isShowSidebar ? "rotate(180deg)" : "")};
+  transform: ${(props) => (props.$isShowSidebar ? "rotate(180deg)" : "")};
 
   path {
-    fill: ${(props) => (props.isShowSidebar ? "#f2f2f2" : "#658da6")};
+    fill: ${(props) => (props.$isShowSidebar ? "#f2f2f2" : "#658da6")};
   }
 `;
 
-const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
+const ShowSidebarButton = styled.button<{ $isShowSidebar: boolean }>`
   position: fixed;
   display: flex;
   align-items: center;
@@ -38,14 +38,14 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
   font-size: 16px;
   font-weight: 900;
   bottom: 0px;
-  left: ${(props) => (props.isShowSidebar ? "0px" : "0px")};
-  height: ${(props) => (props.isShowSidebar ? "50px" : "calc(100vh - 70px)")};
-  width: ${(props) => (props.isShowSidebar ? "260px" : "30px")};
+  left: ${(props) => (props.$isShowSidebar ? "0px" : "0px")};
+  height: ${(props) => (props.$isShowSidebar ? "50px" : "calc(100vh - 70px)")};
+  width: ${(props) => (props.$isShowSidebar ? "260px" : "30px")};
   margin: 0;
   padding: 0;
   border: none;
   background-color: ${(props) =>
-    props.isShowSidebar ? "#658da6" : "transparent"};
+    props.$isShowSidebar ? "#658da6" : "transparent"};
   cursor: pointer;
   z-index: 40;
   transition: width 0.3s;
@@ -62,7 +62,7 @@ const ShowSidebarButton = styled.button<{ isShowSidebar: boolean }>`
     &::before {
       content: "";
       background-color: ${(props) =>
-        props.isShowSidebar ? "#2c4859" : "#658da6"};
+        props.$isShowSidebar ? "#2c4859" : "#658da6"};
       width: 40px;
       height: 40px;
       position: absolute;
@@ -91,12 +91,12 @@ const SidebarButton: React.FC<Props> = ({
 }) => {
   return (
     <ShowSidebarButton
-      isShowSidebar={isShowSidebar}
+      $isShowSidebar={isShowSidebar}
       onClick={() => {
         setIsShowSidebar((prevIsShowSidebar) => !prevIsShowSidebar);
       }}
     >
-      <CollapseIcon isShowSidebar={isShowSidebar} />
+      <CollapseIcon $isShowSidebar={isShowSidebar} />
       <MenuIcon />
     </ShowSidebarButton>
   );
