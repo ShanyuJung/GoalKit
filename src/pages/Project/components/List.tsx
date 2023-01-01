@@ -21,10 +21,10 @@ const Container = styled.div<IsDraggingProps>`
   border-radius: 10px;
   margin: 0px 5px;
   background-color: #ebecf0;
-  padding: 10px 3px 10px 10px;
+  padding: 10px 10px 10px 10px;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.35);
   outline: ${(props) => (props.$isDragging ? "2px solid blue" : "none")};
-  min-width: 283px;
+  width: 290px;
 
   &::before {
     content: ${(props) =>
@@ -75,9 +75,12 @@ const TitleWrapper = styled.div`
 `;
 
 const Title = styled.div`
-  margin: 0px 15px;
+  margin: 0px 0px 0px 15px;
   font-weight: 900;
   font-size: 20px;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: wrap;
 `;
 
 const LogoWrapper = styled.div`
@@ -323,6 +326,7 @@ const List = ({
                 key={`move-all-${list.id}`}
                 onClick={() => {
                   moveAllCardsHandler(id, list.id);
+                  setIsShowModal(false);
                 }}
               >
                 {list.title}
@@ -365,6 +369,7 @@ const List = ({
                       logo={<MoveIcon />}
                       text={"Move all cards"}
                       fontSize={12}
+                      isDisabled={cards.length > 0 ? false : true}
                     >
                       {listGroup()}
                     </DropdownButton>

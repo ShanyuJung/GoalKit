@@ -54,7 +54,7 @@ const Container = styled.div`
 const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
   height: calc(100vh - 70px);
   flex-grow: 1;
-  margin-left: ${(props) => (props.isShowSidebar ? "260px" : "15px")};
+  margin-left: ${(props) => (props.isShowSidebar ? "260px" : "30px")};
   transition: margin 0.3s;
   overflow: hidden;
 
@@ -65,7 +65,7 @@ const BorderWrapper = styled.div<{ isShowSidebar: boolean }>`
 
 const SubNavbar = styled.div<{ isShowSidebar: boolean }>`
   width: ${(props) =>
-    props.isShowSidebar ? "calc(100vw - 260px)" : "calc(100% - 15px)"};
+    props.isShowSidebar ? "calc(100vw - 260px)" : "calc(100% - 30px)"};
   height: 40px;
   padding: 0px 40px;
   display: flex;

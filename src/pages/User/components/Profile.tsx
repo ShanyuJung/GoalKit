@@ -10,6 +10,7 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { ReactComponent as editIcon } from "../../../assets/edit-svgrepo-com.svg";
 import AuthInput from "../../../components/input/AuthInput";
+import ReactLoading from "react-loading";
 
 const Wrapper = styled.div`
   padding: 50px 10px;
@@ -85,8 +86,8 @@ const Image = styled.div<{ $background: string }>`
 `;
 
 const DefaultImage = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   font-size: 48px;
   border-radius: 50%;
   background-color: #658da6;
@@ -177,7 +178,7 @@ const ImageInput = styled.input`
 const ImageInputLabel = styled.label`
   position: relative;
   top: -65px;
-  right: -65px;
+  right: -85px;
 `;
 
 const EditIcon = styled(editIcon)`
@@ -222,6 +223,10 @@ const MessageWrapper = styled.div`
   filter: brightness(110%);
 `;
 
+const Loading = styled(ReactLoading)`
+  margin: auto;
+`;
+
 const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -233,6 +238,8 @@ const Profile = () => {
 
   const onSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
+    setErrorMessage("");
+    setMessage("");
     if (!nameRef.current?.value.trim()) {
       setErrorMessage("Can not enter empty name.");
       return;
@@ -253,6 +260,9 @@ const Profile = () => {
     try {
       await updateUserDisplayName(newName);
       setMessage("Update user name succeed.");
+      setTimeout(() => {
+        setMessage("");
+      }, 3000);
     } catch {
       setErrorMessage("Fail to update user name.");
     }
@@ -262,6 +272,9 @@ const Profile = () => {
   useEffect(() => {
     const uploadUserPhotoHandler = async () => {
       if (imageUpload === null) return;
+      if (imageUpload.size > 2097152) {
+        return setErrorMessage("Maximum size of photo is 2MB.");
+      }
 
       const uploadUserPhoto = async (userPhoto: File) => {
         if (!userPhoto || !currentUser) return;
@@ -283,6 +296,9 @@ const Profile = () => {
       try {
         await uploadUserPhoto(imageUpload);
         setMessage("Update user photo succeed.");
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
       } catch {
         setErrorMessage("Fail to upload image.");
       }
@@ -292,22 +308,35 @@ const Profile = () => {
     uploadUserPhotoHandler();
   }, [imageUpload]);
 
+  const renderUserIcon = () => {
+    return (
+      <>
+        {currentUser && currentUser.photoURL ? (
+          <Image $background={currentUser.photoURL} />
+        ) : (
+          <DefaultImage>
+            {currentUser ? currentUser.displayName.charAt(0) : ""}
+          </DefaultImage>
+        )}
+      </>
+    );
+  };
+
   const renderProfileCard = () => {
     return (
       <>
         <ImageWrapper>
-          {currentUser && currentUser.photoURL ? (
-            <Image $background={currentUser.photoURL} />
-          ) : (
+          {isLoading && (
             <DefaultImage>
-              {currentUser ? currentUser.displayName.charAt(0) : ""}
+              <Loading />
             </DefaultImage>
           )}
+          {!isLoading && renderUserIcon()}
           <ImageInputWrapper>
             <ImageInputLabel>
               <ImageInput
                 type="file"
-                accept=".jpg,.jpeg,.png"
+                accept=".jpg,.jpeg,.png,.webp"
                 onChange={(event) => {
                   if (!event.target.files) return;
                   setImageUpload(event.target.files[0]);

@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   width: 230px;
@@ -79,14 +80,31 @@ const NewList = ({ onSubmit }: Props) => {
   };
 
   const clickOutsideHandler = () => {
+    if (!textRef.current) return;
     setIsTextAreaFocus(false);
     textRef.current?.blur();
+    textRef.current.value = "";
   };
 
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!textRef.current?.value) return;
-    onSubmit(textRef.current?.value || "");
+    if (!textRef.current?.value.trim()) {
+      Swal.fire(
+        "Invalid list name",
+        "List name must contain at least one characters.",
+        "warning"
+      );
+      return;
+    }
+    if (textRef.current.value.trim().length > 50) {
+      Swal.fire(
+        "Invalid list name",
+        "List name must not contain over 50 characters.",
+        "warning"
+      );
+      return;
+    }
+    onSubmit(textRef.current?.value.trim() || "");
     textRef.current.value = "";
   };
 
@@ -102,7 +120,7 @@ const NewList = ({ onSubmit }: Props) => {
           required
         />
         <ButtonWrapper isShow={isTextAreaFocus}>
-          <Button>Add new list</Button>
+          <Button>Add New list</Button>
           <CloseButton onClick={clickOutsideHandler} />
         </ButtonWrapper>
       </form>
