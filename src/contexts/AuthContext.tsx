@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       password
     );
 
-    const { uid, email } = response.user; // here
+    const { uid, email } = response.user;
     if (!email) return;
     setCurrentUser({
       uid,
