@@ -5,10 +5,14 @@ interface Props {
   children: JSX.Element;
 }
 
-const PrivateRoute = ({ children }: Props) => {
+export const PrivateRoute = ({ children }: Props) => {
   const { currentUser } = useAuth();
 
   return currentUser ? children : <Navigate to="/login" />;
 };
 
-export default PrivateRoute;
+export const LoginRoute = ({ children }: Props) => {
+  const { currentUser } = useAuth();
+
+  return currentUser ? <Navigate to="/dashboard" /> : children;
+};

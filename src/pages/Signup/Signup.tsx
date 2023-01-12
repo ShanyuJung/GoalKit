@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import LoginRoute from "../../components/route/LoginRoute";
+import { LoginRoute } from "../../components/route/PrivateRoute";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import placeholder from "../../assets/signup-placeholder.jpg";

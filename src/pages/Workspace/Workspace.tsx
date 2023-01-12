@@ -6,7 +6,7 @@ import {
   LoaderFunctionArgs,
 } from "react-router-dom";
 import styled from "styled-components";
-import PrivateRoute from "../../components/route/PrivateRoute";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
 import {
   getDoc,
   collection,

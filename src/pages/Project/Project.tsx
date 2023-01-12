@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import PrivateRoute from "../../components/route/PrivateRoute";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
 import List from "./components/List";
 import {
   DragDropContext,

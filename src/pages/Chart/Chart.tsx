@@ -16,7 +16,7 @@ import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
 import produce from "immer";
-import PrivateRoute from "../../components/route/PrivateRoute";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
 import {
   MemberInterface,
   WorkspaceInterface,
