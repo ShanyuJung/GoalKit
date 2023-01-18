@@ -153,23 +153,27 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
   const [isHeader, setIsHeader] = useState(true);
   const { projectID } = useParams();
 
-  const viewModeHandler = (modeType: string) => {
-    if (modeType === "Half Day") {
-      setView(ViewMode.HalfDay);
-      setColumnWidth(45);
-    } else if (modeType === "Day") {
-      setView(ViewMode.Day);
-      setColumnWidth(45);
-    } else if (modeType === "Week") {
-      setView(ViewMode.Week);
-      setColumnWidth(120);
-    } else if (modeType === "Month") {
-      setView(ViewMode.Month);
-      setColumnWidth(180);
-    } else if (modeType === "Year") {
-      setView(ViewMode.Year);
-      setColumnWidth(360);
+  const viewModeHandler = (modeType: ViewMode) => {
+    switch (modeType) {
+      case ViewMode.HalfDay:
+        setColumnWidth(45);
+        break;
+      case ViewMode.Day:
+        setColumnWidth(45);
+        break;
+      case ViewMode.Week:
+        setColumnWidth(120);
+        break;
+      case ViewMode.Month:
+        setColumnWidth(180);
+        break;
+      case ViewMode.Year:
+        setColumnWidth(360);
+        break;
+      default:
+        setColumnWidth(45);
     }
+    setView(modeType);
   };
 
   const showHeaderHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,7 +263,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
             <ViewModeSelect
               defaultValue={"Day"}
               onChange={(e) => {
-                viewModeHandler(e.target.value);
+                viewModeHandler(e.target.value as ViewMode);
               }}
             >
               <option>Half Day</option>
