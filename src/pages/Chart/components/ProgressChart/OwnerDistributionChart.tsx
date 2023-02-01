@@ -35,20 +35,41 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
 
   useEffect(() => {
     const ownerDataHandler = () => {
-      const newOwnerData = members.map((member) => {
-        return { name: member.displayName, total: 0, id: member.uid };
-      });
-      const displayOwnerData = produce(newOwnerData, (draftState) => {
-        draftState.forEach((owner) => {
-          lists.forEach((list) => {
-            list.cards.forEach((card) => {
-              if (card.owner?.includes(owner.id)) {
-                owner.total += 1;
-              }
-            });
-          });
+      const ownerList = lists.flatMap((list) => {
+        return list.cards.flatMap((card) => {
+          return card.owner;
         });
       });
+
+      const ownerAmount = produce(
+        {} as { [key: string]: number },
+        (draftState) => {
+          ownerList.forEach((owner) => {
+            if (!owner) return;
+            if (owner in draftState) {
+              draftState[`${owner}`] += 1;
+            } else {
+              draftState[`${owner}`] = 1;
+            }
+          });
+        }
+      );
+
+      const displayOwnerData = members.map((member) => {
+        if (ownerAmount[`${member.uid}`]) {
+          return {
+            name: member.displayName,
+            total: ownerAmount[`${member.uid}`],
+            id: member.uid,
+          };
+        }
+        return {
+          name: member.displayName,
+          total: 0,
+          id: member.uid,
+        };
+      });
+
       setOwnerData(displayOwnerData);
     };
 
