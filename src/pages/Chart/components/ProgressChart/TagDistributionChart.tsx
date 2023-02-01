@@ -31,20 +31,34 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
 
   useEffect(() => {
     const tagsDataHandler = () => {
-      const newTagsData = tags.map((tag) => {
-        return { name: tag.title, total: 0, id: tag.id };
-      });
-      const displayTagsData = produce(newTagsData, (draftState) => {
-        draftState.forEach((tag) => {
-          lists.forEach((list) => {
-            list.cards.forEach((card) => {
-              if (card.tagsIDs?.includes(tag.id)) {
-                tag.total += 1;
-              }
-            });
-          });
+      const tagList = lists.flatMap((list) => {
+        return list.cards.flatMap((card) => {
+          return card.tagsIDs;
         });
       });
+
+      const tagAmount = produce(
+        {} as { [key: string]: number },
+        (draftState) => {
+          tagList.forEach((tag) => {
+            if (!tag) return;
+            if (tag in draftState) {
+              draftState[`${tag}`] += 1;
+            } else {
+              draftState[`${tag}`] = 1;
+            }
+          });
+        }
+      );
+
+      const displayTagsData = tags.map((tag) => {
+        if (tagAmount[`${tag.id}`]) {
+          return { name: tag.title, total: tagAmount[`${tag.id}`], id: tag.id };
+        } else {
+          return { name: tag.title, total: 0, id: tag.id };
+        }
+      });
+
       setTagsData(displayTagsData);
     };
 
