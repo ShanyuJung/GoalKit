@@ -33,6 +33,13 @@ const DUMMY_DATA = [
 
 const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#999"];
 
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  innerRadius: 60,
+  outerRadius: 100,
+};
+
 const renderActiveShape = (props: PieChartProps) => {
   const RADIAN = Math.PI / 180;
   const {
@@ -166,15 +173,15 @@ const TaskDistribution: React.FC<Props> = ({ lists }) => {
   }
 
   return (
-    <PieChart width={460} height={300}>
+    <PieChart width={CHART_SIZE.width} height={CHART_SIZE.height}>
       <Pie
         activeIndex={activeIndex}
         activeShape={renderActiveShape}
         data={data}
         cx="50%"
         cy="50%"
-        innerRadius={60}
-        outerRadius={100}
+        innerRadius={CHART_SIZE.innerRadius}
+        outerRadius={CHART_SIZE.outerRadius}
         fill="#8884d8"
         dataKey="value"
         onMouseEnter={onPieEnter}

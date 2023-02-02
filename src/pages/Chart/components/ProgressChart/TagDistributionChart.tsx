@@ -18,6 +18,15 @@ const ErrorText = styled.div`
   font-size: 16px;
 `;
 
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  barSize: 20,
+  maxCharacter: 20,
+  baseNumber: 5,
+  fontSize: 12,
+};
+
 interface Props {
   lists: ListInterface[];
   tags: { id: string; colorCode: string; title: string }[];
@@ -27,7 +36,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   const [tagsData, setTagsData] = useState<
     { name: string; total: number; id: string }[]
   >([]);
-  const [barChartWidth, setBarChartWidth] = useState<number>(460);
+  const [barChartWidth, setBarChartWidth] = useState<number>(CHART_SIZE.width);
 
   useEffect(() => {
     const tagsDataHandler = () => {
@@ -63,13 +72,15 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
     };
 
     tagsDataHandler();
-    if (tags.length > 5) {
-      setBarChartWidth(tags.length * 92);
+    if (tags.length > CHART_SIZE.baseNumber) {
+      setBarChartWidth(
+        tags.length * (CHART_SIZE.width / CHART_SIZE.baseNumber)
+      );
     }
   }, [lists, tags]);
 
   const tickFormatter = (value: string) => {
-    const limit = 20; // put your maximum character
+    const limit = CHART_SIZE.maxCharacter; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;
   };
@@ -85,7 +96,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   return (
     <BarChart
       width={barChartWidth}
-      height={300}
+      height={CHART_SIZE.height}
       data={tagsData}
       margin={{
         top: 5,
@@ -95,11 +106,15 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
+      <XAxis
+        dataKey="name"
+        fontSize={CHART_SIZE.fontSize}
+        tickFormatter={tickFormatter}
+      />
       <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
-      <Bar dataKey="total" fill="#82ca9d" barSize={20} />
+      <Bar dataKey="total" fill="#82ca9d" barSize={CHART_SIZE.barSize} />
     </BarChart>
   );
 };

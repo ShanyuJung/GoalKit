@@ -18,6 +18,15 @@ const ErrorText = styled.div`
   font-size: 16px;
 `;
 
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  barSize: 20,
+  maxCharacter: 20,
+  baseNumber: 5,
+  fontSize: 12,
+};
+
 interface Props {
   lists: ListInterface[];
   members: MemberInterface[];
@@ -31,7 +40,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       id: string;
     }[]
   >([]);
-  const [barChartWidth, setBarChartWidth] = useState<number>(460);
+  const [barChartWidth, setBarChartWidth] = useState<number>(CHART_SIZE.width);
 
   useEffect(() => {
     const ownerDataHandler = () => {
@@ -74,13 +83,15 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
     };
 
     ownerDataHandler();
-    if (members.length > 5) {
-      setBarChartWidth(members.length * 92);
+    if (members.length > CHART_SIZE.baseNumber) {
+      setBarChartWidth(
+        members.length * (CHART_SIZE.width / CHART_SIZE.baseNumber)
+      );
     }
   }, [lists, members]);
 
   const tickFormatter = (value: string) => {
-    const limit = 20; // put your maximum character
+    const limit = CHART_SIZE.maxCharacter; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;
   };
@@ -92,7 +103,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
   return (
     <BarChart
       width={barChartWidth}
-      height={300}
+      height={CHART_SIZE.height}
       data={ownerData}
       margin={{
         top: 5,
@@ -102,11 +113,15 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
+      <XAxis
+        dataKey="name"
+        fontSize={CHART_SIZE.fontSize}
+        tickFormatter={tickFormatter}
+      />
       <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
-      <Bar dataKey="total" fill="#8884d8" barSize={20} />
+      <Bar dataKey="total" fill="#8884d8" barSize={CHART_SIZE.barSize} />
     </BarChart>
   );
 };

@@ -12,6 +12,22 @@ const ErrorText = styled.div`
 
 const DUMMY_TIME_DATA = { start: 0, end: 1, passed: 0 };
 
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  innerRadius: 110,
+  outerRadius: 130,
+  startAngle: 90,
+  endAngle: -270,
+  cornerRadius: 15,
+  percentageFontSize: 50,
+  percentageMarkX: 275,
+  percentageMarkY: 155,
+  percentageMarkFontSize: 20,
+  detailFontSize: 14,
+  detailY: 185,
+};
+
 interface Props {
   lists: ListInterface[];
 }
@@ -58,15 +74,15 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
 
   return (
     <RadialBarChart
-      width={460}
-      height={300}
+      width={CHART_SIZE.width}
+      height={CHART_SIZE.height}
       data={[timeData]}
-      cx={230}
-      cy={150}
-      innerRadius={110}
-      outerRadius={130}
-      startAngle={90}
-      endAngle={-270}
+      cx={"50%"}
+      cy={"50%"}
+      innerRadius={CHART_SIZE.innerRadius}
+      outerRadius={CHART_SIZE.outerRadius}
+      startAngle={CHART_SIZE.startAngle}
+      endAngle={CHART_SIZE.endAngle}
     >
       <PolarAngleAxis
         type="number"
@@ -77,7 +93,7 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
       <RadialBar
         background
         dataKey="passed"
-        cornerRadius={30 / 2}
+        cornerRadius={CHART_SIZE.cornerRadius}
         fill={
           Math.round(
             (timeData.passed / (timeData.end - timeData.start)) * 100
@@ -87,12 +103,12 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         }
       />
       <text
-        x={230}
-        y={150}
+        x={CHART_SIZE.width / 2}
+        y={CHART_SIZE.height / 2}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={50}
+        fontSize={CHART_SIZE.percentageFontSize}
         fill="#666"
       >
         {`${
@@ -106,23 +122,23 @@ const DurationChart: React.FC<Props> = ({ lists }) => {
         }`}
       </text>
       <text
-        x={275}
-        y={155}
+        x={CHART_SIZE.percentageMarkX}
+        y={CHART_SIZE.percentageMarkY}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={20}
+        fontSize={CHART_SIZE.percentageMarkFontSize}
         fill="#666"
       >
         {"%"}
       </text>
       <text
-        x={230}
-        y={185}
+        x={CHART_SIZE.width / 2}
+        y={CHART_SIZE.detailY}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={14}
+        fontSize={CHART_SIZE.detailFontSize}
         fill="#666"
       >
         {`Duration: ${
