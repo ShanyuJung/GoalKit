@@ -122,7 +122,7 @@ interface Props {
 const NewProject = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   useOnClickOutside(ref, () => setIsEdit(false));
 

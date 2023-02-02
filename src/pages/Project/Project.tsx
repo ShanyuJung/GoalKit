@@ -155,20 +155,20 @@ export const checkPermissionHandler = async ({
 
 const Project = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [isPermission, setIsPermission] = useState(false);
+  const [isPermission, setIsPermission] = useState<boolean>(false);
   const [lists, setLists] = useState<ListInterface[]>([]);
   const [project, setProject] =
     useState<ProjectInterface | undefined>(undefined);
   const [members, setMembers] = useState<MemberInterface[]>([]);
   const [memberIDs, setMemberIDs] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isShowSidebar, setIsShowSidebar] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isShowSidebar, setIsShowSidebar] = useState<boolean>(true);
   const navigate = useNavigate();
   const { workspaceID, projectID, cardID } = useParams();
   const response = useLoaderData() as WorkspaceInterface | null;
   const { currentUser } = useAuth();
-  const [keyword, setKeyword] = useState("");
-  const [isFiltered, setIsFiltered] = useState(false);
+  const [keyword, setKeyword] = useState<string>("");
+  const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
   const updateDataHandler = async (newList: ListInterface[]) => {
     if (!projectID || isLoading) return;

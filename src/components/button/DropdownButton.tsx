@@ -56,7 +56,7 @@ const DropdownButton: React.FC<Props> = ({
   fontSize,
   isDisabled,
 }) => {
-  const [isToggle, setIsToggle] = useState(false);
+  const [isToggle, setIsToggle] = useState<boolean>(false);
   const ref = useRef(null);
 
   const toggleHandler = () => {

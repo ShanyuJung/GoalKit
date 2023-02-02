@@ -79,7 +79,7 @@ const Message: React.FC<Props> = ({
   messageTime,
   messagePhoto,
 }) => {
-  const [isShowTime, setIsShowTime] = useState(false);
+  const [isShowTime, setIsShowTime] = useState<boolean>(false);
   const { currentUser } = useAuth();
 
   let newTimeString = "";

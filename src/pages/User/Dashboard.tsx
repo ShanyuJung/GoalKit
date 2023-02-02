@@ -164,9 +164,9 @@ const Dashboard = () => {
   const [guestWorkspaces, setGuestWorkspace] = useState<WorkspaceInterface[]>(
     []
   );
-  const [contentType, setContentType] = useState("workspace");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isShowSidebar, setIsShowSidebar] = useState(true);
+  const [contentType, setContentType] = useState<string>("workspace");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isShowSidebar, setIsShowSidebar] = useState<boolean>(true);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 

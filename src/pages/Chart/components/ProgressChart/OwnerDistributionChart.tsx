@@ -31,7 +31,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       id: string;
     }[]
   >([]);
-  const [barChartWidth, setBarChartWidth] = useState(460);
+  const [barChartWidth, setBarChartWidth] = useState<number>(460);
 
   useEffect(() => {
     const ownerDataHandler = () => {

@@ -17,7 +17,8 @@ interface Props {
 }
 
 const DurationChart: React.FC<Props> = ({ lists }) => {
-  const [timeData, setTimeData] = useState(DUMMY_TIME_DATA);
+  const [timeData, setTimeData] =
+    useState<{ start: number; end: number; passed: number }>(DUMMY_TIME_DATA);
 
   useEffect(() => {
     const timeDataHandler = () => {

@@ -361,14 +361,27 @@ const DEFAULT_ERROR_MESSAGE = {
   passwordConfirmError: "",
 };
 
+interface DefaultErrorMessageInterface {
+  message: string;
+  nameValid: boolean;
+  nameError: string;
+  emailValid: boolean;
+  emailError: string;
+  passwordValid: boolean;
+  passwordError: string;
+  passwordConfirmValid: boolean;
+  passwordConfirmError: string;
+}
+
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const { signup } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(DEFAULT_ERROR_MESSAGE);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] =
+    useState<DefaultErrorMessageInterface>(DEFAULT_ERROR_MESSAGE);
 
   const nameValidHandler = () => {
     if (!name) {

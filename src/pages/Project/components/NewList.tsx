@@ -73,7 +73,7 @@ interface Props {
 const NewList = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState<boolean>(false);
 
   const focusHandler = () => {
     setIsTextAreaFocus(true);

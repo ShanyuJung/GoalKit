@@ -441,19 +441,19 @@ export const getProjectsHandler = async ({ params }: LoaderFunctionArgs) => {
 const Workspace = () => {
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [isPermission, setIsPermission] = useState(false);
+  const [isPermission, setIsPermission] = useState<boolean>(false);
   const [membersInfo, setMembersInfo] = useState<MemberInterface[]>([]);
-  const [contentType, setContentType] = useState("project");
-  const [ownerID, setOwnerID] = useState("");
-  const [title, setTitle] = useState("");
-  const [isShowSidebar, setIsShowSidebar] = useState(true);
+  const [contentType, setContentType] = useState<string>("project");
+  const [ownerID, setOwnerID] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [isShowSidebar, setIsShowSidebar] = useState<boolean>(true);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [isShowChatRoom, setIsShowChatRoom] = useState<boolean>(false);
   const memberRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLInputElement>(null);
   const chatRoomRef = useRef<null | HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSending, setIsSending] = useState<boolean>(false);
   const navigate = useNavigate();
   const { workspaceID } = useParams();
   const { currentUser } = useAuth();

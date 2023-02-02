@@ -70,7 +70,7 @@ interface Props {
 const NewCard = ({ onSubmit, parentID }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState<boolean>(false);
 
   const focusHandler = () => {
     setIsTextAreaFocus(true);

@@ -149,8 +149,8 @@ interface Props {
 const GanttChart: React.FC<Props> = ({ lists }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [view, setView] = useState(ViewMode.Day);
-  const [columnWidth, setColumnWidth] = useState(45);
-  const [isHeader, setIsHeader] = useState(true);
+  const [columnWidth, setColumnWidth] = useState<number>(45);
+  const [isHeader, setIsHeader] = useState<boolean>(true);
   const { projectID } = useParams();
 
   const viewModeHandler = (modeType: ViewMode) => {

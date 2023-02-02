@@ -229,8 +229,8 @@ const List = ({
   isFilter,
   keyword,
 }: Props) => {
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [draggingUser, setDraggingUser] = useState("");
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
+  const [draggingUser, setDraggingUser] = useState<string>("");
   const [displayCards, setDisplayCards] = useState<CardInterface[]>([]);
   const ref = useRef(null);
 

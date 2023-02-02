@@ -228,12 +228,12 @@ const Loading = styled(ReactLoading)`
 `;
 
 const Profile = () => {
-  const [isEdit, setIsEdit] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imageUpload, setImageUpload] = useState<File | null>(null);
   const nameRef = useRef<HTMLInputElement>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const { currentUser, updatePhotoURL, updateUserDisplayName } = useAuth();
 
   const onSubmitHandler = async (event: FormEvent) => {

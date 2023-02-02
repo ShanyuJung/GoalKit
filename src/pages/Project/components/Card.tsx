@@ -191,10 +191,10 @@ interface Props {
 }
 
 const Card: React.FC<Props> = ({ cardInfo, tags, members, draggingCards }) => {
-  const [timeLabelColor, setTimeLabelColor] = useState(
+  const [timeLabelColor, setTimeLabelColor] = useState<string>(
     "rgba(253, 216, 53, 0.9)"
   );
-  const [draggingUser, setDraggingUser] = useState("");
+  const [draggingUser, setDraggingUser] = useState<string>("");
   const navigate = useNavigate();
   const { workspaceID, projectID } = useParams();
 

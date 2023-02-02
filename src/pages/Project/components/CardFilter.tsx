@@ -153,7 +153,7 @@ interface Props {
 }
 
 const CardFilter: React.FC<Props> = ({ keyword, setKeyword }) => {
-  const [isToggle, setIsToggle] = useState(false);
+  const [isToggle, setIsToggle] = useState<boolean>(false);
   const ref = useRef(null);
   const textRef = useRef<HTMLInputElement>(null);
 

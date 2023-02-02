@@ -27,7 +27,7 @@ const TagsDistribution: React.FC<Props> = ({ lists, tags }) => {
   const [tagsData, setTagsData] = useState<
     { name: string; total: number; id: string }[]
   >([]);
-  const [barChartWidth, setBarChartWidth] = useState(460);
+  const [barChartWidth, setBarChartWidth] = useState<number>(460);
 
   useEffect(() => {
     const tagsDataHandler = () => {

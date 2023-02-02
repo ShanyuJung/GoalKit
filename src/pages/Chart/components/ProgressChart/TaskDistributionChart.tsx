@@ -111,8 +111,9 @@ interface Props {
 }
 
 const TaskDistribution: React.FC<Props> = ({ lists }) => {
-  const [data, setData] = useState(DUMMY_DATA);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [data, setData] =
+    useState<{ name: string; value: number; total: number }[]>(DUMMY_DATA);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const onPieEnter = useCallback(
     (_: number, index: number) => {
       setActiveIndex(index);

@@ -76,11 +76,11 @@ const ErrorText = styled.div`
 
 const Chart = () => {
   const [isExist, setIsExist] = useState<boolean | undefined>(undefined);
-  const [isPermission, setIsPermission] = useState(false);
+  const [isPermission, setIsPermission] = useState<boolean>(false);
   const [project, setProject] =
     useState<ProjectInterface | undefined>(undefined);
   const [members, setMembers] = useState<MemberInterface[]>([]);
-  const [isShowSidebar, setIsShowSidebar] = useState(true);
+  const [isShowSidebar, setIsShowSidebar] = useState<boolean>(true);
   const { workspaceID, projectID, chartType } = useParams();
   const response = useLoaderData() as WorkspaceInterface | null;
   const { currentUser } = useAuth();

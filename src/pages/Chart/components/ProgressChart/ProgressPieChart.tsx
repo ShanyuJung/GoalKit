@@ -22,7 +22,8 @@ interface Props {
 }
 
 const ProgressPieChart: React.FC<Props> = ({ lists }) => {
-  const [data, setData] = useState(DUMMY_DATA);
+  const [data, setData] =
+    useState<{ name: string; value: number; total: number }[]>(DUMMY_DATA);
 
   useEffect(() => {
     const taskNumberHandler = () => {
