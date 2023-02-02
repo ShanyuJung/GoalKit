@@ -114,7 +114,7 @@ const Navbar = () => {
           onClick={() => {
             navigate("/dashboard");
           }}
-        ></LoginUserIcon>
+        />
       );
     }
 
