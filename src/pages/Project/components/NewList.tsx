@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
-import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import styled from "styled-components";
 import Swal from "sweetalert2";
+import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   width: 230px;
@@ -73,7 +73,7 @@ interface Props {
 const NewList = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState<boolean>(false);
 
   const focusHandler = () => {
     setIsTextAreaFocus(true);

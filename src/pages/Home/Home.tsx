@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import { useProgressiveImage } from "../../utils/hooks";
+import styled from "styled-components";
 import placeholder from "../../assets/home-placeholder.jpg";
 
 const Wrapper = styled.div<{ $url: string | null }>`

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { auth, db, app } from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,8 +9,6 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db, firebaseConfig } from "../firebase";
-import { initializeApp } from "firebase/app";
 import {
   getDatabase,
   set,
@@ -44,33 +43,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     email: "",
     displayName: "",
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const signup = async (
-    email: string,
+    _email: string,
     password: string,
     displayName: string
   ) => {
     const response = await createUserWithEmailAndPassword(
       auth,
-      email,
+      _email,
       password
     );
-    if (!response.user.email) return;
+
+    const { uid, email } = response.user;
+    if (!email) return;
     setCurrentUser({
-      uid: response.user.uid,
-      email: response.user.email,
-      displayName: displayName,
+      uid,
+      email,
+      displayName,
     });
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, {
-        displayName: displayName,
+        displayName,
       });
     }
-    await setDoc(doc(db, "users", response.user.uid), {
-      uid: response.user.uid,
-      email: response.user.email,
-      displayName: displayName,
+    await setDoc(doc(db, "users", uid), {
+      uid,
+      email,
+      displayName,
     });
   };
 
@@ -79,7 +80,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     if (currentUser) {
       const userStatusDatabaseRef = ref(db, "/status/" + currentUser.uid);
@@ -158,7 +158,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!currentUser || currentUser.uid === "") return;
 
-    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const userStatusDatabaseRef = ref(db, `/status/${currentUser.uid}`);
 

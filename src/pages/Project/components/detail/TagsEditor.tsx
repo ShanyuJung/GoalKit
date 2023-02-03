@@ -1,12 +1,12 @@
-import produce from "immer";
 import { FormEvent, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
-import { uuidv4 } from "@firebase/util";
-import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import styled from "styled-components";
+import produce from "immer";
+import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { ReactComponent as editIcon } from "../../../../assets/edit-svgrepo-com.svg";
 import { ListInterface } from "../../../../types";
 
 const TagSelectorList = styled.div`

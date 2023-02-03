@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import Navbar from "./components/layout/navbar/Navbar";
 import { AuthProvider } from "./contexts/AuthContext";
+import Navbar from "./components/layout/navbar/Navbar";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -9,8 +9,14 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    font-family: 'Poppins',-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
 
   #root {
     min-height: calc(100vh - 70px);

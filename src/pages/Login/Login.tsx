@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
-import AuthInput from "../../components/input/AuthInput";
-import LoginRoute from "../../components/route/LoginRoute";
 import { useAuth } from "../../contexts/AuthContext";
+import AuthInput from "../../components/input/AuthInput";
+import { LoginRoute } from "../../components/route/PrivateRoute";
+import styled from "styled-components";
 import placeholder from "../../assets/login-placeholder.jpg";
 import { useProgressiveImage } from "../../utils/hooks";
 
@@ -305,8 +305,8 @@ const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const submitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();

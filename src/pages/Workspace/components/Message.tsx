@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
 import { useState } from "react";
-import styled from "styled-components";
+import { Timestamp } from "firebase/firestore";
 import { useAuth } from "../../../contexts/AuthContext";
+import styled from "styled-components";
 
 const MessageWrapper = styled.div<{ isCurrentUser: boolean }>`
   display: flex;
@@ -79,7 +79,7 @@ const Message: React.FC<Props> = ({
   messageTime,
   messagePhoto,
 }) => {
-  const [isShowTime, setIsShowTime] = useState(false);
+  const [isShowTime, setIsShowTime] = useState<boolean>(false);
   const { currentUser } = useAuth();
 
   let newTimeString = "";

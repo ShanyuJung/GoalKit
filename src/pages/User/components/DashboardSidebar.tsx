@@ -1,9 +1,9 @@
+import { useAuth } from "../../../contexts/AuthContext";
 import styled from "styled-components";
+import Swal from "sweetalert2";
 import { ReactComponent as projectIcon } from "../../../assets/board-svgrepo-com.svg";
 import { ReactComponent as userIcon } from "../../../assets/user-svgrepo-com.svg";
 import { ReactComponent as logoutIcon } from "../../../assets/logout-svgrepo-com.svg";
-import { useAuth } from "../../../contexts/AuthContext";
-import Swal from "sweetalert2";
 
 interface StylesProps {
   isShow: boolean;

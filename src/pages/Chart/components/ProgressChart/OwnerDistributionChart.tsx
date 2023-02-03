@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import produce from "immer";
 import {
   BarChart,
   CartesianGrid,
@@ -8,8 +10,6 @@ import {
   Legend,
   Bar,
 } from "recharts";
-import { useEffect, useState } from "react";
-import produce from "immer";
 import { ListInterface, MemberInterface } from "../../../../types";
 
 const ErrorText = styled.div`
@@ -17,6 +17,15 @@ const ErrorText = styled.div`
   padding: 20px 30px;
   font-size: 16px;
 `;
+
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  barSize: 20,
+  maxCharacter: 20,
+  baseNumber: 5,
+  fontSize: 12,
+};
 
 interface Props {
   lists: ListInterface[];
@@ -31,35 +40,58 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       id: string;
     }[]
   >([]);
-  const [barChartWidth, setBarChartWidth] = useState(460);
+  const [barChartWidth, setBarChartWidth] = useState<number>(CHART_SIZE.width);
 
   useEffect(() => {
     const ownerDataHandler = () => {
-      const newOwnerData = members.map((member) => {
-        return { name: member.displayName, total: 0, id: member.uid };
-      });
-      const displayOwnerData = produce(newOwnerData, (draftState) => {
-        draftState.forEach((owner) => {
-          lists.forEach((list) => {
-            list.cards.forEach((card) => {
-              if (card.owner?.includes(owner.id)) {
-                owner.total += 1;
-              }
-            });
-          });
+      const ownerList = lists.flatMap((list) => {
+        return list.cards.flatMap((card) => {
+          return card.owner;
         });
       });
+
+      const ownerAmount = produce(
+        {} as { [key: string]: number },
+        (draftState) => {
+          ownerList.forEach((owner) => {
+            if (!owner) return;
+            if (owner in draftState) {
+              draftState[`${owner}`] += 1;
+            } else {
+              draftState[`${owner}`] = 1;
+            }
+          });
+        }
+      );
+
+      const displayOwnerData = members.map((member) => {
+        if (ownerAmount[`${member.uid}`]) {
+          return {
+            name: member.displayName,
+            total: ownerAmount[`${member.uid}`],
+            id: member.uid,
+          };
+        }
+        return {
+          name: member.displayName,
+          total: 0,
+          id: member.uid,
+        };
+      });
+
       setOwnerData(displayOwnerData);
     };
 
     ownerDataHandler();
-    if (members.length > 5) {
-      setBarChartWidth(members.length * 92);
+    if (members.length > CHART_SIZE.baseNumber) {
+      setBarChartWidth(
+        members.length * (CHART_SIZE.width / CHART_SIZE.baseNumber)
+      );
     }
   }, [lists, members]);
 
   const tickFormatter = (value: string) => {
-    const limit = 20; // put your maximum character
+    const limit = CHART_SIZE.maxCharacter; // put your maximum character
     if (value.length < limit) return value;
     return `${value.substring(0, limit)}...`;
   };
@@ -71,7 +103,7 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
   return (
     <BarChart
       width={barChartWidth}
-      height={300}
+      height={CHART_SIZE.height}
       data={ownerData}
       margin={{
         top: 5,
@@ -81,11 +113,15 @@ const OwnerDistribution: React.FC<Props> = ({ lists, members }) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" fontSize={12} tickFormatter={tickFormatter} />
+      <XAxis
+        dataKey="name"
+        fontSize={CHART_SIZE.fontSize}
+        tickFormatter={tickFormatter}
+      />
       <YAxis allowDecimals={false} />
       <Tooltip />
       <Legend />
-      <Bar dataKey="total" fill="#8884d8" barSize={20} />
+      <Bar dataKey="total" fill="#8884d8" barSize={CHART_SIZE.barSize} />
     </BarChart>
   );
 };
