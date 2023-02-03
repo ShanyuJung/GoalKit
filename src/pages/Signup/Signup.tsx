@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { LoginRoute } from "../../components/route/PrivateRoute";
-import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
-import placeholder from "../../assets/signup-placeholder.jpg";
+import { useAuth } from "../../contexts/AuthContext";
 import { useProgressiveImage } from "../../utils/hooks";
+import { LoginRoute } from "../../components/route/PrivateRoute";
+import styled from "styled-components";
+import placeholder from "../../assets/signup-placeholder.jpg";
 
 const Wrapper = styled.div`
   display: flex;

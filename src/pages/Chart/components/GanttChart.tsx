@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Gantt, Task, ViewMode } from "gantt-task-react";
-import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
-import { useParams } from "react-router-dom";
 import { ListInterface } from "../../../types";
 
 const Container = styled.div`

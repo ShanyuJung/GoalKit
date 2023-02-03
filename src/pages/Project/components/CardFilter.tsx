@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import styled from "styled-components";
+import { useOnClickOutside } from "../../../utils/hooks";
 import { ReactComponent as filterIcon } from "../../../assets/filter-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
-import { useOnClickOutside } from "../../../utils/hooks";
 
 const Container = styled.div`
   height: 40px;

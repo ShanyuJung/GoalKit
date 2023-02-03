@@ -1,14 +1,14 @@
-import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
+import { useOnClickOutside } from "../../../utils/hooks";
 import Card from "./Card";
-import { Droppable, Draggable } from "react-beautiful-dnd";
 import NewCard from "./NewCard";
+import DropdownButton from "../../../components/button/DropdownButton";
+import styled from "styled-components";
+import Swal from "sweetalert2";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 import { ReactComponent as moreIcon } from "../../../assets/more-svgrepo-com.svg";
 import { ReactComponent as trashIcon } from "../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as moveIcon } from "../../../assets/move-arrows-svgrepo-com.svg";
-import { useEffect, useRef, useState } from "react";
-import { useOnClickOutside } from "../../../utils/hooks";
-import Swal from "sweetalert2";
-import DropdownButton from "../../../components/button/DropdownButton";
 import { CardInterface, ListInterface, MemberInterface } from "../../../types";
 
 interface IsDraggingProps {

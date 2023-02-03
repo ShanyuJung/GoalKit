@@ -1,15 +1,11 @@
-import styled from "styled-components";
-import { PrivateRoute } from "../../components/route/PrivateRoute";
-import List from "./components/List";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-  DragStart,
-} from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
-import produce from "immer";
+import {
+  useNavigate,
+  useParams,
+  LoaderFunctionArgs,
+  useLoaderData,
+} from "react-router-dom";
+import { db } from "../../firebase";
 import {
   arrayRemove,
   arrayUnion,
@@ -22,29 +18,33 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
-import NewList from "./components/NewList";
-import { v4 as uuidv4 } from "uuid";
-import {
-  useNavigate,
-  useParams,
-  LoaderFunctionArgs,
-  useLoaderData,
-} from "react-router-dom";
-import Modal from "../../components/modal/Modal";
-import CardDetail from "./components/detail/CardDetail";
-import ProjectSidebar from "./components/ProjectSidebar";
-import OnlineMembers from "./components/OnlineMembers";
-import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
+import CardDetail from "./components/detail/CardDetail";
 import CardFilter from "./components/CardFilter";
+import List from "./components/List";
+import Modal from "../../components/modal/Modal";
+import NewList from "./components/NewList";
+import OnlineMembers from "./components/OnlineMembers";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
+import ProjectSidebar from "./components/ProjectSidebar";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
+import styled from "styled-components";
+import produce from "immer";
+import Swal from "sweetalert2";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  DragStart,
+} from "react-beautiful-dnd";
+import { v4 as uuidv4 } from "uuid";
 import {
   ListInterface,
   MemberInterface,
   ProjectInterface,
   WorkspaceInterface,
 } from "../../types";
-import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Container = styled.div`
   display: flex;

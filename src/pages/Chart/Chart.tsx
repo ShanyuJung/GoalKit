@@ -1,7 +1,6 @@
-import styled from "styled-components";
-import "gantt-task-react/dist/index.css";
 import { useEffect, useState } from "react";
 import { useLoaderData, useParams } from "react-router-dom";
+import { db } from "../../firebase";
 import {
   collection,
   doc,
@@ -11,19 +10,20 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
 import GanttChart from "./components/GanttChart";
 import ChartSidebar from "./components/ChartSidebar";
 import ProgressChart from "./components/ProgressChart/ProgressChart";
-import produce from "immer";
 import { PrivateRoute } from "../../components/route/PrivateRoute";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
+import styled from "styled-components";
+import produce from "immer";
+import "gantt-task-react/dist/index.css";
 import {
   MemberInterface,
   WorkspaceInterface,
   ProjectInterface,
 } from "../../types";
-import { useAuth } from "../../contexts/AuthContext";
-import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Container = styled.div`
   display: flex;

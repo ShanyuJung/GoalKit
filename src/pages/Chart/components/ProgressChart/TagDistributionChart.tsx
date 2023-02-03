@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import produce from "immer";
 import {
   BarChart,
   CartesianGrid,
@@ -8,8 +10,6 @@ import {
   Legend,
   Bar,
 } from "recharts";
-import { useEffect, useState } from "react";
-import produce from "immer";
 import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`

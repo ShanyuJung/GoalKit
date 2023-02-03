@@ -1,14 +1,14 @@
+import { FormEvent, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import DropdownButton from "../../../../components/button/DropdownButton";
+import TagsEditor from "./TagsEditor";
 import styled from "styled-components";
+import Swal from "sweetalert2";
 import { ReactComponent as trashIcon } from "../../../../assets/trash-svgrepo-com.svg";
 import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 import { ReactComponent as dateIcon } from "../../../../assets/clock-svgrepo-com.svg";
 import { ReactComponent as ownerIcon } from "../../../../assets/user-svgrepo-com.svg";
 import { ReactComponent as tagsIcon } from "../../../../assets/tags-svgrepo-com.svg";
-import DropdownButton from "../../../../components/button/DropdownButton";
-import { FormEvent, useRef } from "react";
-import TagsEditor from "./TagsEditor";
-import Swal from "sweetalert2";
 import { ListInterface, MemberInterface } from "../../../../types";
 
 const Wrapper = styled.div`

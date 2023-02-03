@@ -1,19 +1,19 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import produce from "immer";
-import styled from "styled-components";
 import { db } from "../../../../firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
-import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import Description from "./Description";
 import Time from "./Time";
 import Tags from "./Tags";
 import Owners from "./Owners";
 import CardDetailSideBar from "./CardDetailSidebar";
 import Todo from "./Todo";
+import styled from "styled-components";
+import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { ReactComponent as cardIcon } from "../../../../assets/details-svgrepo-com.svg";
+import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
 import {
   CardInterface,
   ListInterface,

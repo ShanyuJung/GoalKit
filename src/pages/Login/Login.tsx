@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import { useAuth } from "../../contexts/AuthContext";
 import AuthInput from "../../components/input/AuthInput";
 import { LoginRoute } from "../../components/route/PrivateRoute";
-import { useAuth } from "../../contexts/AuthContext";
+import styled from "styled-components";
 import placeholder from "../../assets/login-placeholder.jpg";
 import { useProgressiveImage } from "../../utils/hooks";
 

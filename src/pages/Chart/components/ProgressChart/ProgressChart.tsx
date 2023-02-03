@@ -1,9 +1,9 @@
-import styled from "styled-components";
 import ProgressPieChart from "./ProgressPieChart";
 import TaskDistribution from "./TaskDistributionChart";
 import OwnerDistribution from "./OwnerDistributionChart";
 import TagsDistribution from "./TagDistributionChart";
 import DurationChart from "./DurationChart";
+import styled from "styled-components";
 import { ListInterface, MemberInterface } from "../../../../types";
 
 const Container = styled.div`

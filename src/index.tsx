@@ -1,6 +1,4 @@
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import {
   Navigate,
   Route,
@@ -8,14 +6,16 @@ import {
   RouterProvider,
   createRoutesFromElements,
 } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import Signup from "./pages/Signup/Signup";
-import Login from "./pages/Login/Login";
-import Dashboard from "./pages/User/Dashboard";
-import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
-import Project, { checkPermissionHandler } from "./pages/Project/Project";
+import reportWebVitals from "./reportWebVitals";
+import App from "./App";
 import Chart from "./pages/Chart/Chart";
+import Dashboard from "./pages/User/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import Project, { checkPermissionHandler } from "./pages/Project/Project";
+import Signup from "./pages/Signup/Signup";
+import Workspace, { getProjectsHandler } from "./pages/Workspace/Workspace";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

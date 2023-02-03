@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import Navbar from "./components/layout/navbar/Navbar";
 import { AuthProvider } from "./contexts/AuthContext";
+import Navbar from "./components/layout/navbar/Navbar";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {

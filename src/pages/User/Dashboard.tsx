@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { PrivateRoute } from "../../components/route/PrivateRoute";
-import { useAuth } from "../../contexts/AuthContext";
+import { db } from "../../firebase";
 import {
   collection,
   query,
@@ -11,15 +9,17 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../firebase";
-import produce from "immer";
-import NewWorkspace from "./components/NewWorkspace";
+import { useAuth } from "../../contexts/AuthContext";
 import DashboardSidebar from "./components/DashboardSidebar";
+import NewWorkspace from "./components/NewWorkspace";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
 import Profile from "./components/Profile";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
+import styled from "styled-components";
+import produce from "immer";
 import Swal from "sweetalert2";
 import ReactLoading from "react-loading";
 import { WorkspaceInterface } from "../../types";
-import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Wrapper = styled.div`
   display: flex;

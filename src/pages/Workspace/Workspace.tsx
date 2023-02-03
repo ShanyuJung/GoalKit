@@ -5,8 +5,7 @@ import {
   useParams,
   LoaderFunctionArgs,
 } from "react-router-dom";
-import styled from "styled-components";
-import { PrivateRoute } from "../../components/route/PrivateRoute";
+import { db } from "../../firebase";
 import {
   getDoc,
   collection,
@@ -23,19 +22,20 @@ import {
   orderBy,
   arrayRemove,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
+import Message from "./components/Message";
 import NewProject from "./components/NewProject";
+import { PrivateRoute } from "../../components/route/PrivateRoute";
+import SidebarButton from "../../components/layout/sidebar/SidebarButton";
+import WorkspaceSidebar from "./components/WorkspaceSidebar";
+import styled from "styled-components";
 import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
-import { useAuth } from "../../contexts/AuthContext";
-import WorkspaceSidebar from "./components/WorkspaceSidebar";
+import Swal from "sweetalert2";
 import { ReactComponent as sendIcon } from "../../assets/send-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../assets/close-svgrepo-com.svg";
 import { ReactComponent as deleteIcon } from "../../assets/remove-user-svgrepo-com.svg";
-import Swal from "sweetalert2";
-import Message from "./components/Message";
 import { MemberInterface, WorkspaceInterface } from "../../types";
-import SidebarButton from "../../components/layout/sidebar/SidebarButton";
 
 const Wrapper = styled.div`
   display: flex;

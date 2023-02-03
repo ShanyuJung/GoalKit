@@ -1,5 +1,4 @@
-import styled from "styled-components";
-import { useAuth } from "../../../contexts/AuthContext";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   getStorage,
   uploadBytes,
@@ -7,10 +6,11 @@ import {
   ref,
   list,
 } from "firebase/storage";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { ReactComponent as editIcon } from "../../../assets/edit-svgrepo-com.svg";
+import { useAuth } from "../../../contexts/AuthContext";
 import AuthInput from "../../../components/input/AuthInput";
+import styled from "styled-components";
 import ReactLoading from "react-loading";
+import { ReactComponent as editIcon } from "../../../assets/edit-svgrepo-com.svg";
 
 const Wrapper = styled.div`
   padding: 50px 10px;

@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
-import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import styled from "styled-components";
 import Swal from "sweetalert2";
+import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div<{ $isEdit: boolean }>`
   position: relative;
