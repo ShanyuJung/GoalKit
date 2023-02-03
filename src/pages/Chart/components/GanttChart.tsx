@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Gantt, Task, ViewMode } from "gantt-task-react";
-import { useEffect, useState } from "react";
 import { TaskType } from "gantt-task-react/dist/types/public-types";
-import { useParams } from "react-router-dom";
 import { ListInterface } from "../../../types";
 
 const Container = styled.div`
@@ -149,27 +149,31 @@ interface Props {
 const GanttChart: React.FC<Props> = ({ lists }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [view, setView] = useState(ViewMode.Day);
-  const [columnWidth, setColumnWidth] = useState(45);
-  const [isHeader, setIsHeader] = useState(true);
+  const [columnWidth, setColumnWidth] = useState<number>(45);
+  const [isHeader, setIsHeader] = useState<boolean>(true);
   const { projectID } = useParams();
 
-  const viewModeHandler = (modeType: string) => {
-    if (modeType === "Half Day") {
-      setView(ViewMode.HalfDay);
-      setColumnWidth(45);
-    } else if (modeType === "Day") {
-      setView(ViewMode.Day);
-      setColumnWidth(45);
-    } else if (modeType === "Week") {
-      setView(ViewMode.Week);
-      setColumnWidth(120);
-    } else if (modeType === "Month") {
-      setView(ViewMode.Month);
-      setColumnWidth(180);
-    } else if (modeType === "Year") {
-      setView(ViewMode.Year);
-      setColumnWidth(360);
+  const viewModeHandler = (modeType: ViewMode) => {
+    switch (modeType) {
+      case ViewMode.HalfDay:
+        setColumnWidth(45);
+        break;
+      case ViewMode.Day:
+        setColumnWidth(45);
+        break;
+      case ViewMode.Week:
+        setColumnWidth(120);
+        break;
+      case ViewMode.Month:
+        setColumnWidth(180);
+        break;
+      case ViewMode.Year:
+        setColumnWidth(360);
+        break;
+      default:
+        setColumnWidth(45);
     }
+    setView(modeType);
   };
 
   const showHeaderHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,7 +263,7 @@ const GanttChart: React.FC<Props> = ({ lists }) => {
             <ViewModeSelect
               defaultValue={"Day"}
               onChange={(e) => {
-                viewModeHandler(e.target.value);
+                viewModeHandler(e.target.value as ViewMode);
               }}
             >
               <option>Half Day</option>

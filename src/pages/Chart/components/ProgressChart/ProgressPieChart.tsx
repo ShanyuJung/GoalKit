@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { RadialBarChart, PolarAngleAxis, RadialBar } from "recharts";
 import { useEffect, useState } from "react";
+import styled from "styled-components";
 import produce from "immer";
+import { RadialBarChart, PolarAngleAxis, RadialBar } from "recharts";
 import { ListInterface } from "../../../../types";
 
 const ErrorText = styled.div`
@@ -17,12 +17,29 @@ const DUMMY_DATA = [
   { name: "Without Plan", value: 0, total: 0 },
 ];
 
+const CHART_SIZE = {
+  width: 460,
+  height: 300,
+  innerRadius: 110,
+  outerRadius: 130,
+  startAngle: 90,
+  endAngle: -270,
+  cornerRadius: 15,
+  percentageFontSize: 50,
+  percentageMarkX: 275,
+  percentageMarkY: 155,
+  percentageMarkFontSize: 20,
+  detailFontSize: 14,
+  detailY: 185,
+};
+
 interface Props {
   lists: ListInterface[];
 }
 
 const ProgressPieChart: React.FC<Props> = ({ lists }) => {
-  const [data, setData] = useState(DUMMY_DATA);
+  const [data, setData] =
+    useState<{ name: string; value: number; total: number }[]>(DUMMY_DATA);
 
   useEffect(() => {
     const taskNumberHandler = () => {
@@ -70,15 +87,15 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
 
   return (
     <RadialBarChart
-      width={460}
-      height={300}
+      width={CHART_SIZE.width}
+      height={CHART_SIZE.height}
       data={[data[0]]}
-      cx={230}
-      cy={150}
-      innerRadius={110}
-      outerRadius={130}
-      startAngle={90}
-      endAngle={-270}
+      cx={"50%"}
+      cy={"50%"}
+      innerRadius={CHART_SIZE.innerRadius}
+      outerRadius={CHART_SIZE.outerRadius}
+      startAngle={CHART_SIZE.startAngle}
+      endAngle={CHART_SIZE.endAngle}
     >
       <PolarAngleAxis
         type="number"
@@ -89,38 +106,38 @@ const ProgressPieChart: React.FC<Props> = ({ lists }) => {
       <RadialBar
         background
         dataKey="value"
-        cornerRadius={30 / 2}
+        cornerRadius={CHART_SIZE.cornerRadius}
         fill="#82ca9d"
       />
       <text
-        x={230}
-        y={150}
+        x={CHART_SIZE.width / 2}
+        y={CHART_SIZE.height / 2}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={50}
+        fontSize={CHART_SIZE.percentageFontSize}
         fill="#666"
       >
         {`${Math.round((data[0].value / data[0].total) * 100)}`}
       </text>
       <text
-        x={275}
-        y={155}
+        x={CHART_SIZE.percentageMarkX}
+        y={CHART_SIZE.percentageMarkY}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={20}
+        fontSize={CHART_SIZE.percentageMarkFontSize}
         fill="#666"
       >
         {"%"}
       </text>
       <text
-        x={230}
-        y={185}
+        x={CHART_SIZE.width / 2}
+        y={CHART_SIZE.detailY}
         textAnchor="middle"
         dominantBaseline="middle"
         className="progress-label"
-        fontSize={14}
+        fontSize={CHART_SIZE.detailFontSize}
         fill="#666"
       >
         {`${data[0].value} / ${data[0].total} Card Complete.`}

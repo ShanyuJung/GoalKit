@@ -1,9 +1,9 @@
-import produce from "immer";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import produce from "immer";
+import Swal from "sweetalert2";
 import { ReactComponent as toDoIcon } from "../../../../assets/checkbox-svgrepo-com.svg";
 import { ReactComponent as closeIcon } from "../../../../assets/close-svgrepo-com.svg";
-import Swal from "sweetalert2";
 
 const Wrapper = styled.div`
   margin: 10px;

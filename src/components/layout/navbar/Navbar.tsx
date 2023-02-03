@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
 import styled from "styled-components";
 import { ReactComponent as homeIcon } from "../../../assets/logo-svgrepo-com.svg";
 import { ReactComponent as userIcon } from "../../../assets/user-svgrepo-com.svg";
-import { useAuth } from "../../../contexts/AuthContext";
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -114,7 +114,7 @@ const Navbar = () => {
           onClick={() => {
             navigate("/dashboard");
           }}
-        ></LoginUserIcon>
+        />
       );
     }
 

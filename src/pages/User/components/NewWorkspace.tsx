@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import styled from "styled-components";
 import { useOnClickOutside } from "../../../utils/hooks";
-import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
+import styled from "styled-components";
 import Swal from "sweetalert2";
+import { ReactComponent as closeIcon } from "../../../assets/close-svgrepo-com.svg";
 
 const Wrapper = styled.div<{ $isEdit: boolean }>`
   position: relative;
@@ -122,7 +122,7 @@ interface Props {
 const NewWorkspace = ({ onSubmit }: Props) => {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const ref = useRef(null);
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   useOnClickOutside(ref, () => setIsEdit(false));
 

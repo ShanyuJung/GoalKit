@@ -1,12 +1,13 @@
 import { Timestamp } from "firebase/firestore";
 
-export interface MemberInterface {
-  uid: string;
-  email: string;
-  displayName: string;
-  last_changed?: Timestamp;
-  state?: string;
-  photoURL?: string;
+export interface ProjectInterface {
+  id: string;
+  title: string;
+  lists: ListInterface[];
+  workspaceID: string;
+  tags?: { id: string; colorCode: string; title: string }[];
+  draggingLists?: { listID: string; displayName: string }[];
+  draggingCards?: { cardID: string; displayName: string }[];
 }
 
 export interface WorkspaceInterface {
@@ -17,14 +18,10 @@ export interface WorkspaceInterface {
   members: string[];
 }
 
-export interface ProjectInterface {
+export interface ListInterface {
   id: string;
   title: string;
-  lists: ListInterface[];
-  workspaceID: string;
-  tags?: { id: string; colorCode: string; title: string }[];
-  draggingLists?: { listID: string; displayName: string }[];
-  draggingCards?: { cardID: string; displayName: string }[];
+  cards: CardInterface[];
 }
 
 export interface CardInterface {
@@ -38,8 +35,11 @@ export interface CardInterface {
   todo?: { title: string; isDone: boolean; id: string }[];
 }
 
-export interface ListInterface {
-  id: string;
-  title: string;
-  cards: CardInterface[];
+export interface MemberInterface {
+  uid: string;
+  email: string;
+  displayName: string;
+  last_changed?: Timestamp;
+  state?: string;
+  photoURL?: string;
 }
