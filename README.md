@@ -14,7 +14,7 @@ This project was built project with [`Create React App`](https://create-react-ap
 ## Features
 
 - [x] Instant co-editing
-- [x] Instant massaging
+- [x] Instant messaging
 - [x] Drag and drop
 - [x] Updated multiple different types of information
 - [x] Visualized data as chart
@@ -27,7 +27,7 @@ This project was built project with [`Create React App`](https://create-react-ap
 
 Fulfilled instant co-editing with [`onSnapshot API`](https://firebase.google.com/docs/firestore/query-data/listen) and solved conflict problems of instant co-editing
 
-### `Instant massaging`
+### `Instant messaging`
 
 Fulfilled instant messaging feature between multiple users
 
